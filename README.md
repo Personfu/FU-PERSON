@@ -1,12 +1,40 @@
-﻿# FU PERSON
+﻿<div align="center">
+
+# FU PERSON — v1.777
+
+```
+    ███████╗██╗   ██╗    ██████╗ ███████╗██████╗ ███████╗ ██████╗ ███╗   ██╗
+    ██╔════╝██║   ██║    ██╔══██╗██╔════╝██╔══██╗██╔════╝██╔═══██╗████╗  ██║
+    █████╗  ██║   ██║    ██████╔╝█████╗  ██████╔╝███████╗██║   ██║██╔██╗ ██║
+    ██╔══╝  ██║   ██║    ██╔═══╝ ██╔══╝  ██╔══██╗╚════██║██║   ██║██║╚██╗██║
+    ██║     ╚██████╔╝    ██║     ███████╗██║  ██║███████║╚██████╔╝██║ ╚████║
+    ╚═╝      ╚═════╝     ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝
+```
 
 **Integrated Security Operations Toolkit**
 
-Offensive security, reconnaissance, intelligence gathering, and field-deployable exploitation — consolidated into a single portable platform built around the tri-drive USB form factor.
+[![Version](https://img.shields.io/badge/Version-1.777-00FFFF?style=for-the-badge)]()
+[![License](https://img.shields.io/badge/License-Source--Available-FF00FF?style=for-the-badge)]()
+[![FLLC](https://img.shields.io/badge/FLLC-2026-7B2FBE?style=for-the-badge)]()
+
+</div>
+
+---
+
+> Offensive security, reconnaissance, intelligence gathering, and field-deployable exploitation — consolidated into a single portable platform built around the tri-drive USB form factor.
 
 ```
-Property of FLLC (FLLC LLC)
+Property of FLLC
 Source-Available | All Rights Reserved | Authorized Use Only
+```
+
+### Theme: Midnight Neon Blacklight Galaxy
+
+```
+Background:  #0D0D1A (Midnight)      Text:      #E0E0FF (Ghost White)
+Primary:     #00FFFF (Neon Cyan)      Muted:     #8888AA (Lavender)
+Secondary:   #FF00FF (Fuchsia)        Success:   #00FF88 (Neon Green)
+Accent:      #7B2FBE (Ultraviolet)    Border:    #2A2A4A (Dim)
 ```
 
 ---
@@ -212,23 +240,29 @@ USB Insert
     ├── OR: Target clicks phantom.bat / setup.bat / install.bat
     │   └── Self-hides immediately → launches full chain
     │
-    └── autorun_service.ps1 (Phantom Engine)
+    └── autorun_service.ps1 v2 (Phantom Engine)
+        ├── Evasion framework loaded (AMSI/ETW/Defender bypass)
+        ├── Sandbox/VM detection with abort logic
         ├── Auto-detects USB drive letters
-        ├── Sets stealth mode (AMSI bypass, ETW patch, low priority)
         ├── Creates loot directory structure on Micro SD
-        ├── Launches auto_pwn.ps1 (10-phase attack chain)
-        │   ├── Phase 0:   Environment fingerprint + defense enum
+        ├── Launches auto_pwn.ps1 v3 (15-phase attack chain)
+        │   ├── Phase 0:   Evasion init + environment fingerprint
         │   ├── Phase 1:   System reconnaissance
-        │   ├── Phase 1.5: Lateral movement + AD recon
-        │   ├── Phase 2:   Credential harvest (6 browsers + WiFi + cloud)
-        │   ├── Phase 2.5: DPAPI credential decryption
-        │   ├── Phase 3:   Privilege escalation (17 vectors + UAC bypass)
-        │   ├── Phase 4:   SQL injection scan
-        │   ├── Phase 5:   Application exploitation (Notepad++ DLL hijack)
-        │   ├── Phase 6:   Input monitor (keystrokes, screenshots)
-        │   ├── Phase 7:   Data aggregation
-        │   └── Phase 7.5: Network exfiltration (DNS/HTTP)
+        │   ├── Phase 2:   Network lateral movement + AD recon
+        │   ├── Phase 3:   Credential harvest (6 browsers + WiFi + cloud)
+        │   ├── Phase 4:   DPAPI credential decryption (AES-256-GCM)
+        │   ├── Phase 5:   Cloud & SaaS harvesting (M365/Azure/AWS/GCP)
+        │   ├── Phase 6:   Communications data (Teams/Slack/Discord/Signal)
+        │   ├── Phase 7:   Cryptocurrency wallet hunting (40+ wallets)
+        │   ├── Phase 8:   Privilege escalation (17 vectors + UAC bypass)
+        │   ├── Phase 9:   SQL injection scan (40+ payloads)
+        │   ├── Phase 10:  Application exploitation (Notepad++ DLL hijack)
+        │   ├── Phase 11:  Input monitor v2 (keys/mouse/screenshots/network)
+        │   ├── Phase 12:  Persistence installation (12 methods)
+        │   ├── Phase 13:  Data packaging + network exfiltration
+        │   └── Phase 14:  Anti-forensics + cleanup
         ├── Runs inline quick-collect as failsafe
+        ├── Timing jitter between phases
         └── Cleans execution traces
 ```
 
@@ -289,19 +323,24 @@ FU-PERSON/
 │
 ├── payloads/
 │   ├── windows/                       Windows target payloads
-│   │   ├── auto_pwn.ps1              10-phase attack chain orchestrator
-│   │   ├── autorun_service.ps1       Phantom zero-touch autorun engine
+│   │   ├── auto_pwn.ps1              15-phase attack chain orchestrator (v3)
+│   │   ├── autorun_service.ps1       Phantom zero-touch autorun engine (v2)
+│   │   ├── evasion.ps1               Universal Defender/EDR bypass framework
+│   │   ├── cloud_harvester.ps1       M365/Azure/AWS/GCP token harvester
+│   │   ├── comms_harvester.ps1       Teams/Slack/Discord/Signal extractor
+│   │   ├── crypto_hunter.ps1         40+ wallet/seed/exchange credential hunter
+│   │   ├── persistence_engine.ps1    12-method persistence installer
 │   │   ├── phantom.bat               Silent USB autorun trigger
 │   │   ├── windows_collector.ps1     System + browser + credential harvest
 │   │   ├── privesc.ps1               Privilege escalation (17 vectors)
 │   │   ├── sqli_scanner.ps1          SQL injection automation
 │   │   ├── npp_exploit.ps1           DLL hijack + config injection
-│   │   ├── input_monitor.py          Keystrokes, mouse, clipboard, screenshots
+│   │   ├── input_monitor.py          Input monitor v2 (8-thread capture)
 │   │   ├── start_monitor.bat         Silent monitor launcher
 │   │   ├── run_me.bat                Social engineering wrapper
 │   │   └── windows_collector.bat     CMD fallback collector
 │   └── linux/
-│       └── linux_collector.sh         Linux + cloud + K8s + Docker harvest
+│       └── linux_collector.sh         Linux collector v2 (12-phase harvest)
 │
 ├── firmware/
 │   └── esp32/
