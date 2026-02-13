@@ -1,0 +1,122 @@
+﻿# ============================================================================
+#  FLLC - Flipper Zero NFC/RFID Attack Playbook
+# ============================================================================
+#  Techniques for NFC and RFID testing with Flipper Zero.
+#
+#  SUPPORTED PROTOCOLS:
+#    NFC-A (ISO 14443-3A) - Mifare Classic, Mifare Ultralight, NTAG
+#    NFC-B (ISO 14443-3B) - Some passports, transit cards
+#    NFC-V (ISO 15693)    - Some access cards
+#    NFC-F (FeliCa)       - Sony FeliCa transit cards
+#    EMV                  - Contactless payment cards (read only)
+#
+#  RFID 125kHz:
+#    EM4100              - Very common access badges
+#    HID Prox            - HID corporate badges
+#    Indala              - Older access systems
+#    FDX-B/A             - Animal chips, some access cards
+# ============================================================================
+
+# ============================================================================
+#  ATTACK 1: BADGE CLONING (125kHz RFID)
+# ============================================================================
+#  Most corporate access badges use 125kHz RFID (EM4100 or HID Prox).
+#  These have NO encryption and can be cloned in seconds.
+#
+#  Steps:
+#  1. Flipper -> 125kHz RFID -> Read
+#  2. Hold Flipper next to target badge (< 2cm distance)
+#  3. Flipper reads and saves the badge UID
+#  4. Flipper -> 125kHz RFID -> Saved -> Select badge
+#  5. Choose "Emulate" to use Flipper as the badge
+#  6. Or "Write" to clone onto a blank T5577 card
+#
+#  SOCIAL ENGINEERING:
+#  - "Hey can I see your badge? I'm comparing designs between offices"
+#  - Walk closely behind badge holder in elevator
+#  - Place Flipper near badge on a desk/table while talking
+
+# ============================================================================
+#  ATTACK 2: MIFARE CLASSIC CRACKING (13.56MHz NFC)
+# ============================================================================
+#  Mifare Classic cards have known cryptographic weaknesses.
+#  Flipper can attempt dictionary and nested attacks.
+#
+#  Steps:
+#  1. Flipper -> NFC -> Read
+#  2. Hold card to Flipper (< 1cm)
+#  3. If Mifare Classic detected, Flipper starts key recovery
+#  4. "Detect Reader" mode: Hold Flipper to a card reader to capture keys
+#     the reader uses, then use those keys to read the card
+#  5. Once keys recovered, full dump is saved
+#  6. Can emulate or write to blank Mifare Classic card
+#
+#  TIP: Use "Detect Reader" on the actual door reader first.
+#       It will reveal the authentication keys it uses.
+#       Then use those keys to fully dump the real card.
+
+# ============================================================================
+#  ATTACK 3: EMV CARD READING (Contactless Payment)
+# ============================================================================
+#  Flipper can READ data from contactless credit/debit cards.
+#  This captures: card number, expiry date, some transaction data.
+#  It CANNOT clone payment cards (dynamic authentication).
+#
+#  Steps:
+#  1. Flipper -> NFC -> Read
+#  2. Hold wallet/card near Flipper
+#  3. Captured data includes PAN, expiry, cardholder name
+#  4. Data is saved for OSINT/reconnaissance purposes
+#
+#  LIMITATIONS:
+#  - CVV/CVC is NOT on the chip
+#  - Online transactions require CVV
+#  - EMV has dynamic authentication (can't replay)
+#  - Mostly useful for identifying card holder info
+
+# ============================================================================
+#  ATTACK 4: NTAG/ULTRALIGHT MANIPULATION
+# ============================================================================
+#  NTAG213/215/216 are writable NFC tags often used for:
+#  - Amiibo figures (NTAG215)
+#  - Smart posters
+#  - Tap-to-connect WiFi
+#  - Business cards
+#  - Some access control
+#
+#  Steps:
+#  1. Read original tag
+#  2. Save dump
+#  3. Modify data (e.g., change URL in smart poster)
+#  4. Write to blank NTAG
+#  5. Replace original (social engineering NFC phishing)
+#
+#  EVIL NFC TAG:
+#  - Write a malicious URL to a blank NTAG215
+#  - Place near legitimate NFC reader/poster
+#  - Victims tap and get redirected to phishing page
+
+# ============================================================================
+#  ATTACK 5: RFID FUZZING
+# ============================================================================
+#  Brute force RFID UIDs against access control readers.
+#
+#  Steps:
+#  1. Flipper -> 125kHz RFID -> Extra Actions -> Read ASK/PSK RAW
+#  2. Capture the reader's behavior
+#  3. Use saved/emulated cards with sequential UIDs
+#  4. Note which UIDs the reader responds to
+#
+#  This is slow but can sometimes find valid UIDs.
+
+# ============================================================================
+#  BEST PRACTICES
+# ============================================================================
+#  - Always attempt 125kHz read first (faster, more common)
+#  - Then try NFC 13.56MHz
+#  - Save EVERYTHING - even partial reads are useful
+#  - "Detect Reader" mode is incredibly powerful for Mifare
+#  - Keep a collection of captured badges organized by location
+#  - Label saved files with date/location/context
+#  - T5577 blank cards can emulate most 125kHz protocols
+#  - Mifare Classic 1K blank cards for 13.56MHz cloning

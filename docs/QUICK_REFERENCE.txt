@@ -1,0 +1,263 @@
+﻿╔═══════════════════════════════════════════════════════════════╗
+║   FLLC - PENTEST SUITE QUICK REFERENCE                ║
+║   Professional Security Assessment Platform v2.0             ║
+╚═══════════════════════════════════════════════════════════════╝
+
+⚠️  AUTHORIZATION REQUIRED - ALL SCANS LOGGED ⚠️
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 PRE-ENGAGEMENT CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Signed MSA/SOW with client
+□ Scope defined (domains, IPs, exclusions)
+□ Testing window agreed
+□ Emergency contacts confirmed
+□ Certificate of insurance current
+□ NDA executed
+□ Kickoff call completed
+□ Rules of engagement documented
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 QUICK START COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# CLI Tool - Basic Scan
+python3 pentest_suite.py client-domain.com --authorized
+
+# CLI Tool - Full Assessment
+python3 pentest_suite.py client-domain.com --authorized \
+  --full-scan --output ./reports/
+
+# Web Interface
+open pentest-suite-pro.html
+
+# OSINT/Breach Check Only
+python3 pentest_suite.py client-domain.com --passive-only
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 CAPABILITIES MATRIX
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Module              | Passive | Active | Info Gathered
+--------------------|---------|--------|---------------------------
+DNS Enumeration     |   ✓     |   ✓    | Records, subdomains
+Port Scanning       |         |   ✓    | Open ports, services
+SSL/TLS Analysis    |   ✓     |   ✓    | Certs, ciphers, expiry
+Web Crawling        |   ✓     |   ✓    | Pages, forms, files
+Directory Enum      |         |   ✓    | Hidden paths, configs
+File Download       |   ✓     |   ✓    | Documents, data
+Breach Intelligence |   ✓     |        | Leaked credentials
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚡ COMMON WORKFLOWS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌─────────────────────────────────────────────────────────────┐
+│ WORKFLOW 1: Commercial Client ($4,000-$4,500)              │
+└─────────────────────────────────────────────────────────────┘
+
+Day 1: Pre-engagement
+  → Sign SOW with scope
+  → Kickoff call
+  → Confirm testing window
+
+Day 2-3: Active Testing
+  → Run full pentest suite
+  → Document findings in real-time
+  → Report critical issues immediately
+
+Day 4: Reporting
+  → Generate JSON/CSV exports
+  → Create executive summary
+  → Write technical findings
+  → Prepare remediation roadmap
+
+Day 5: Delivery
+  → Client debrief meeting
+  → Q&A on findings
+  → Schedule follow-up scan
+
+┌─────────────────────────────────────────────────────────────┐
+│ WORKFLOW 2: Government Agency (SPECIAL PROTOCOLS)          │
+└─────────────────────────────────────────────────────────────┘
+
+Pre-approval (2-4 weeks):
+  → Submit through official channels
+  → Obtain agency CISO approval
+  → Define scope per FedRAMP/FISMA
+  → Security clearance verification
+
+Execution (Controlled window):
+  → Use government-approved tools only
+  → Follow agency-specific protocols
+  → Real-time reporting to SOC
+  → Maintain detailed audit trail
+
+Post-engagement:
+  → Report through official channels
+  → Classified findings handling
+  → Remediation coordination
+  → Follow-up validation
+
+┌─────────────────────────────────────────────────────────────┐
+│ WORKFLOW 3: Internal FLLC Assets (ONGOING)          │
+└─────────────────────────────────────────────────────────────┘
+
+Weekly: Passive OSINT
+  → Breach database monitoring
+  → DNS changes detection
+  → Certificate expiration checks
+
+Monthly: Active Scan
+  → Full pentest of fllc.net
+  → Client infrastructure review
+  → Update security baseline
+
+Quarterly: Deep Assessment
+  → Comprehensive audit
+  → Threat modeling update
+  → Remediation verification
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 SEVERITY GUIDELINES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CRITICAL (Immediate action required)
+  • Unauthenticated RCE
+  • SQL injection
+  • Exposed .git with credentials
+  • Admin panel without auth
+  • Active credential leaks
+
+HIGH (Fix within 7 days)
+  • Weak SSL/TLS ciphers
+  • Exposed admin panels
+  • Outdated software (known CVEs)
+  • Missing HSTS on auth pages
+  • Password forms over HTTP
+
+MEDIUM (Fix within 30 days)
+  • Missing security headers
+  • Directory listing enabled
+  • Information disclosure
+  • Verbose error messages
+  • Predictable tokens
+
+LOW (Fix within 90 days)
+  • Banner disclosure
+  • Unnecessary open ports
+  • Missing hardening
+  • Non-critical misconfigurations
+
+INFO (Documentation/Baseline)
+  • DNS records
+  • Open standard ports
+  • Valid SSL certificates
+  • Standard configurations
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 DELIVERABLES CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ JSON findings export (machine-readable)
+□ CSV vulnerability list (Excel-compatible)
+□ Executive summary (non-technical)
+□ Technical findings report (detailed)
+□ Remediation roadmap (prioritized)
+□ Risk scoring matrix
+□ Evidence screenshots/files
+□ Attack narrative (if applicable)
+□ Compliance mapping (PCI/HIPAA/SOC2)
+□ Retest offer (30-day validation)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚨 INCIDENT RESPONSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+If you discover active compromise during testing:
+
+1. STOP all testing immediately
+2. Document current state (screenshots, logs)
+3. Contact client emergency contact
+4. Escalate to client CISO/security team
+5. Provide immediate verbal briefing
+6. Follow client incident response procedures
+7. Document all communications
+8. Offer emergency remediation support
+
+Emergency Contact Template:
+  "This is FLLC from FLLC conducting
+   authorized penetration testing. I've discovered evidence
+   of active compromise on [SYSTEM]. Immediate action required.
+   
+   Finding: [BRIEF DESCRIPTION]
+   Severity: CRITICAL
+   Recommended Action: [IMMEDIATE STEPS]
+   
+   Standing by for further instructions."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 PRICING REFERENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Base Security Assessment: $4,000 - $4,500
+  • 2-5 day engagement
+  • Full pentest suite
+  • Comprehensive reporting
+  • 30-day validation scan
+
+Add-Ons:
+  • Ongoing monitoring: +$297/month
+  • Quarterly reassessment: +$1,200/quarter
+  • Security training: +$500
+  • Remediation support: $150/hour
+
+Enterprise/Government: Custom pricing
+  • Multi-site assessments
+  • Compliance-specific testing
+  • Red team operations
+  • 24/7 monitoring
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📞 CONTACTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FLLC Security Operations
+FLLC, Founder & Lead Security Architect
+
+Website: https://fllc.net
+Email: preston@fllc.net
+Stripe: https://buy.stripe.com/6oU5kDbaleJA6TIaKk8EM00
+
+Office Hours: Tue/Thu 0900-1700 MST
+Response Time: <24hrs standard, <4hrs critical
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚖️  LEGAL REMINDER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your government clearance means you're held to HIGHER standards.
+
+Even with authorization:
+  ✓ Stay within defined scope
+  ✓ Stop if you find active compromise
+  ✓ Document everything
+  ✓ Report through proper channels
+  ✓ Maintain confidentiality
+  ✓ Follow data handling procedures
+
+NEVER:
+  ✗ Test without written authorization
+  ✗ Exceed defined scope
+  ✗ Retain client data unnecessarily
+  ✗ Discuss findings publicly
+  ✗ Use findings for personal gain
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Last Updated: 2026-02-10
+Version: 2.0 Professional Edition
+FLLC | FLLC | Government-Cleared IT Operations
+
+FOR AUTHORIZED USE ONLY - MAINTAIN OPERATIONAL SECURITY

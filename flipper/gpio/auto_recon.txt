@@ -1,0 +1,15 @@
+﻿# ============================================================================
+#  FLLC - ESP32 Auto-Recon Script
+#  Send these commands sequentially to ESP32 via Flipper GPIO UART
+# ============================================================================
+#  Usage: In Flipper GPIO UART terminal, paste each command one at a time
+#         or use the ESP32 Marauder app's script feature
+# ============================================================================
+
+scan wifi
+save
+sniff probes
+save
+scan ble 15
+save
+pcap start

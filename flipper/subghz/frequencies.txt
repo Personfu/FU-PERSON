@@ -1,0 +1,105 @@
+﻿# ============================================================================
+#  FLLC - Flipper Zero SubGHz Frequency Reference
+# ============================================================================
+#  Common SubGHz frequencies for scanning, jamming, and replay attacks.
+#  Use with Flipper Zero SubGHz module.
+#
+#  NOTE: Transmitting on these frequencies may be illegal in your jurisdiction
+#        without proper authorization. For authorized testing only.
+# ============================================================================
+
+# === COMMON DEVICE FREQUENCIES ===
+
+# Garage door openers (300-390 MHz)
+300.000 MHz  - Older garage remotes
+310.000 MHz  - US garage remotes (common)
+315.000 MHz  - US garage remotes / car keyfobs (VERY common)
+318.000 MHz  - US garage remotes
+330.000 MHz  - Some garage systems
+350.000 MHz  - Specialty systems
+390.000 MHz  - Some older systems
+
+# Car keyfobs (300-434 MHz)
+312.000 MHz  - Some Toyota/Lexus keyfobs
+315.000 MHz  - US market car keyfobs (primary)
+433.920 MHz  - EU/Asian market car keyfobs (primary)
+434.000 MHz  - EU keyfobs
+
+# Smart home / IoT devices
+315.000 MHz  - US IoT sensors, doorbells
+433.920 MHz  - EU IoT sensors, weather stations, doorbells
+868.000 MHz  - EU LoRa / smart home
+868.350 MHz  - EU smart home devices
+915.000 MHz  - US LoRa / Meshtastic
+916.800 MHz  - US Meshtastic default
+906.875 MHz  - US Meshtastic alt
+
+# TPMS (Tire Pressure Monitoring)
+315.000 MHz  - US TPMS
+433.920 MHz  - EU TPMS
+
+# Wireless doorbells
+315.000 MHz  - US wireless doorbells
+433.920 MHz  - EU wireless doorbells
+
+# Power outlets / smart plugs
+315.000 MHz  - US RF outlets
+433.920 MHz  - EU RF outlets
+
+# Weather stations
+433.920 MHz  - Most weather stations
+
+# Gate/barrier systems
+433.920 MHz  - EU gate openers
+315.000 MHz  - US gate openers
+868.300 MHz  - EU commercial gates
+
+# ============================================================================
+#  PROTOCOL REFERENCE
+# ============================================================================
+#  Princeton     - Simple OOK, used in cheap remotes
+#  KeeLoq        - Rolling code, used in many garage doors
+#  Nice FLO      - Fixed code, older European gates
+#  Nice FloR-S   - Rolling code, newer European gates
+#  CAME          - Gate/barrier systems
+#  Chamberlain   - MyQ garage systems
+#  Linear        - Commercial access control
+#  Honeywell     - Security sensors
+#  Interlogix    - Security systems (345 MHz)
+#  2GIG          - Security sensors (345 MHz)
+#  Secplus v1/v2 - Security+ garage door protocol
+# ============================================================================
+
+# === ADVANCED FREQUENCIES ===
+
+# Two-way pagers
+152.025 MHz  - POCSAG pagers
+157.450 MHz  - POCSAG pagers
+462.000 MHz  - FRS/GMRS (Family Radio)
+
+# Railroad / transportation
+160.215 MHz  - Railroad channel 1
+161.100 MHz  - Railroad emergency
+
+# Amateur radio (for reference)
+144.390 MHz  - APRS (Automatic Packet Reporting)
+146.520 MHz  - 2m calling frequency
+446.000 MHz  - 70cm calling frequency
+
+# ============================================================================
+#  FLIPPER ZERO SUBGHZ WORKFLOW
+# ============================================================================
+#  1. Read RAW        - Record any SubGHz signal
+#  2. Read            - Decode known protocols
+#  3. Saved           - Replay captured signals
+#  4. Frequency Analyzer - Find active frequencies
+#  5. Test Signal     - Transmit test patterns
+#
+#  ATTACK FLOW:
+#  a. Use Frequency Analyzer to find active signals
+#  b. Switch to Read/Read RAW on that frequency
+#  c. Trigger the target device (press remote, etc.)
+#  d. Save the captured signal
+#  e. Replay to test
+#  f. For rolling code: capture multiple codes for analysis
+# ============================================================================

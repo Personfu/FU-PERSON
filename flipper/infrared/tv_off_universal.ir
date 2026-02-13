@@ -1,0 +1,77 @@
+﻿Filetype: IR signals file
+Version: 1
+#
+# FLLC - Universal TV-OFF IR Codes
+# Flipper Zero Infrared Remote
+#
+# Contains power-off codes for major TV brands.
+# Useful for: demonstrations, social engineering, distraction
+#
+# Usage: Flipper -> Infrared -> Saved Remotes -> tv_off_universal
+#        Press "Send All" to blast all codes sequentially
+#
+name: Samsung_Power
+type: parsed
+protocol: Samsung32
+address: 07 00 00 00
+command: 02 00 00 00
+#
+name: LG_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Sony_Power
+type: parsed
+protocol: SIRC
+address: 01 00 00 00
+command: 15 00 00 00
+#
+name: Vizio_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: TCL_Roku_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Philips_Power
+type: parsed
+protocol: RC5
+address: 00 00 00 00
+command: 0C 00 00 00
+#
+name: Panasonic_Power
+type: parsed
+protocol: Kaseikyo
+address: 00 40 04 00
+command: 00 3D 00 00
+#
+name: Sharp_Power
+type: parsed
+protocol: NEC
+address: 11 00 00 00
+command: 48 00 00 00
+#
+name: Toshiba_Power
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 12 00 00 00
+#
+name: Hisense_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: Insignia_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
