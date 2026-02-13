@@ -330,6 +330,8 @@ FU-PERSON/
 │   │   ├── comms_harvester.ps1       Teams/Slack/Discord/Signal extractor
 │   │   ├── crypto_hunter.ps1         40+ wallet/seed/exchange credential hunter
 │   │   ├── persistence_engine.ps1    12-method persistence installer
+│   │   ├── ai_evasion.ps1           7-phase AI/ML detection evasion engine
+│   │   ├── compliance_scanner.ps1   NIST/CIS/PCI/SOC2 compliance audit engine
 │   │   ├── phantom.bat               Silent USB autorun trigger
 │   │   ├── windows_collector.ps1     System + browser + credential harvest
 │   │   ├── privesc.ps1               Privilege escalation (17 vectors)
@@ -446,7 +448,10 @@ FU-PERSON/
 │   ├── OSINT_QUICK_START.md          OSINT quick-start guide
 │   ├── OSINT_README.md               OSINT suite overview
 │   ├── TOOL_INSTALLATION.md          Dependency installation guide
-│   └── QUICK_REFERENCE.txt           Command cheat sheet
+│   ├── QUICK_REFERENCE.txt           Command cheat sheet
+│   ├── AI_THREAT_LANDSCAPE_2026.md   AI defense/offense threat mapping
+│   ├── COMPLIANCE_FRAMEWORK.md       Compliance-to-pentest control mapping
+│   └── SATELLITE_LINKS.md            All FLLC satellite repository links
 │
 ├── LICENSE                            FU PERSON Source-Available License v1.0
 ├── SECURITY.md                        Vulnerability disclosure policy
