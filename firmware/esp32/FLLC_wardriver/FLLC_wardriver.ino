@@ -1,6 +1,6 @@
 ﻿/*
  * ============================================================================
- *  F U R U L I E   W A R D R I V E R   v3
+ *  F L L C   W A R D R I V E R   v3
  *  ─────────────────────────────────────────
  *  ESP32 autonomous WiFi / BLE intelligence platform
  *
