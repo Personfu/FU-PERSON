@@ -67,15 +67,26 @@ def build_dsi_sd(sd_path):
     print("  FLLC - DSi SD Card Builder")
     print("=" * 50)
 
-    # Create directory structure
+    # Create directory structure — full game library layout
     dirs = [
         '_nds',              # TWiLight Menu++ config
         '_nds/TWiLightMenu', # TW Menu++ assets
-        'roms/nds',          # Homebrew .nds files
-        'tools',             # Our custom tools
+        '_nds/TWiLightMenu/boxart',
+        'roms/nds',          # Nintendo DS ROMs
+        'roms/gba',          # Game Boy Advance ROMs
+        'roms/gb',           # Game Boy / Color ROMs
+        'roms/nes',          # NES ROMs
+        'roms/snes',         # SNES ROMs
+        'roms/sega',         # Sega Genesis / MD ROMs
+        'roms/homebrew',     # Homebrew .nds apps
+        'saves',             # Save files (auto-created by emulators)
+        'tools',             # FLLC custom tools
         'tools/wordlists',   # Offline wordlists
         'tools/data',        # Collected data output
-        'tools/scripts',     # Helper scripts
+        'tools/data/wifi_scans',
+        'tools/data/recon',
+        'tools/scripts',     # Source code / Makefiles
+        'cheats',            # Cheat databases
     ]
 
     for d in dirs:
@@ -499,6 +510,81 @@ clean:
     with open(guide_path, 'w') as f:
         f.write(tools_guide)
     print(f"  [+] DSi tool guide written")
+
+    # ====================================================================
+    # ROM Library Manifest (what to download)
+    # ====================================================================
+    rom_manifest = {
+        "pokemon": {
+            "gb": [
+                "Pokemon_Red.gb", "Pokemon_Blue.gb", "Pokemon_Yellow.gb",
+                "Pokemon_Gold.gbc", "Pokemon_Silver.gbc", "Pokemon_Crystal.gbc",
+                "Pokemon_Pinball.gbc", "Pokemon_TCG.gbc", "Pokemon_Puzzle.gbc"
+            ],
+            "gba": [
+                "Pokemon_Ruby.gba", "Pokemon_Sapphire.gba", "Pokemon_Emerald.gba",
+                "Pokemon_FireRed.gba", "Pokemon_LeafGreen.gba",
+                "Pokemon_MD_Red.gba", "Pokemon_Pinball_RS.gba"
+            ],
+            "nds": [
+                "Pokemon_Diamond.nds", "Pokemon_Pearl.nds", "Pokemon_Platinum.nds",
+                "Pokemon_HeartGold.nds", "Pokemon_SoulSilver.nds",
+                "Pokemon_Black.nds", "Pokemon_White.nds",
+                "Pokemon_Black2.nds", "Pokemon_White2.nds",
+                "Pokemon_Conquest.nds", "Pokemon_Ranger.nds",
+                "Pokemon_Ranger_SoA.nds", "Pokemon_Ranger_GS.nds",
+                "Pokemon_MD_Blue.nds", "Pokemon_MD_Time.nds",
+                "Pokemon_MD_Darkness.nds", "Pokemon_MD_Sky.nds",
+                "Pokemon_Dash.nds", "Pokemon_Trozei.nds", "Pokemon_Typing.nds"
+            ]
+        },
+        "classics_nds": [
+            "Mario_Kart_DS.nds", "New_Super_Mario_Bros.nds",
+            "Super_Mario_64_DS.nds", "Zelda_Phantom_Hourglass.nds",
+            "Zelda_Spirit_Tracks.nds", "Animal_Crossing_Wild_World.nds",
+            "Kirby_Super_Star_Ultra.nds", "Castlevania_Dawn_of_Sorrow.nds",
+            "Metroid_Prime_Hunters.nds", "Advance_Wars_Dual_Strike.nds",
+            "Fire_Emblem_Shadow_Dragon.nds", "Chrono_Trigger.nds",
+            "Dragon_Quest_IX.nds", "The_World_Ends_With_You.nds",
+            "Phoenix_Wright_Ace_Attorney.nds", "999.nds",
+            "Ghost_Trick.nds", "Elite_Beat_Agents.nds",
+            "Tetris_DS.nds", "Scribblenauts.nds"
+        ],
+        "classics_gba": [
+            "Zelda_Minish_Cap.gba", "Metroid_Fusion.gba",
+            "Metroid_Zero_Mission.gba", "Super_Mario_Advance_4.gba",
+            "Golden_Sun.gba", "Golden_Sun_Lost_Age.gba",
+            "Fire_Emblem.gba", "Fire_Emblem_Sacred_Stones.gba",
+            "Advance_Wars.gba", "FF_Tactics_Advance.gba",
+            "Castlevania_Aria_of_Sorrow.gba", "Mega_Man_Zero.gba",
+            "Wario_Land_4.gba", "Mother_3.gba", "Kingdom_Hearts_CoM.gba"
+        ],
+        "classics_gb": [
+            "Zelda_Links_Awakening_DX.gbc", "Zelda_Oracle_Seasons.gbc",
+            "Zelda_Oracle_Ages.gbc", "Super_Mario_Land.gb",
+            "Super_Mario_Land_2.gb", "Wario_Land.gb",
+            "Kirbys_Dream_Land.gb", "Metroid_II.gb",
+            "Donkey_Kong_94.gb", "Tetris.gb", "Shantae.gbc",
+            "Metal_Gear_Solid.gbc", "Dragon_Warrior_III.gbc"
+        ]
+    }
+
+    manifest_path = os.path.join(sd_path, 'roms', 'ROM_MANIFEST.json')
+    with open(manifest_path, 'w') as f:
+        json.dump(rom_manifest, f, indent=2)
+
+    # Count total games
+    total_roms = 0
+    for cat, data in rom_manifest.items():
+        if isinstance(data, dict):
+            for sys_roms in data.values():
+                total_roms += len(sys_roms)
+        elif isinstance(data, list):
+            total_roms += len(data)
+
+    print(f"  [+] ROM manifest written ({total_roms} games cataloged)")
+    print(f"      Pokemon: {sum(len(v) for v in rom_manifest['pokemon'].values())} titles")
+    print(f"      Download ROMs and place in matching roms/<system>/ folders")
 
     # ====================================================================
     # Compact wordlists for SD card
