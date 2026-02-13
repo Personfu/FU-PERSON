@@ -1,0 +1,116 @@
+# ============================================================================
+#  FLLC - FU PERSON | EMV Contactless Card Reference
+# ============================================================================
+#  Reference guide for reading and analyzing contactless payment cards.
+#  Flipper Zero can READ EMV data but CANNOT clone/replay payment cards.
+# ============================================================================
+
+# ============================================================================
+#  EMV DATA FIELDS (What Flipper Captures)
+# ============================================================================
+#
+#  TAG      | NAME                    | NOTES
+#  ---------|-------------------------|----------------------------------------
+#  5A       | PAN (Card Number)       | Usually partial (last 4-8 digits)
+#  5F24     | Expiry Date             | YYMMDD format
+#  5F20     | Cardholder Name         | May be present or empty
+#  9F26     | App Cryptogram          | Dynamic, single-use
+#  9F27     | Cryptogram Info Data    | Indicates type (ARQC/TC/AAC)
+#  9F10     | Issuer App Data         | Issuer-specific data
+#  9F36     | App Transaction Counter | Increments per transaction
+#  9F6C     | Card Transaction Qual   | Indicates contactless capabilities
+#  57       | Track 2 Equivalent      | PAN + expiry for magstripe fallback
+#  82       | AIP                     | Application Interchange Profile
+#  94       | AFL                     | Application File Locator
+#  9F37     | Unpredictable Number    | Random challenge
+#
+# ============================================================================
+#  CARD NETWORK AIDs (Application Identifiers)
+# ============================================================================
+#
+#  AID                  | NETWORK
+#  ---------------------|------------------
+#  A000000003           | Visa
+#  A0000000031010       | Visa Debit/Credit
+#  A0000000032010       | Visa Electron
+#  A0000000033010       | Visa Interlink
+#  A0000000041010       | Mastercard
+#  A0000000042010       | Mastercard (Maestro)
+#  A0000000043060       | Mastercard (Maestro)
+#  A00000002501         | American Express
+#  A0000001523010       | Discover
+#  A0000001524010       | Discover
+#  A0000000651010       | JCB
+#  A000000333010101     | UnionPay Debit
+#  A000000333010102     | UnionPay Credit
+#  A000000004306001     | Mastercard (Maestro UK)
+#  B012345678           | Example/Test
+#
+# ============================================================================
+#  WHAT YOU CAN DO WITH EMV DATA
+# ============================================================================
+#
+#  1. OSINT/RECONNAISSANCE:
+#     - Identify cardholder name
+#     - Determine card network (Visa/MC/Amex)
+#     - Determine issuing bank (from BIN/IIN)
+#     - Identify card type (credit/debit/prepaid)
+#     - Track 2 data for social engineering
+#
+#  2. BIN LOOKUP:
+#     First 6-8 digits of PAN = BIN (Bank Identification Number)
+#     Use binlist.net or similar to identify:
+#       - Issuing bank
+#       - Card type
+#       - Card level (Gold, Platinum, Black)
+#       - Country of issue
+#
+#  3. WHAT YOU CANNOT DO:
+#     - Clone the card (dynamic cryptograms prevent replay)
+#     - Make purchases (CVV not on chip, cryptogram is one-time)
+#     - Extract PIN
+#     - Bypass EMV authentication
+#
+# ============================================================================
+#  FLIPPER WORKFLOW FOR EMV
+# ============================================================================
+#
+#  1. Flipper -> NFC -> Read
+#  2. Hold near target's wallet/pocket (< 4cm, 1.5in)
+#  3. Flipper identifies card type and reads available data
+#  4. Data saved to SD card
+#  5. Review in: SD/nfc/<saved_file>.nfc
+#
+#  TIPS:
+#  - Metal wallets / RFID blockers will prevent reading
+#  - Through jeans pocket: ~2cm range
+#  - Through thin wallet: ~3cm range
+#  - Bus/train: Stand close during crowded times
+#  - Cafe: While "looking at phone" near their wallet on table
+#
+# ============================================================================
+#  COMMON BIN RANGES (First 6 Digits)
+# ============================================================================
+#
+#  RANGE        | ISSUER
+#  -------------|---------------------------
+#  4*** ****    | Visa
+#  51-55** **** | Mastercard
+#  2221-2720    | Mastercard (new range)
+#  34** ****    | American Express
+#  37** ****    | American Express
+#  6011 ****    | Discover
+#  6221-6229    | UnionPay
+#  3528-3589    | JCB
+#
+#  POPULAR US ISSUERS:
+#  4147 09**    | Chase Visa
+#  4266 84**    | Chase Visa
+#  5425 23**    | Chase Mastercard
+#  3782 82**    | Amex (Chase co-brand)
+#  4024 00**    | Capital One Visa
+#  5178 05**    | Capital One MC
+#  4000 12**    | Citi Visa
+#  5135 01**    | Citi MC
+#  4744 00**    | Bank of America Visa
+#  5166 01**    | Bank of America MC

@@ -1,0 +1,123 @@
+# ============================================================================
+#  FLLC - FU PERSON | IoT Device Sub-GHz Database
+# ============================================================================
+#  Wireless IoT devices and their RF characteristics.
+#  Smart home, sensors, weather stations, power outlets.
+# ============================================================================
+
+# ============================================================================
+#  SMART HOME RF OUTLETS & SWITCHES
+# ============================================================================
+#
+#  BRAND           | FREQ    | PROTOCOL    | CODE TYPE | CLONABLE
+#  ----------------|---------|-------------|-----------|----------
+#  Etekcity        | 433.920 | Princeton   | Fixed     | YES
+#  BN-LINK         | 433.920 | Princeton   | Fixed     | YES
+#  Dewenwils       | 433.920 | Princeton   | Fixed     | YES
+#  WoodsSmart      | 433.920 | Princeton   | Fixed     | YES
+#  KAB             | 315.000 | Princeton   | Fixed     | YES
+#  Syantek         | 433.920 | Princeton   | Fixed     | YES
+#  Fosmon          | 433.920 | Princeton   | Fixed     | YES
+#  HBN             | 433.920 | Princeton   | Fixed     | YES
+#  DEWENWILS       | 433.920 | Princeton   | Fixed     | YES
+#  Brotonn         | 433.920 | Princeton   | Fixed     | YES
+#
+#  ALL of these use the same Princeton/PT2260 encoder chip!
+#  Capture one press -> replay -> control any outlet
+#
+#  Code structure (Princeton 24-bit):
+#    [20-bit Address][4-bit Data]
+#    Address = remote unit (set during pairing)
+#    Data = button pressed (A-ON, A-OFF, B-ON, B-OFF, etc.)
+
+# ============================================================================
+#  WEATHER STATIONS
+# ============================================================================
+#
+#  BRAND             | FREQ    | PROTOCOL      | DATA FORMAT
+#  ------------------|---------|---------------|---------------------------
+#  Acurite 06045     | 433.920 | OOK           | Temp/Humidity/ID
+#  Acurite Tower     | 433.920 | OOK           | Temp/Humidity/Battery
+#  Oregon Scientific | 433.920 | Manchester    | Temp/Humidity/Channel
+#  LaCrosse TX7U     | 433.920 | OOK           | Temp/Humidity
+#  Ambient Weather   | 433.920 | OOK           | Multi-sensor
+#  TFA Dostmann      | 868.000 | OOK           | Temp/Humidity (EU)
+#  Bresser           | 868.000 | FSK           | 5-in-1 data (EU)
+#  Fine Offset WH32  | 433.920 | OOK           | Temp/Humidity/Pressure
+#  Govee H5075       | 433.920 | OOK           | Temp/Humidity
+#  ThermoPro         | 433.920 | OOK           | Temp/Humidity
+#
+#  Weather stations broadcast CONTINUOUSLY every 30-60 seconds.
+#  No encryption. Easy to capture. Contains unique sensor IDs.
+#  Use for: Passive recon (detect occupied buildings)
+
+# ============================================================================
+#  WIRELESS DOORBELLS
+# ============================================================================
+#
+#  BRAND           | FREQ    | PROTOCOL   | CLONABLE
+#  ----------------|---------|------------|----------
+#  Ring (old RF)   | 433.920 | Custom     | YES
+#  SadoTech        | 433.920 | Princeton  | YES
+#  Avantek         | 433.920 | Princeton  | YES
+#  PHYSEN          | 433.920 | Princeton  | YES
+#  Novete          | 433.920 | Princeton  | YES
+#  1byone          | 433.920 | Princeton  | YES
+#  Honeywell RCWL  | 916.800 | Custom     | MAYBE
+#  NuTone          | 315.000 | Custom     | YES
+#
+#  Attack: Capture doorbell press -> replay to ring anytime
+#  Use: Create distraction / lure resident to door
+
+# ============================================================================
+#  CAR / GARAGE ACCESSORIES
+# ============================================================================
+#
+#  DEVICE           | FREQ    | PROTOCOL     | CLONABLE
+#  -----------------|---------|--------------|----------
+#  EZ-Pass / IPass  | 915.750 | Proprietary  | NO (encrypted)
+#  TollTag          | 915.000 | Proprietary  | NO
+#  TPMS sensors     | 315/433 | Custom OOK   | YES (read)
+#  Aftermarket alarm| 315/433 | Princeton/KL | MAYBE
+#  GPS trackers     | 433.920 | Custom       | NO (cellular)
+#  OBD dongles      | BT/WiFi | N/A          | N/A
+
+# ============================================================================
+#  INDUSTRIAL / COMMERCIAL IoT
+# ============================================================================
+#
+#  DEVICE              | FREQ    | PROTOCOL     | NOTES
+#  --------------------|---------|--------------|---------------------------
+#  Utility meters      | 915.000 | Custom       | AMR/AMI readings
+#  Irrigation control  | 433.920 | Custom OOK   | Mostly fixed code
+#  Pet invisible fence | 315.000 | OOK          | Boundary signal
+#  Pool thermometer    | 433.920 | OOK          | Temp broadcast
+#  Soil moisture       | 433.920 | OOK          | Ag sensors
+#  Livestock trackers  | 433.920 | OOK          | Farm equipment
+#  LoRaWAN sensors     | 915.000 | CSS/GFSK     | Encrypted (AppKey)
+#  Meshtastic nodes    | 906-928 | LoRa CSS     | May be unencrypted
+#
+# ============================================================================
+#  FLIPPER IoT ATTACK WORKFLOWS
+# ============================================================================
+#
+#  WORKFLOW 1: SMART OUTLET TAKEOVER
+#    1. Sub-GHz -> Frequency Analyzer (confirm 433.92)
+#    2. Sub-GHz -> Read on 433.920 MHz
+#    3. Ask neighbor to turn light on/off OR wait for it
+#    4. Capture Princeton code
+#    5. Replay to toggle outlet on/off at will
+#    6. Use for: Turning off security cameras, lights, etc.
+#
+#  WORKFLOW 2: WEATHER STATION RECON
+#    1. Sub-GHz -> Read on 433.920 MHz
+#    2. Capture weather sensor broadcasts
+#    3. Each sensor has unique ID
+#    4. Map: Sensor ID -> location (building occupied?)
+#    5. Temperature data can reveal HVAC patterns (occupied hours)
+#
+#  WORKFLOW 3: DOORBELL HARASSMENT
+#    1. Capture doorbell signal (usually 433.920)
+#    2. Replay to ring doorbell anytime
+#    3. Ring at 3 AM repeatedly for social engineering access
+#       ("Sorry to bother you, I heard your doorbell from outside...")

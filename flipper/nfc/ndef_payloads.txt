@@ -1,0 +1,123 @@
+# ============================================================================
+#  FLLC - FU PERSON | NFC NDEF Payload Templates
+# ============================================================================
+#  Pre-built NDEF payloads for evil NFC tag attacks.
+#  Write these to blank NTAG213/215/216 tags using Flipper Zero.
+#
+#  ATTACK CONCEPT:
+#  1. Write malicious NDEF to blank NFC tag
+#  2. Place tag near legitimate NFC reader/poster/kiosk
+#  3. Victim taps phone -> payload executes
+# ============================================================================
+
+# ============================================================================
+#  PAYLOAD 1: WIFI CREDENTIAL HARVEST (Captive Portal)
+# ============================================================================
+#  Writes a WiFi connection NDEF record.
+#  When tapped, phone auto-connects to your rogue AP.
+#  Rogue AP presents captive portal that captures credentials.
+#
+#  NDEF WiFi Simple Config:
+#    SSID: "FreeWiFi_5G"
+#    Auth: Open (no password)
+#    Redirect to: <your-captive-portal-IP>
+#
+#  Flipper: NFC -> Saved -> [your tag] -> Write
+#  Overwrite NDEF data with WiFi config record
+
+# ============================================================================
+#  PAYLOAD 2: URL REDIRECT (Phishing)
+# ============================================================================
+#  Writes a URL record that opens attacker-controlled page.
+#  Craft page to look like login portal for nearby business.
+#
+#  Example URLs (replace with your phishing domain):
+#    https://login-portal.example.com/
+#    https://wifi-login.example.com/connect
+#    https://update.example.com/security-patch
+#
+#  Social engineering context:
+#    - Place near coffee shop: "Tap for Free WiFi"
+#    - Place near parking meter: "Tap to Pay"
+#    - Place near event: "Tap for Schedule"
+#    - Place near store: "Tap for 20% Discount"
+
+# ============================================================================
+#  PAYLOAD 3: SMS / PHONE CALL TRIGGER
+# ============================================================================
+#  NDEF URI records that trigger phone actions:
+#
+#  Premium Rate SMS (social engineering):
+#    tel:+1-900-555-0199
+#    sms:+1-555-0199?body=SUBSCRIBE
+#
+#  These require user confirmation on most phones,
+#  but combined with social engineering ("Tap to verify") they work.
+
+# ============================================================================
+#  PAYLOAD 4: BLUETOOTH PAIRING REQUEST
+# ============================================================================
+#  NDEF Bluetooth OOB record triggers pairing dialog.
+#  If accepted, attacker device gains BT access.
+#
+#  Write BT MAC + device name as Bluetooth OOB NDEF record.
+#  Target phone shows "Pair with [Device Name]?"
+#  Social engineering: Name device "AirPods Pro" or "Conference Speaker"
+
+# ============================================================================
+#  PAYLOAD 5: APP LAUNCH / DEEP LINK
+# ============================================================================
+#  NDEF records with Android App Links or iOS Universal Links
+#  can launch specific apps or deep-link into app states.
+#
+#  Android Intent:
+#    android.nfc.action.NDEF_DISCOVERED
+#    android.intent.action.VIEW
+#
+#  Example deep links:
+#    whatsapp://send?phone=+15550199
+#    fb://profile/attacker_id
+#    market://details?id=com.malicious.app
+
+# ============================================================================
+#  PAYLOAD 6: VCARD INJECTION
+# ============================================================================
+#  Write a vCard NDEF record that auto-creates a contact.
+#  Can be used for social engineering - victim unknowingly adds
+#  attacker's contact with a trusted name.
+#
+#  vCard Template:
+#    BEGIN:VCARD
+#    VERSION:3.0
+#    N:Support;IT
+#    FN:IT Support
+#    TEL:+1-555-ATTACKER
+#    EMAIL:itsupport@evil.com
+#    URL:https://evil.com/help
+#    END:VCARD
+
+# ============================================================================
+#  PAYLOAD 7: RICKROLL / DISTRACTION
+# ============================================================================
+#  Classic distraction payload. Opens YouTube video.
+#  Useful for: Creating diversion while performing other attacks nearby.
+#
+#  URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+# ============================================================================
+#  DEPLOYMENT CHECKLIST
+# ============================================================================
+#  [ ] Acquire blank NTAG215 tags (Amazon, ~$0.30 each)
+#  [ ] Write payload using Flipper: NFC -> Add Manually -> NTAG215
+#  [ ] Or: Write using NFC Tools app on Android
+#  [ ] Test payload on your own device first
+#  [ ] Place tag in high-traffic area with social engineering label
+#  [ ] Monitor your phishing server / captive portal for captures
+#  [ ] Retrieve tag when done to avoid detection
+#
+#  TIPS:
+#  - NTAG213: 144 bytes (short URLs only)
+#  - NTAG215: 504 bytes (vCards, longer URLs)
+#  - NTAG216: 888 bytes (full payloads, multiple records)
+#  - Thin NFC stickers can be placed under existing NFC spots
+#  - Many modern phones auto-read NFC without user action

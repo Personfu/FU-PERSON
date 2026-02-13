@@ -1,0 +1,100 @@
+# ============================================================================
+#  FLLC - FU PERSON | Sub-GHz Protocol Encyclopedia
+# ============================================================================
+#  Complete reference of RF protocols the Flipper Zero can decode/encode.
+#  Sorted by vulnerability level: FIXED CODE (clonable) first.
+# ============================================================================
+
+# ============================================================================
+#  FIXED CODE PROTOCOLS (FULLY VULNERABLE — Capture & Replay)
+# ============================================================================
+#
+#  PROTOCOL      | FREQ (MHz) | BITS | MODULATION | COMMON USE
+#  --------------|------------|------|------------|---------------------------
+#  Princeton     | 315/433    | 24   | OOK/ASK    | Cheap remotes, outlets, doorbells
+#  Holtek HT12E  | 315/433    | 12   | OOK/ASK    | RC toys, wireless relays
+#  Linear        | 310/318    | 10   | OOK/ASK    | Garage doors, access control
+#  Nice FLO      | 433        | 12   | OOK/ASK    | European gates, garage doors
+#  CAME          | 433        | 12   | OOK/ASK    | European gates, barriers
+#  CAME TWEE     | 433        | 54   | OOK/ASK    | European gates
+#  SMC5326       | 330/433    | 25   | OOK/ASK    | SE Asian gate remotes
+#  GateTX        | 433        | 24   | OOK/ASK    | Gate systems
+#  Marantec      | 433        | 12   | OOK/ASK    | European garage doors
+#  Intertechno   | 433        | 24   | OOK/ASK    | Smart home switches (EU)
+#  Bett          | 433        | 18   | OOK/ASK    | Italian gates/shutters
+#  Doitrand      | 433        | 37   | OOK/ASK    | French gates
+#  Nero Radio    | 433        | 56   | OOK/ASK    | Roller shutters
+#  Somfy Telis   | 433        | 56   | Manchester | Blinds/awnings (fixed part)
+#  Hormann HSM   | 868        | 44   | OOK/ASK    | German garage doors (older)
+#  FAAC SLH      | 868        | 64   | OOK/ASK    | Italian gates (older)
+#  BFT Mitto     | 433        | 12   | OOK/ASK    | Italian gates (older)
+#  Ansonic       | 433        | 12   | OOK/ASK    | European garage
+#
+#  ATTACK: Single capture -> unlimited replay. No time limit.
+#
+# ============================================================================
+#  ROLLING CODE PROTOCOLS (PARTIALLY VULNERABLE)
+# ============================================================================
+#
+#  PROTOCOL        | FREQ (MHz) | MODULATION | VULNERABILITY
+#  ----------------|------------|------------|--------------------------------
+#  KeeLoq          | 315/433    | OOK/ASK    | Rolljam attack possible
+#  Nice FloR-S     | 433        | OOK/ASK    | Rolljam attack possible
+#  Security+ 1.0   | 315        | OOK/ASK    | Rolljam (2 captures needed)
+#  Security+ 2.0   | 310/315    | OOK/ASK    | More resistant, but rolljam works
+#  Chamberlain     | 315        | OOK/ASK    | MyQ protocol, rolling code
+#  Somfy RTS       | 433        | Manchester | Rolljam + de-sync attacks
+#  Hormann BiSecur | 868        | FSK        | Complex rolling code
+#  ABUS CFB        | 868        | FSK        | Strong rolling code
+#
+#  ROLLJAM ATTACK FLOW:
+#    1. Jam the receiver (prevent it hearing the real remote)
+#    2. Capture the remote's transmission
+#    3. When user presses remote again (thinking it failed), capture 2nd code
+#    4. Replay the FIRST code (it's still valid since receiver never got it)
+#    5. You now have the 2nd code saved for later use
+#
+# ============================================================================
+#  PROTOCOL MODULATION TYPES
+# ============================================================================
+#
+#  OOK (On-Off Keying):
+#    Simplest modulation. Carrier on = 1, carrier off = 0.
+#    Most common in cheap consumer devices.
+#    Flipper preset: FuriHalSubGhzPresetOok270Async or Ook650Async
+#
+#  ASK (Amplitude Shift Keying):
+#    Similar to OOK but with amplitude levels.
+#    Flipper preset: Same as OOK presets
+#
+#  FSK (Frequency Shift Keying):
+#    Two frequencies represent 0 and 1.
+#    More resistant to noise. Used in higher-end systems.
+#    Flipper preset: FuriHalSubGhzPreset2FSKDev238Async
+#
+#  GFSK (Gaussian FSK):
+#    Smoothed FSK transitions. Common in digital protocols.
+#    Flipper preset: FuriHalSubGhzPreset2FSKDev476Async
+#
+#  Manchester:
+#    Self-clocking encoding. Transition in middle of each bit period.
+#    Used by Somfy, some security systems.
+#
+# ============================================================================
+#  FLIPPER CAPTURE SETTINGS BY PROTOCOL
+# ============================================================================
+#
+#  TARGET              | FREQUENCY  | PRESET
+#  --------------------|------------|----------------------------------
+#  US Garage (old)     | 300.000    | FuriHalSubGhzPresetOok650Async
+#  US Garage (common)  | 310.000    | FuriHalSubGhzPresetOok650Async
+#  US Car keyfob       | 315.000    | FuriHalSubGhzPresetOok650Async
+#  US Garage (Linear)  | 318.000    | FuriHalSubGhzPresetOok650Async
+#  EU Gate/Garage      | 433.920    | FuriHalSubGhzPresetOok650Async
+#  EU Car keyfob       | 433.920    | FuriHalSubGhzPresetOok650Async
+#  EU Smart Home       | 868.000    | FuriHalSubGhzPresetOok650Async
+#  Hormann (EU)        | 868.350    | FuriHalSubGhzPreset2FSKDev238Async
+#  US LoRa/Meshtastic  | 915.000    | FuriHalSubGhzPreset2FSKDev476Async
+#  TPMS (US)           | 315.000    | FuriHalSubGhzPresetOok650Async
+#  TPMS (EU)           | 433.920    | FuriHalSubGhzPresetOok650Async
+#  Security sensors    | 345.000    | FuriHalSubGhzPresetOok650Async

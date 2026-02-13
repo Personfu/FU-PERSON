@@ -1,0 +1,325 @@
+Filetype: IR signals file
+Version: 1
+#
+# +---------------------------------------------------------------+
+# |  FU PERSON - Universal Projector Remote                       |
+# |  by PERSON FU | FLLC                                          |
+# +---------------------------------------------------------------+
+#
+# 25+ projector brands. Power On/Off, Input Source, Mute.
+#
+# === EPSON ===
+#
+name: Epson_Power
+type: parsed
+protocol: NEC
+address: 05 00 00 00
+command: 00 00 00 00
+#
+name: Epson_Power2
+type: parsed
+protocol: NECext
+address: 05 FA 00 00
+command: 00 FF 00 00
+#
+name: Epson_Input
+type: parsed
+protocol: NEC
+address: 05 00 00 00
+command: 04 00 00 00
+#
+name: Epson_Mute
+type: parsed
+protocol: NEC
+address: 05 00 00 00
+command: 06 00 00 00
+#
+# === BENQ ===
+#
+name: BenQ_Power
+type: parsed
+protocol: NEC
+address: 30 00 00 00
+command: 0A 00 00 00
+#
+name: BenQ_Power2
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 0A 00 00 00
+#
+name: BenQ_Input
+type: parsed
+protocol: NEC
+address: 30 00 00 00
+command: 09 00 00 00
+#
+name: BenQ_Mute
+type: parsed
+protocol: NEC
+address: 30 00 00 00
+command: 03 00 00 00
+#
+# === OPTOMA ===
+#
+name: Optoma_Power
+type: parsed
+protocol: NEC
+address: 44 00 00 00
+command: 1E 00 00 00
+#
+name: Optoma_Power2
+type: parsed
+protocol: NEC
+address: 83 00 00 00
+command: 0C 00 00 00
+#
+name: Optoma_Input
+type: parsed
+protocol: NEC
+address: 44 00 00 00
+command: 1B 00 00 00
+#
+name: Optoma_Mute
+type: parsed
+protocol: NEC
+address: 44 00 00 00
+command: 16 00 00 00
+#
+# === VIEWSONIC ===
+#
+name: ViewSonic_Power
+type: parsed
+protocol: NEC
+address: 03 00 00 00
+command: 0C 00 00 00
+#
+name: ViewSonic_Power2
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 0C 00 00 00
+#
+name: ViewSonic_Input
+type: parsed
+protocol: NEC
+address: 03 00 00 00
+command: 13 00 00 00
+#
+name: ViewSonic_Mute
+type: parsed
+protocol: NEC
+address: 03 00 00 00
+command: 14 00 00 00
+#
+# === ACER ===
+#
+name: Acer_Power
+type: parsed
+protocol: NEC
+address: 82 00 00 00
+command: 01 00 00 00
+#
+name: Acer_Input
+type: parsed
+protocol: NEC
+address: 82 00 00 00
+command: 07 00 00 00
+#
+name: Acer_Mute
+type: parsed
+protocol: NEC
+address: 82 00 00 00
+command: 16 00 00 00
+#
+# === INFOCUS ===
+#
+name: InFocus_Power
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 10 00 00 00
+#
+name: InFocus_Input
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 14 00 00 00
+#
+name: InFocus_Mute
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 0D 00 00 00
+#
+# === NEC PROJECTOR ===
+#
+name: NEC_Proj_Power
+type: parsed
+protocol: NEC
+address: 01 00 00 00
+command: 02 00 00 00
+#
+name: NEC_Proj_Input
+type: parsed
+protocol: NEC
+address: 01 00 00 00
+command: 09 00 00 00
+#
+name: NEC_Proj_Mute
+type: parsed
+protocol: NEC
+address: 01 00 00 00
+command: 08 00 00 00
+#
+# === SONY PROJECTOR ===
+#
+name: Sony_Proj_Power
+type: parsed
+protocol: SIRC
+address: 1A 00 00 00
+command: 15 00 00 00
+#
+name: Sony_Proj_Power2
+type: parsed
+protocol: SIRC15
+address: 1A 00 00 00
+command: 15 00 00 00
+#
+name: Sony_Proj_Input
+type: parsed
+protocol: SIRC
+address: 1A 00 00 00
+command: 25 00 00 00
+#
+name: Sony_Proj_Mute
+type: parsed
+protocol: SIRC
+address: 1A 00 00 00
+command: 14 00 00 00
+#
+# === PANASONIC PROJECTOR ===
+#
+name: Panasonic_Proj_Power
+type: parsed
+protocol: Kaseikyo
+address: 00 40 04 00
+command: 00 3D 00 00
+#
+name: Panasonic_Proj_Input
+type: parsed
+protocol: Kaseikyo
+address: 00 40 04 00
+command: 00 14 00 00
+#
+# === HITACHI PROJECTOR ===
+#
+name: Hitachi_Proj_Power
+type: parsed
+protocol: NEC
+address: 71 00 00 00
+command: 00 00 00 00
+#
+name: Hitachi_Proj_Input
+type: parsed
+protocol: NEC
+address: 71 00 00 00
+command: 01 00 00 00
+#
+# === CASIO PROJECTOR ===
+#
+name: Casio_Proj_Power
+type: parsed
+protocol: NEC
+address: 43 00 00 00
+command: 0C 00 00 00
+#
+name: Casio_Proj_Input
+type: parsed
+protocol: NEC
+address: 43 00 00 00
+command: 14 00 00 00
+#
+# === LG PROJECTOR ===
+#
+name: LG_Proj_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: LG_Proj_Input
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 0B 00 00 00
+#
+# === VIVITEK ===
+#
+name: Vivitek_Power
+type: parsed
+protocol: NEC
+address: 56 00 00 00
+command: 01 00 00 00
+#
+name: Vivitek_Input
+type: parsed
+protocol: NEC
+address: 56 00 00 00
+command: 04 00 00 00
+#
+# === XGIMI ===
+#
+name: XGIMI_Power
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 12 00 00 00
+#
+name: XGIMI_Input
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 1F 00 00 00
+#
+# === DELL PROJECTOR ===
+#
+name: Dell_Proj_Power
+type: parsed
+protocol: NEC
+address: 44 00 00 00
+command: 1E 00 00 00
+#
+name: Dell_Proj_Input
+type: parsed
+protocol: NEC
+address: 44 00 00 00
+command: 1B 00 00 00
+#
+# === CANON PROJECTOR ===
+#
+name: Canon_Proj_Power
+type: parsed
+protocol: NEC
+address: 4E 00 00 00
+command: 00 00 00 00
+#
+name: Canon_Proj_Input
+type: parsed
+protocol: NEC
+address: 4E 00 00 00
+command: 05 00 00 00
+#
+# === JVC PROJECTOR ===
+#
+name: JVC_Proj_Power
+type: parsed
+protocol: NEC
+address: 60 00 00 00
+command: 05 00 00 00
+#
+name: JVC_Proj_Input
+type: parsed
+protocol: NEC
+address: 60 00 00 00
+command: 08 00 00 00

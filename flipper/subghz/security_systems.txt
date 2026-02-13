@@ -1,0 +1,150 @@
+# ============================================================================
+#  FLLC - FU PERSON | Security System RF Reference
+# ============================================================================
+#  Wireless alarm and security sensor exploitation guide.
+#  Most home security sensors use UNENCRYPTED Sub-GHz RF.
+# ============================================================================
+
+# ============================================================================
+#  SECURITY SYSTEM FREQUENCIES
+# ============================================================================
+#
+#  SYSTEM             | FREQUENCY  | PROTOCOL    | ENCRYPTED?
+#  -------------------|------------|-------------|------------
+#  Honeywell/2GIG     | 345.000    | Custom      | NO
+#  Interlogix/GE      | 319.500    | Custom      | NO
+#  DSC (PowerSeries)  | 433.920    | Custom      | NO
+#  Visonic             | 315/433    | PowerCode   | BASIC
+#  Paradox             | 433.920    | Custom      | BASIC
+#  Ademco              | 345.000    | Custom      | NO
+#  SimpliSafe Gen1     | 433.920    | Custom      | NO (BROKEN!)
+#  SimpliSafe Gen2     | 433.920    | Custom      | YES (AES)
+#  ADT Pulse           | 319.500    | Interlogix  | NO
+#  ADT Command         | 345.000    | Honeywell   | NO
+#  Ring Alarm          | 908.42     | Z-Wave      | YES (AES-128)
+#  Vivint Smart Home   | 345.000    | Honeywell   | NO
+#  Abode               | 433.920    | Custom      | BASIC
+#  Cove                | 345.000    | Honeywell   | NO
+#  Frontpoint          | 345.000    | Honeywell   | NO
+#  Brinks Home         | 345.000    | Honeywell   | NO
+#  Scout               | 433.920    | Custom      | BASIC
+#
+# ============================================================================
+#  ATTACK 1: SENSOR REPLAY (Door/Window Sensors)
+# ============================================================================
+#
+#  Most door/window sensors transmit FIXED codes when opened/closed.
+#  Capture the "door open" signal -> replay it to trigger/test alarm.
+#
+#  Steps:
+#  1. Flipper -> Sub-GHz -> Read RAW on sensor frequency
+#  2. Open/close a protected door/window
+#  3. Capture the sensor transmission
+#  4. Replay to trigger false alarms (distraction/nuisance)
+#  5. Or: Study timing to understand when sensors report
+#
+# ============================================================================
+#  ATTACK 2: JAMMING (Sensor Suppression)
+# ============================================================================
+#
+#  Jam the sensor frequency to prevent the panel from receiving signals.
+#  While jammed, sensors cannot report breaches.
+#
+#  CRITICAL: Flipper Zero's TX power is LOW (10dBm).
+#  Effective jamming range: ~5-10 meters
+#  Better option: Use ESP32 or HackRF for higher power jamming
+#
+#  Detection: Some panels detect jamming (RF supervision)
+#    - 2GIG panels: Will report "RF jam" after ~30 seconds
+#    - Honeywell panels: May report "sensor supervision loss"
+#    - SimpliSafe Gen2: Has jam detection
+#
+# ============================================================================
+#  ATTACK 3: REPLAY ARM/DISARM (SimpliSafe Gen1)
+# ============================================================================
+#
+#  SimpliSafe Gen1 keypad sends UNENCRYPTED arm/disarm signals!
+#  Research by Andrew Zonenberg (2016) demonstrated this.
+#
+#  Steps:
+#  1. Capture a DISARM command from the keypad (433.920 MHz)
+#  2. Replay to disarm the system at any time
+#  3. PIN code is transmitted in plaintext
+#
+#  SimpliSafe Gen2 (2018+) fixed this with AES encryption.
+#
+# ============================================================================
+#  ATTACK 4: SENSOR CLONING / SPOOFING
+# ============================================================================
+#
+#  Clone a sensor's ID to become a "trusted" device on the panel.
+#
+#  Use case:
+#  1. Capture sensor transmission
+#  2. Extract sensor ID from the signal
+#  3. Add sensor ID to Flipper Sub-GHz library
+#  4. Send "sensor OK" signals to keep panel thinking door is closed
+#     while actually opening it
+#
+# ============================================================================
+#  HONEYWELL/2GIG/ADT DEEP DIVE (345 MHz)
+# ============================================================================
+#
+#  The Honeywell 5800 series (345 MHz) is the MOST DEPLOYED wireless
+#  security sensor in North America. Used by:
+#    - ADT, Vivint, Brinks, Frontpoint, Cove, and dozens more
+#
+#  Protocol details:
+#    - Frequency: 345.000 MHz
+#    - Modulation: OOK
+#    - Data rate: ~2kbps
+#    - Message format: [Preamble][Serial#][Status][Loop#][Checksum]
+#    - Serial: 20-bit (unique per sensor)
+#    - Status: tamper, low battery, supervision
+#    - NO ENCRYPTION. NO ROLLING CODE. NO AUTHENTICATION.
+#
+#  Flipper capture settings:
+#    Frequency: 345000000
+#    Preset: FuriHalSubGhzPresetOok650Async
+#
+#  What you can extract:
+#    - Sensor serial number
+#    - Sensor type (door, motion, glass break, smoke)
+#    - Loop number (which zone)
+#    - Battery status
+#    - Tamper status
+#
+# ============================================================================
+#  Z-WAVE SECURITY SYSTEMS (Ring, SmartThings)
+# ============================================================================
+#
+#  Z-Wave operates at 908.42 MHz (US) / 868.42 MHz (EU)
+#  Modern Z-Wave (S2) uses AES-128 encryption.
+#
+#  Flipper Zero CAN read Z-Wave frequency but CANNOT:
+#    - Decode encrypted Z-Wave S2 messages
+#    - Replay Z-Wave commands (unique nonces)
+#
+#  Flipper Zero CAN:
+#    - Detect Z-Wave devices transmitting
+#    - Record RAW signals for offline analysis
+#    - Identify Z-Wave network presence (passive recon)
+#
+# ============================================================================
+#  COUNTERMEASURES & DETECTION AVOIDANCE
+# ============================================================================
+#
+#  1. RF Supervision: Panel checks sensor heartbeats (every 60-90 min)
+#     Mitigation: Replay sensor heartbeat during attack window
+#
+#  2. Jam Detection: Panel monitors for continuous RF energy on its freq
+#     Mitigation: Use short burst jamming, not continuous
+#
+#  3. Cross-zone Detection: Multiple sensors in same area
+#     Mitigation: Suppress ALL sensors in the path simultaneously
+#
+#  4. Cellular Backup: Panel calls monitoring even if WiFi jammed
+#     Mitigation: Cell jammer (VERY illegal) or cut power to panel
+#
+#  5. Battery Backup: Panel runs 24-72 hours on battery
+#     Mitigation: Wait out the battery (impractical in most cases)

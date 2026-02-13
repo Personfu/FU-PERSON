@@ -30,7 +30,7 @@ FU PERSON is built around a multi-device attack platform:
 | Device | Role | Description |
 |--------|------|-------------|
 | **USB Tri-Drive** | Core Platform | SD (H:) + Micro SD (I:) + ESP32/Recorder (J:) |
-| **Flipper Zero** | Field Tool | 18 BadUSB payloads, GPIO ESP32 bridge, Sub-GHz, NFC, IR |
+| **Flipper Zero** | Field Tool | 35+ BadUSB payloads, 290+ IR codes, 150+ NFC keys, Sub-GHz, RFID, iButton, GPIO |
 | **ESP32 DevKit V1.1** | Wireless | 11-mode wardriver: WiFi/BLE scan, deauth, evil twin, PMKID |
 | **Android (S20+)** | Mobile Platform | Magisk root, Termux, Kali NetHunter, headless recon |
 | **Nintendo DSi** | Covert Recon | Jailbroken, 200+ games, homebrew WiFi scanner |
@@ -105,30 +105,33 @@ All output logs to the Micro SD card in PCAP, JSON, and hashcat-ready formats.
 
 ### Step 5: Load the Flipper Zero
 
-Copy payloads to your Flipper Zero (via qFlipper or USB):
+Copy the entire `flipper/` directory to your Flipper Zero SD card (via qFlipper or USB):
 
 ```
-flipper/badusb/*.txt    → SD Card/badusb/
-flipper/gpio/*.txt      → SD Card/gpio/
-flipper/subghz/*.txt    → SD Card/subghz/
-flipper/nfc/*.txt       → SD Card/nfc/
-flipper/infrared/*.ir   → SD Card/infrared/
+flipper/badusb/          → SD Card/badusb/       (35+ payloads)
+flipper/infrared/        → SD Card/infrared/      (7 databases, 290+ signals)
+flipper/subghz/          → SD Card/subghz/        (7 reference files)
+flipper/nfc/             → SD Card/nfc/            (5 tools, 150+ keys)
+flipper/rfid/            → SD Card/rfid/           (19 protocols)
+flipper/ibutton/         → SD Card/ibutton/        (25+ types)
+flipper/gpio/            → SD Card/gpio/           (4 ESP32 references)
 ```
 
-**18 BadUSB payloads** ready to deploy:
+**MEGA Arsenal v2.0 — 35+ BadUSB payloads:**
 
 | Category | Payloads |
 |----------|----------|
-| Auto-Deploy | `phantom_usb.txt`, `auto_pwn_deploy.txt`, `stealth_deploy.txt` |
-| Exfiltration | `rapid_exfil.txt`, `full_exfil.txt`, `credential_dump.txt`, `sam_dump.txt` |
-| Recon | `network_recon.txt`, `wifi_passwords.txt`, `recon_launch.txt` |
-| Persistence | `persistence_install.txt`, `keylogger_deploy.txt`, `disable_defender.txt` |
-| Reverse Shells | `net_diag.txt`, `reverse_shell.txt`, `linux_reverse_shell.txt` |
-| Post-Exploit | `empire_stager.txt`, `obfuscated_loader.txt` |
+| Auto-Deploy | `phantom_usb`, `auto_pwn_deploy`, `stealth_deploy` |
+| Exfiltration (12) | `rapid_exfil`, `full_exfil`, `credential_dump`, `sam_dump`, `browser_harvest`, `email_harvest`, `token_theft`, `crypto_wallet`, `cloud_creds`, `vpn_creds`, `powershell_history`, `env_dump` |
+| Recon (7) | `network_recon`, `wifi_passwords`, `recon_launch`, `ad_enum`, `wmic_recon`, `scheduled_task_enum`, `wifi_evil_twin` |
+| Exploitation (11) | `persistence_install`, `keylogger_deploy`, `disable_defender`, `firewall_disable`, `shadow_admin`, `ssh_backdoor`, `rdp_enable`, `uac_bypass`, `dns_poison`, `lsass_dump`, `deploy_toolkit` |
+| Shells & C2 (7) | `net_diag`, `reverse_shell`, `linux_reverse_shell`, `mac_reverse_shell`, `linux_cred_dump`, `empire_stager`, `obfuscated_loader` |
 
-See `flipper/FLIPPER_PLAYBOOK.md` for full attack sequences and timing.
+**Plus:** 7 IR databases (TVs, ACs, projectors, soundbars, fans, set-top boxes, LEDs), comprehensive Sub-GHz protocol + frequency references, MIFARE key dictionary (150+ keys), NFC attack playbook, RFID cloning guide, iButton database, and full ESP32 GPIO command reference.
 
-Recommended firmware: **Momentum** or **Unleashed** for maximum capability.
+See `flipper/FLIPPER_PLAYBOOK.md` for the complete reference with 8 pre-built attack sequences.
+
+Recommended firmware: **Momentum** or **Unleashed** for full Sub-GHz TX unlock.
 
 ### Step 6: Set Up Android (Magisk Root)
 
@@ -309,32 +312,69 @@ FU-PERSON/
 │       ├── platformio.ini             Build configuration
 │       └── flash_esp32.py             Automated flash utility
 │
-├── flipper/                           Flipper Zero — 18 payloads
-│   ├── FLIPPER_PLAYBOOK.md           Complete attack playbook
-│   ├── badusb/                        18 DuckyScript payloads
+├── flipper/                           Flipper Zero MEGA Arsenal v2.0
+│   ├── FLIPPER_PLAYBOOK.md           Complete reference (35+ payloads, 8 attack sequences)
+│   ├── badusb/ (35+ payloads)
 │   │   ├── phantom_usb.txt           Zero-touch auto-deploy
-│   │   ├── auto_pwn_deploy.txt       Full attack chain deploy
-│   │   ├── stealth_deploy.txt        Base64 EDR bypass variant
-│   │   ├── rapid_exfil.txt           15-second full system grab
-│   │   ├── full_exfil.txt            Complete data exfiltration
-│   │   ├── credential_dump.txt       Browser + cloud + token dump
-│   │   ├── sam_dump.txt              Windows password hash export
-│   │   ├── network_recon.txt         Full network map in 30 seconds
-│   │   ├── wifi_passwords.txt        Saved WiFi credential extraction
-│   │   ├── recon_launch.txt          Automated recon kickoff
-│   │   ├── persistence_install.txt   Scheduled task + registry persistence
-│   │   ├── keylogger_deploy.txt      Silent input monitor deployment
-│   │   ├── disable_defender.txt      Windows Defender neutralization
-│   │   ├── deploy_toolkit.txt        Copy toolkit to target
-│   │   ├── net_diag.txt              Encoded reverse shell (AV bypass)
-│   │   ├── reverse_shell.txt         PowerShell reverse shell
-│   │   ├── linux_reverse_shell.txt   Linux target reverse shell
-│   │   ├── empire_stager.txt         PowerShell Empire stager
-│   │   └── obfuscated_loader.txt     Multi-stage obfuscated loader
-│   ├── gpio/                          ESP32 bridge commands
-│   ├── subghz/                        Sub-GHz frequency database
-│   ├── nfc/                           NFC/RFID attack playbook
-│   └── infrared/                      Universal IR codes
+│   │   ├── auto_pwn_deploy.txt       10-phase attack chain
+│   │   ├── stealth_deploy.txt        Base64 EDR bypass
+│   │   ├── rapid_exfil.txt           15-second system grab
+│   │   ├── full_exfil.txt            Complete data exfil
+│   │   ├── credential_dump.txt       All credential types
+│   │   ├── sam_dump.txt              Registry hive export
+│   │   ├── browser_harvest.txt       Chrome/Edge/Brave/Firefox
+│   │   ├── email_harvest.txt         Outlook/Thunderbird/Mail
+│   │   ├── token_theft.txt           Discord/Slack/Teams/Telegram
+│   │   ├── crypto_wallet.txt         12+ wallet types
+│   │   ├── cloud_creds.txt           AWS/Azure/GCP/Docker/K8s
+│   │   ├── vpn_creds.txt             VPN configs & creds
+│   │   ├── powershell_history.txt    PS history secrets
+│   │   ├── env_dump.txt              Environment variables
+│   │   ├── ad_enum.txt               Active Directory mapping
+│   │   ├── wmic_recon.txt            WMI deep inventory
+│   │   ├── scheduled_task_enum.txt   Hijackable task finder
+│   │   ├── wifi_evil_twin.txt        Evil twin preparation
+│   │   ├── shadow_admin.txt          Hidden admin creation
+│   │   ├── ssh_backdoor.txt          SSH persistent access
+│   │   ├── rdp_enable.txt            RDP backdoor
+│   │   ├── uac_bypass.txt            3-method UAC bypass
+│   │   ├── dns_poison.txt            DNS redirect
+│   │   ├── lsass_dump.txt            LSASS memory dump
+│   │   ├── firewall_disable.txt      Security neutralization
+│   │   ├── mac_reverse_shell.txt     macOS reverse shell
+│   │   ├── linux_cred_dump.txt       Linux credential dump
+│   │   └── ... (+ 8 more)
+│   ├── infrared/ (7 databases, 290+ signals)
+│   │   ├── tv_off_universal.ir       40+ TV brands
+│   │   ├── ac_universal.ir           60+ AC brands
+│   │   ├── projector_universal.ir    25+ projector brands
+│   │   ├── soundbar_universal.ir     30+ soundbar brands
+│   │   ├── fan_universal.ir          20+ fan brands
+│   │   ├── settopbox_universal.ir    Cable/streaming devices
+│   │   └── led_universal.ir          LED strip controllers
+│   ├── subghz/ (7 references)
+│   │   ├── frequencies.txt           Master frequency database
+│   │   ├── protocols_reference.txt   30+ protocol encyclopedia
+│   │   ├── garage_door_codes.txt     8+ garage systems
+│   │   ├── vehicle_keyfobs.txt       Manufacturer CVEs + TPMS
+│   │   ├── security_systems.txt      Alarm exploitation
+│   │   ├── iot_devices.txt           Smart home devices
+│   │   └── regional_regulations.txt  Legal frequency bands
+│   ├── nfc/ (5 tools, 150+ keys)
+│   │   ├── mifare_keys.txt           150+ MIFARE Classic keys
+│   │   ├── card_formats.txt          Card format encyclopedia
+│   │   ├── emv_reference.txt         EMV contactless reference
+│   │   ├── ndef_payloads.txt         Evil NFC tag templates
+│   │   └── attack_playbook.txt       NFC attack methodology
+│   ├── rfid/
+│   │   └── format_database.txt       19 protocols + attacks
+│   ├── ibutton/
+│   │   └── types_database.txt        25+ types + cloning guide
+│   └── gpio/ (4 references)
+│       ├── marauder_commands.txt      Marauder command set
+│       ├── esp32_advanced.txt         Full ESP32 reference
+│       ├── ble_attacks.txt            BLE attack techniques
+│       └── auto_recon.txt             Automated recon
 │
 ├── mobile/
 │   ├── s20_headless/                  Android attack platform

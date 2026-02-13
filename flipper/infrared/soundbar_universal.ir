@@ -1,0 +1,377 @@
+Filetype: IR signals file
+Version: 1
+#
+# +---------------------------------------------------------------+
+# |  FU PERSON - Universal Soundbar Remote                        |
+# |  by PERSON FU | FLLC                                          |
+# +---------------------------------------------------------------+
+#
+# 30+ soundbar brands. Power, Volume, Mute, Input.
+#
+# === SAMSUNG SOUNDBAR ===
+#
+name: Samsung_SB_Power
+type: parsed
+protocol: Samsung32
+address: 01 00 00 00
+command: 02 00 00 00
+#
+name: Samsung_SB_VolUp
+type: parsed
+protocol: Samsung32
+address: 01 00 00 00
+command: 07 00 00 00
+#
+name: Samsung_SB_VolDn
+type: parsed
+protocol: Samsung32
+address: 01 00 00 00
+command: 0B 00 00 00
+#
+name: Samsung_SB_Mute
+type: parsed
+protocol: Samsung32
+address: 01 00 00 00
+command: 0F 00 00 00
+#
+name: Samsung_SB_Input
+type: parsed
+protocol: Samsung32
+address: 01 00 00 00
+command: 61 00 00 00
+#
+# === LG SOUNDBAR ===
+#
+name: LG_SB_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: LG_SB_VolUp
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 02 00 00 00
+#
+name: LG_SB_VolDn
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 03 00 00 00
+#
+name: LG_SB_Mute
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 09 00 00 00
+#
+name: LG_SB_Input
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 0B 00 00 00
+#
+# === SONY SOUNDBAR ===
+#
+name: Sony_SB_Power
+type: parsed
+protocol: SIRC
+address: 10 00 00 00
+command: 15 00 00 00
+#
+name: Sony_SB_VolUp
+type: parsed
+protocol: SIRC
+address: 10 00 00 00
+command: 12 00 00 00
+#
+name: Sony_SB_VolDn
+type: parsed
+protocol: SIRC
+address: 10 00 00 00
+command: 13 00 00 00
+#
+name: Sony_SB_Mute
+type: parsed
+protocol: SIRC
+address: 10 00 00 00
+command: 14 00 00 00
+#
+name: Sony_SB_Input
+type: parsed
+protocol: SIRC
+address: 10 00 00 00
+command: 25 00 00 00
+#
+# === VIZIO SOUNDBAR ===
+#
+name: Vizio_SB_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: Vizio_SB_VolUp
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 00 00 00 00
+#
+name: Vizio_SB_VolDn
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 01 00 00 00
+#
+name: Vizio_SB_Mute
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 09 00 00 00
+#
+name: Vizio_SB_Input
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 0F 00 00 00
+#
+# === BOSE SOUNDBAR ===
+#
+name: Bose_SB_Power
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 01 00 00 00
+#
+name: Bose_SB_VolUp
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 03 00 00 00
+#
+name: Bose_SB_VolDn
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 04 00 00 00
+#
+name: Bose_SB_Mute
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 02 00 00 00
+#
+name: Bose_SB_Input
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 06 00 00 00
+#
+# === JBL SOUNDBAR ===
+#
+name: JBL_SB_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: JBL_SB_VolUp
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 02 00 00 00
+#
+name: JBL_SB_VolDn
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 03 00 00 00
+#
+name: JBL_SB_Mute
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 09 00 00 00
+#
+# === YAMAHA SOUNDBAR ===
+#
+name: Yamaha_SB_Power
+type: parsed
+protocol: NEC
+address: 7A 00 00 00
+command: 1E 00 00 00
+#
+name: Yamaha_SB_VolUp
+type: parsed
+protocol: NEC
+address: 7A 00 00 00
+command: 1A 00 00 00
+#
+name: Yamaha_SB_VolDn
+type: parsed
+protocol: NEC
+address: 7A 00 00 00
+command: 1B 00 00 00
+#
+name: Yamaha_SB_Mute
+type: parsed
+protocol: NEC
+address: 7A 00 00 00
+command: 1C 00 00 00
+#
+# === SONOS SOUNDBAR ===
+#
+name: Sonos_SB_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Sonos_SB_VolUp
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 02 00 00 00
+#
+name: Sonos_SB_VolDn
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 03 00 00 00
+#
+name: Sonos_SB_Mute
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 09 00 00 00
+#
+# === DENON SOUNDBAR ===
+#
+name: Denon_SB_Power
+type: parsed
+protocol: NEC
+address: 02 00 00 00
+command: 00 00 00 00
+#
+name: Denon_SB_VolUp
+type: parsed
+protocol: NEC
+address: 02 00 00 00
+command: 04 00 00 00
+#
+name: Denon_SB_VolDn
+type: parsed
+protocol: NEC
+address: 02 00 00 00
+command: 05 00 00 00
+#
+name: Denon_SB_Mute
+type: parsed
+protocol: NEC
+address: 02 00 00 00
+command: 06 00 00 00
+#
+# === POLK SOUNDBAR ===
+#
+name: Polk_SB_Power
+type: parsed
+protocol: NEC
+address: 46 00 00 00
+command: 00 00 00 00
+#
+name: Polk_SB_VolUp
+type: parsed
+protocol: NEC
+address: 46 00 00 00
+command: 02 00 00 00
+#
+name: Polk_SB_VolDn
+type: parsed
+protocol: NEC
+address: 46 00 00 00
+command: 03 00 00 00
+#
+name: Polk_SB_Mute
+type: parsed
+protocol: NEC
+address: 46 00 00 00
+command: 09 00 00 00
+#
+# === HARMAN KARDON SOUNDBAR ===
+#
+name: HK_SB_Power
+type: parsed
+protocol: NEC
+address: 70 00 00 00
+command: 01 00 00 00
+#
+name: HK_SB_VolUp
+type: parsed
+protocol: NEC
+address: 70 00 00 00
+command: 03 00 00 00
+#
+name: HK_SB_VolDn
+type: parsed
+protocol: NEC
+address: 70 00 00 00
+command: 04 00 00 00
+#
+name: HK_SB_Mute
+type: parsed
+protocol: NEC
+address: 70 00 00 00
+command: 02 00 00 00
+#
+# === TCL SOUNDBAR ===
+#
+name: TCL_SB_Power
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 12 00 00 00
+#
+name: TCL_SB_VolUp
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 00 00 00 00
+#
+name: TCL_SB_VolDn
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 01 00 00 00
+#
+name: TCL_SB_Mute
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 09 00 00 00
+#
+# === HISENSE SOUNDBAR ===
+#
+name: Hisense_SB_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: Hisense_SB_VolUp
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 02 00 00 00
+#
+name: Hisense_SB_VolDn
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 03 00 00 00
+#
+name: Hisense_SB_Mute
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 09 00 00 00

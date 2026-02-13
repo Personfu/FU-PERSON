@@ -1,0 +1,249 @@
+Filetype: IR signals file
+Version: 1
+#
+# +---------------------------------------------------------------+
+# |  FU PERSON - Universal Fan Remote                             |
+# |  by PERSON FU | FLLC                                          |
+# +---------------------------------------------------------------+
+#
+# 20+ fan brands. Power, Speed, Oscillate, Timer.
+#
+# === DYSON FAN ===
+#
+name: Dyson_Power
+type: parsed
+protocol: NEC
+address: 66 00 00 00
+command: 10 00 00 00
+#
+name: Dyson_SpeedUp
+type: parsed
+protocol: NEC
+address: 66 00 00 00
+command: 1A 00 00 00
+#
+name: Dyson_SpeedDn
+type: parsed
+protocol: NEC
+address: 66 00 00 00
+command: 1B 00 00 00
+#
+name: Dyson_Oscillate
+type: parsed
+protocol: NEC
+address: 66 00 00 00
+command: 1F 00 00 00
+#
+# === HONEYWELL FAN ===
+#
+name: Honeywell_Power
+type: parsed
+protocol: NEC
+address: 71 00 00 00
+command: 40 00 00 00
+#
+name: Honeywell_Speed
+type: parsed
+protocol: NEC
+address: 71 00 00 00
+command: 41 00 00 00
+#
+name: Honeywell_Oscillate
+type: parsed
+protocol: NEC
+address: 71 00 00 00
+command: 45 00 00 00
+#
+name: Honeywell_Timer
+type: parsed
+protocol: NEC
+address: 71 00 00 00
+command: 43 00 00 00
+#
+# === LASKO FAN ===
+#
+name: Lasko_Power
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 01 00 00 00
+#
+name: Lasko_Speed
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 04 00 00 00
+#
+name: Lasko_Oscillate
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 03 00 00 00
+#
+name: Lasko_Timer
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 02 00 00 00
+#
+# === HUNTER FAN ===
+#
+name: Hunter_Power
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 01 00 00 00
+#
+name: Hunter_SpeedLow
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 04 00 00 00
+#
+name: Hunter_SpeedMed
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 02 00 00 00
+#
+name: Hunter_SpeedHigh
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 01 00 00 00
+#
+name: Hunter_Light
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 09 00 00 00
+#
+# === HAMPTON BAY CEILING FAN ===
+#
+name: HamptonBay_FanOff
+type: raw
+frequency: 38000
+duty_cycle: 0.330000
+data: 340 340 680 340 340 680 340 340 340 340 340 340 340 340 680 340 340 680 340 340 340 340 680 680 10200
+#
+name: HamptonBay_FanLow
+type: raw
+frequency: 38000
+duty_cycle: 0.330000
+data: 340 340 680 340 340 680 340 340 340 340 340 340 680 340 340 340 340 680 340 340 340 340 680 680 10200
+#
+name: HamptonBay_FanMed
+type: raw
+frequency: 38000
+duty_cycle: 0.330000
+data: 340 340 680 340 340 680 340 340 340 340 340 340 340 680 340 340 340 680 340 340 340 340 680 680 10200
+#
+name: HamptonBay_FanHigh
+type: raw
+frequency: 38000
+duty_cycle: 0.330000
+data: 340 340 680 340 340 680 340 340 340 340 340 340 680 680 340 340 340 340 340 680 340 340 680 680 10200
+#
+name: HamptonBay_Light
+type: raw
+frequency: 38000
+duty_cycle: 0.330000
+data: 340 340 680 340 340 680 340 340 340 340 340 340 340 340 340 340 340 680 680 680 340 340 680 680 10200
+#
+# === VORNADO FAN ===
+#
+name: Vornado_Power
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 01 00 00 00
+#
+name: Vornado_Speed
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 04 00 00 00
+#
+name: Vornado_Timer
+type: parsed
+protocol: NEC
+address: 80 00 00 00
+command: 0A 00 00 00
+#
+# === ROWENTA FAN ===
+#
+name: Rowenta_Power
+type: parsed
+protocol: NEC
+address: 10 00 00 00
+command: 40 00 00 00
+#
+name: Rowenta_Speed
+type: parsed
+protocol: NEC
+address: 10 00 00 00
+command: 41 00 00 00
+#
+name: Rowenta_Oscillate
+type: parsed
+protocol: NEC
+address: 10 00 00 00
+command: 42 00 00 00
+#
+# === DREO FAN ===
+#
+name: Dreo_Power
+type: parsed
+protocol: NEC
+address: 01 00 00 00
+command: 10 00 00 00
+#
+name: Dreo_Speed
+type: parsed
+protocol: NEC
+address: 01 00 00 00
+command: 11 00 00 00
+#
+name: Dreo_Oscillate
+type: parsed
+protocol: NEC
+address: 01 00 00 00
+command: 12 00 00 00
+#
+name: Dreo_Timer
+type: parsed
+protocol: NEC
+address: 01 00 00 00
+command: 14 00 00 00
+#
+# === ARCTIC KING / GENERIC CEILING FAN ===
+#
+name: Generic_Fan_Off
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 00 00 00 00
+#
+name: Generic_Fan_Low
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 01 00 00 00
+#
+name: Generic_Fan_Med
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 02 00 00 00
+#
+name: Generic_Fan_High
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 04 00 00 00
+#
+name: Generic_Fan_Light
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 09 00 00 00

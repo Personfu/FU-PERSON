@@ -1,0 +1,122 @@
+# ============================================================================
+#  FLLC - FU PERSON | Vehicle Keyfob RF Reference
+# ============================================================================
+#  Automotive remote keyless entry (RKE) system analysis.
+#  For research and authorized penetration testing ONLY.
+# ============================================================================
+
+# ============================================================================
+#  VEHICLE RF FREQUENCIES BY REGION
+# ============================================================================
+#
+#  REGION          | PRIMARY FREQ | SECONDARY  | NOTES
+#  ----------------|-------------|------------|---------------------------
+#  North America   | 315.000 MHz | 433.92 MHz | Most US/CA vehicles @ 315
+#  Europe          | 433.920 MHz | 868 MHz    | EU standard
+#  Japan           | 315.000 MHz | 312 MHz    | Some Toyota/Lexus @ 312
+#  Australia       | 433.920 MHz |            | Same as EU
+#  China           | 433.920 MHz | 315 MHz    | Mixed market
+#  South Korea     | 315.000 MHz | 433.92 MHz | Hyundai/Kia vary
+
+# ============================================================================
+#  MANUFACTURER PROTOCOL MATRIX
+# ============================================================================
+#
+#  MANUFACTURER    | PROTOCOL       | FREQ    | VULNERABILITY
+#  ----------------|----------------|---------|---------------------------
+#  Toyota/Lexus    | Texas DST80    | 312/315 | DST80 weakness (2020 paper)
+#  Honda/Acura     | KeeLoq variant | 315     | Rolling jam vulnerable
+#  Nissan/Infiniti | KeeLoq variant | 315     | Rolling jam vulnerable
+#  Ford/Lincoln    | Custom rolling | 315     | Some models lack relay prot.
+#  GM (Chevy etc)  | Custom rolling | 315     | KEY FOB RELAY ATTACK
+#  Chrysler/Dodge  | Hitag2/AES     | 315     | Hitag2 cracked (older)
+#  VW/Audi/Skoda   | Megamos/HiTag  | 433     | VW key vuln (Garcia 2016)
+#  BMW             | Custom         | 315/434 | Relay attack demonstrated
+#  Mercedes        | Custom         | 315/434 | Relay attack demonstrated
+#  Hyundai/Kia     | Custom rolling | 315/434 | 2022: Rolling PWN attack
+#  Tesla           | Bluetooth LE   | 2.4 GHz | BLE relay attack
+#  Subaru          | Custom         | 315     | Fixed code on some models!
+#  Mazda           | KeeLoq         | 315     | Rolling jam vulnerable
+#
+# ============================================================================
+#  KNOWN VULNERABILITIES
+# ============================================================================
+#
+#  1. ROLLJAM (Universal against rolling code)
+#     Affects: ALL rolling code systems without counter validation
+#     Method: Jam + capture two consecutive codes
+#     Flipper: Read RAW on target frequency while jamming
+#
+#  2. ROLLBACK / ROLLING-PWN (Hyundai/Kia)
+#     CVE: CVE-2022-27254
+#     Affects: Hyundai/Kia 2012-2022
+#     Method: Resynchronize rolling code counter by replaying old codes
+#     Severity: CRITICAL — unlock & start without key
+#
+#  3. RELAY ATTACK (Keyless Go / PKES)
+#     Affects: Any vehicle with Passive Keyless Entry (PKE)
+#     Method: Extend key fob signal range using two relay devices
+#     Range extension: 10m -> 100m+
+#     Equipment needed: Two HackRF/Proxmark devices
+#     NOT a Flipper-only attack (needs signal relay hardware)
+#
+#  4. SUBARU FIXED CODE
+#     Affects: Some Subaru models (pre-2020 Forester, Outback)
+#     Method: Single capture -> unlimited replay
+#     Flipper: Sub-GHz Read at 315 MHz, replay
+#
+#  5. VW GROUP VULNERABILITY (Garcia et al. 2016)
+#     Affects: VW, Audi, Seat, Skoda (2008-2016)
+#     Method: Extract master key from one ECU -> compute any key
+#     Secret: Only 4 master keys used globally
+#
+#  6. TESLA BLE RELAY (2022)
+#     Affects: Tesla Model S, 3, X, Y with Phone Key
+#     Method: BLE relay extends phone key range
+#     NOT a Sub-GHz attack (requires Bluetooth relay)
+#
+# ============================================================================
+#  FLIPPER WORKFLOW FOR VEHICLES
+# ============================================================================
+#
+#  STEP 1: IDENTIFY FREQUENCY
+#    - US vehicle? Try 315.000 MHz first
+#    - EU vehicle? Try 433.920 MHz first
+#    - Use Frequency Analyzer if unsure
+#
+#  STEP 2: CAPTURE
+#    - Sub-GHz -> Read RAW on target frequency
+#    - Have target press their key fob
+#    - Save the RAW capture
+#
+#  STEP 3: ANALYZE
+#    - View saved file: look for known protocol header
+#    - Identify rolling vs fixed code
+#    - If fixed: replay immediately
+#    - If rolling: plan rolljam attack
+#
+#  STEP 4: REPLAY
+#    - Sub-GHz -> Saved -> Select file
+#    - Stand within 10m of target vehicle
+#    - Send: Watch for door locks/lights
+#
+# ============================================================================
+#  TIRE PRESSURE MONITORING (TPMS)
+# ============================================================================
+#
+#  TPMS sensors broadcast tire pressure data wirelessly.
+#  This data includes a UNIQUE SENSOR ID = vehicle tracking.
+#
+#  US TPMS: 315.000 MHz
+#  EU TPMS: 433.920 MHz
+#
+#  Flipper can READ TPMS signals:
+#    - Sensor ID (unique per wheel, 32-bit)
+#    - Tire pressure
+#    - Temperature
+#    - Battery status
+#
+#  USE CASES:
+#    - Track specific vehicle by TPMS ID
+#    - Spoof TPMS to trigger dashboard warnings
+#    - Map TPMS IDs to license plates (surveillance)

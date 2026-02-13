@@ -1,0 +1,107 @@
+# ============================================================================
+#  FLLC - FU PERSON | Regional Sub-GHz Frequency Regulations
+# ============================================================================
+#  Legal frequency bands by region. Know what you're transmitting on.
+#  Flipper Zero TX range: 300-928 MHz (firmware dependent)
+# ============================================================================
+
+# ============================================================================
+#  UNITED STATES (FCC Part 15)
+# ============================================================================
+#
+#  ISM BANDS (Unlicensed):
+#    260-470 MHz    — Low-power devices (garage, sensors)
+#    902-928 MHz    — ISM band (LoRa, Meshtastic, meters)
+#
+#  COMMON ALLOCATIONS:
+#    300.000 MHz    — Old garage door openers
+#    310.000 MHz    — Garage/gate remotes
+#    315.000 MHz    — Car keyfobs, TPMS, IoT
+#    318.000 MHz    — Garage remotes
+#    345.000 MHz    — Security sensors (Honeywell/2GIG)
+#    390.000 MHz    — Old garage remotes
+#    433.920 MHz    — IoT, weather, some keyfobs
+#    908.420 MHz    — Z-Wave home automation
+#    915.000 MHz    — LoRa, ISM
+#    916.800 MHz    — Meshtastic default
+#
+#  TX POWER LIMIT: 10 dBm (10 mW) without antenna gain consideration
+#  PROHIBITED: Intentional jamming is a federal crime (47 USC 333)
+
+# ============================================================================
+#  EUROPEAN UNION (ETSI / CE)
+# ============================================================================
+#
+#  ISM/SRD BANDS:
+#    433.050-434.790 MHz  — SRD Band (10 mW ERP, 10% duty cycle)
+#    863.000-870.000 MHz  — SRD Band (25 mW ERP)
+#    868.000-868.600 MHz  — General IoT, LoRa (25 mW)
+#    868.700-869.200 MHz  — Social alarms
+#    869.400-869.650 MHz  — High power (500 mW, 10% duty)
+#    869.700-870.000 MHz  — General (25 mW)
+#
+#  COMMON ALLOCATIONS:
+#    433.920 MHz    — Primary: car keyfobs, gates, IoT
+#    868.000 MHz    — LoRa, smart home
+#    868.300 MHz    — Hormann garage systems
+#    868.350 MHz    — FAAC gates, smart home
+#
+#  KEY DIFFERENCE FROM US: 315 MHz is NOT an ISM band in EU!
+#  US car keyfobs (315 MHz) won't work on EU cars (433.92 MHz)
+
+# ============================================================================
+#  UNITED KINGDOM (Post-Brexit)
+# ============================================================================
+#
+#  Generally follows EU allocations:
+#    433.920 MHz    — Same as EU
+#    868.000 MHz    — Same as EU
+#    869.500 MHz    — High power SRD
+#
+#  Ofcom IR2030 governs Short Range Devices.
+
+# ============================================================================
+#  JAPAN (ARIB)
+# ============================================================================
+#
+#  315.000 MHz    — Car keyfobs (some Toyota/Lexus)
+#  312.000 MHz    — Car keyfobs (alternate)
+#  920.500-928.100 MHz — ARIB STD-T108 (LoRa, IoT)
+#
+#  NOTE: 433 MHz is restricted in Japan (used by amateur radio)
+
+# ============================================================================
+#  AUSTRALIA / NEW ZEALAND (ACMA)
+# ============================================================================
+#
+#  433.920 MHz    — Primary ISM (same as EU)
+#  915.000 MHz    — ISM band
+#  868.000 MHz    — NOT allocated in AU/NZ
+#
+#  Car keyfobs: 433.920 MHz (EU-style)
+
+# ============================================================================
+#  CHINA
+# ============================================================================
+#
+#  315.000 MHz    — Common for car keyfobs and remotes
+#  433.920 MHz    — Common for IoT and sensors
+#  470-510 MHz    — Chinese IoT/smart meter band
+#  779-787 MHz    — Chinese LoRa band
+#
+#  Many cheap Chinese devices use 315 or 433 without clear regulation
+
+# ============================================================================
+#  FLIPPER FREQUENCY LIMITS BY FIRMWARE
+# ============================================================================
+#
+#  FIRMWARE            | TX RANGE         | NOTES
+#  --------------------|------------------|------------------------------
+#  Official            | 433 only (US)    | Region-locked TX
+#  Unleashed           | 300-928 MHz      | Full range unlocked
+#  Momentum            | 300-928 MHz      | Full range unlocked
+#  RogueMaster         | 300-928 MHz      | Full range unlocked
+#
+#  IMPORTANT: Only Unleashed/Momentum/Custom firmware unlock all TX bands.
+#  Official firmware restricts TX to your region's legal bands.
+#  For FLLC operations, Momentum or Unleashed is REQUIRED.

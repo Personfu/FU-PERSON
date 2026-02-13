@@ -1,0 +1,149 @@
+# ============================================================================
+#  FLLC - FU PERSON | NFC/RFID Card Format Database
+# ============================================================================
+#  Comprehensive reference of card formats, UID structures, and protocols.
+#  Use this to identify and classify cards read by Flipper Zero.
+# ============================================================================
+
+# ============================================================================
+#  125kHz RFID CARD TYPES
+# ============================================================================
+#
+#  TYPE         | UID LENGTH | PROTOCOL   | SECURITY    | CLONABLE
+#  -------------|------------|------------|-------------|----------
+#  EM4100       | 40-bit     | Manchester | NONE        | YES (T5577)
+#  EM4200       | 128-bit    | Bi-phase   | NONE        | YES
+#  HID ProxCard | 26-bit     | FSK        | NONE        | YES (T5577)
+#  HID iClass   | 64-bit     | FSK        | DES/3DES    | PARTIAL
+#  HID Indala   | 26/27-bit  | PSK        | NONE        | YES (T5577)
+#  AWID         | 26-bit     | FSK        | NONE        | YES
+#  Viking       | 64-bit     | Manchester | NONE        | YES
+#  FDX-B        | 128-bit    | Bi-phase   | NONE        | YES
+#  FDX-A        | 64-bit     | Manchester | NONE        | YES
+#  Pyramid      | 26-bit     | FSK        | NONE        | YES
+#  Keri         | 26-bit     | PSK        | NONE        | YES
+#  Gallagher    | Variable   | FSK        | AES-128     | NO
+#  PAC/Stanley  | 26-bit     | FSK        | NONE        | YES
+#  Nexwatch     | 32-bit     | FSK        | NONE        | YES
+#  Jablotron    | 40-bit     | Manchester | NONE        | YES
+#  Securakey    | 26-bit     | FSK        | NONE        | YES
+#  GProx II     | 26-bit     | FSK        | NONE        | YES
+#  Noralsy      | 32-bit     | Manchester | NONE        | YES
+#  IoProx       | 26-bit     | FSK        | NONE        | YES
+#
+# ============================================================================
+#  HID PROX FORMAT DETAILS
+# ============================================================================
+#
+#  26-BIT WIEGAND (H10301) — Most common corporate badge
+#  Bit Layout:
+#    [P] [FFFFFFFF] [NNNNNNNNNNNNNNNN] [P]
+#    P = Parity (1 bit each)
+#    F = Facility Code (8 bits = 0-255)
+#    N = Card Number (16 bits = 0-65535)
+#
+#  34-BIT WIEGAND (H10306) — Extended range
+#    [P] [FFFFFFFFFFFFFFFF] [NNNNNNNNNNNNNNNN] [P]
+#    F = Facility Code (16 bits = 0-65535)
+#    N = Card Number (16 bits = 0-65535)
+#
+#  37-BIT HID WITH FACILITY CODE (H10304)
+#    [P] [FFFFFFFFFFFFFFFF] [NNNNNNNNNNNNNNNNNNN] [P]
+#    F = Facility Code (16 bits)
+#    N = Card Number (19 bits = 0-524287)
+#
+#  CORPORATE FORMAT (C1000, 35-bit)
+#    [P] [CCCCCCCCCCCC] [NNNNNNNNNNNNNNNNNNNNN] [P]
+#    C = Company Code (12 bits)
+#    N = Card Number (20 bits)
+#
+# ============================================================================
+#  13.56MHz NFC CARD TYPES
+# ============================================================================
+#
+#  TYPE              | UID   | MEMORY | SECURITY      | CLONABLE
+#  ------------------|-------|--------|---------------|----------
+#  MIFARE Classic 1K | 4/7B  | 1024B  | Crypto-1      | YES
+#  MIFARE Classic 4K | 4/7B  | 4096B  | Crypto-1      | YES
+#  MIFARE Ultralight | 7B    | 64B    | NONE          | YES (NTAG)
+#  MIFARE UL C       | 7B    | 192B   | 3DES          | PARTIAL
+#  MIFARE UL EV1     | 7B    | 128B   | Password      | PARTIAL
+#  MIFARE Plus S     | 4/7B  | 1K/4K  | AES-128       | NO
+#  MIFARE Plus X     | 4/7B  | 1K/4K  | AES-128       | NO
+#  MIFARE DESFire    | 7B    | 2-8KB  | AES/3DES      | NO
+#  NTAG213           | 7B    | 144B   | Password      | YES
+#  NTAG215           | 7B    | 504B   | Password      | YES (Amiibo)
+#  NTAG216           | 7B    | 888B   | Password      | YES
+#  NTAG424           | 7B    | 256B   | AES-128+SUN   | NO
+#  ISO 14443-4A      | Var   | Var    | Varies        | Depends
+#  ISO 15693 (NFC-V) | 8B    | Var    | NONE/Password | YES
+#  FeliCa (NFC-F)    | 8B    | Var    | DES/3DES      | NO
+#
+# ============================================================================
+#  MIFARE CLASSIC SECTOR STRUCTURE (1K)
+# ============================================================================
+#
+#  Sector | Blocks  | Common Use
+#  -------|---------|------------------------------------------
+#  0      | 0-3     | Manufacturer block (UID, read-only) + data
+#  1      | 4-7     | Application data (balance, access level)
+#  2      | 8-11    | Application data
+#  3      | 12-15   | Application data
+#  4      | 16-19   | Application data
+#  5      | 20-23   | Application data
+#  6      | 24-27   | Application data
+#  7      | 28-31   | Application data
+#  8      | 32-35   | Application data
+#  9      | 36-39   | Application data
+#  10     | 40-43   | Application data
+#  11     | 44-47   | Application data
+#  12     | 48-51   | Application data
+#  13     | 52-55   | Application data
+#  14     | 56-59   | Application data
+#  15     | 60-63   | Application data (MAD directory)
+#
+#  Each sector's LAST block (trailer) contains:
+#    Key A (6 bytes) + Access Bits (4 bytes) + Key B (6 bytes)
+#
+# ============================================================================
+#  COMMON DEPLOYMENTS BY INDUSTRY
+# ============================================================================
+#
+#  INDUSTRY          | COMMON CARD TYPE         | FREQUENCY
+#  ------------------|--------------------------|----------
+#  Corporate offices | HID ProxCard / iClass    | 125kHz / 13.56MHz
+#  Hotels            | MIFARE Classic 1K        | 13.56MHz
+#  Transit (US)      | MIFARE DESFire           | 13.56MHz
+#  Transit (Europe)  | MIFARE Classic / DESFire | 13.56MHz
+#  Transit (Asia)    | FeliCa                   | 13.56MHz
+#  Universities      | MIFARE Classic 1K/4K     | 13.56MHz
+#  Gyms              | EM4100 / MIFARE UL       | 125kHz / 13.56MHz
+#  Parking garages   | EM4100 / HID ProxCard    | 125kHz
+#  Hospitals         | HID iClass SE            | 13.56MHz
+#  Government        | PIV (DESFire based)      | 13.56MHz
+#  Laundry/vending   | MIFARE Classic 1K        | 13.56MHz
+#  Amusement parks   | MIFARE Ultralight        | 13.56MHz
+#  Ski resorts       | ISO 15693 (NFC-V)        | 13.56MHz
+#
+# ============================================================================
+#  BLANK CARD SHOPPING LIST
+# ============================================================================
+#
+#  For cloning, purchase these writeable blanks:
+#
+#  - T5577 (125kHz) — Can emulate EM4100, HID, Indala, etc.
+#    ~ $1-2 each on Amazon/AliExpress
+#
+#  - MIFARE Classic 1K UID Changeable — Clone any MIFARE Classic
+#    ~ $2-3 each, "magic" or "Gen1a/Gen2" variants
+#    Gen1a: Can be detected by some readers (back-door command)
+#    Gen2: "CUID" — undetectable, preferred for cloning
+#
+#  - NTAG215 — For Amiibo cloning and NDEF payloads
+#    ~ $0.25-0.50 each, NFC stickers or cards
+#
+#  - MIFARE Classic 4K UID Changeable — For transit/university
+#    ~ $3-5 each
+#
+#  - Dual-frequency cards (125kHz + 13.56MHz on one card)
+#    ~ $5-8 each, for targets using both frequencies

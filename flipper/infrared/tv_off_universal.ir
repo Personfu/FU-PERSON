@@ -1,14 +1,12 @@
 ﻿Filetype: IR signals file
 Version: 1
 #
-# FLLC - Universal TV-OFF IR Codes
-# Flipper Zero Infrared Remote
+# ╔═══════════════════════════════════════════════════════════════╗
+# ║  FU PERSON — Universal TV Power-Off                         ║
+# ║  by PERSON FU | FLLC                                        ║
+# ╚═══════════════════════════════════════════════════════════════╝
 #
-# Contains power-off codes for major TV brands.
-# Useful for: demonstrations, social engineering, distraction
-#
-# Usage: Flipper -> Infrared -> Saved Remotes -> tv_off_universal
-#        Press "Send All" to blast all codes sequentially
+# 40+ TV brands. Send All to kill every screen in the room.
 #
 name: Samsung_Power
 type: parsed
@@ -16,15 +14,45 @@ protocol: Samsung32
 address: 07 00 00 00
 command: 02 00 00 00
 #
+name: Samsung_Power2
+type: parsed
+protocol: Samsung32
+address: 07 00 00 00
+command: 98 00 00 00
+#
+name: Samsung_BN59
+type: parsed
+protocol: Samsung32
+address: E0 E0 00 00
+command: 40 00 00 00
+#
 name: LG_Power
 type: parsed
 protocol: NEC
 address: 04 00 00 00
 command: 08 00 00 00
 #
+name: LG_Power2
+type: parsed
+protocol: NECext
+address: 04 FB 00 00
+command: 08 F7 00 00
+#
 name: Sony_Power
 type: parsed
 protocol: SIRC
+address: 01 00 00 00
+command: 15 00 00 00
+#
+name: Sony_Power2
+type: parsed
+protocol: SIRC15
+address: 01 00 00 00
+command: 15 00 00 00
+#
+name: Sony_Power_20bit
+type: parsed
+protocol: SIRC20
 address: 01 00 00 00
 command: 15 00 00 00
 #
@@ -34,15 +62,45 @@ protocol: NEC
 address: 04 00 00 00
 command: 08 00 00 00
 #
+name: Vizio_Power2
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
 name: TCL_Roku_Power
 type: parsed
 protocol: NEC
 address: 04 00 00 00
 command: 08 00 00 00
 #
+name: TCL_Power2
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 0D 00 00 00
+#
+name: Hisense_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: Hisense_Power2
+type: parsed
+protocol: NEC
+address: 00 BF 00 00
+command: 01 00 00 00
+#
 name: Philips_Power
 type: parsed
 protocol: RC5
+address: 00 00 00 00
+command: 0C 00 00 00
+#
+name: Philips_Power2
+type: parsed
+protocol: RC6
 address: 00 00 00 00
 command: 0C 00 00 00
 #
@@ -52,11 +110,23 @@ protocol: Kaseikyo
 address: 00 40 04 00
 command: 00 3D 00 00
 #
+name: Panasonic_Power2
+type: parsed
+protocol: Kaseikyo
+address: 00 40 04 00
+command: 00 3C 00 00
+#
 name: Sharp_Power
 type: parsed
 protocol: NEC
 address: 11 00 00 00
 command: 48 00 00 00
+#
+name: Sharp_Power2
+type: parsed
+protocol: NEC
+address: 11 00 00 00
+command: 00 00 00 00
 #
 name: Toshiba_Power
 type: parsed
@@ -64,14 +134,140 @@ protocol: NEC
 address: 40 00 00 00
 command: 12 00 00 00
 #
-name: Hisense_Power
+name: Toshiba_Power2
 type: parsed
 protocol: NEC
-address: 00 00 00 00
-command: 08 00 00 00
+address: 02 00 00 00
+command: 48 00 00 00
 #
 name: Insignia_Power
 type: parsed
 protocol: NEC
 address: 04 00 00 00
 command: 08 00 00 00
+#
+name: Sanyo_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: Sanyo_Power2
+type: parsed
+protocol: NEC
+address: 38 00 00 00
+command: 12 00 00 00
+#
+name: Magnavox_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Emerson_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Funai_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Sylvania_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: RCA_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: JVC_Power
+type: parsed
+protocol: NEC
+address: 03 00 00 00
+command: 00 00 00 00
+#
+name: Hitachi_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Haier_Power
+type: parsed
+protocol: NEC
+address: 01 00 00 00
+command: 08 00 00 00
+#
+name: Westinghouse_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Element_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Onn_Roku_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: FireTV_Power
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 0D 00 00 00
+#
+name: Roku_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Mitsubishi_Power
+type: parsed
+protocol: NEC
+address: 40 00 00 00
+command: 18 00 00 00
+#
+name: AOC_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: Pioneer_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 1C 00 00 00
+#
+name: Sceptre_Power
+type: parsed
+protocol: NEC
+address: 00 00 00 00
+command: 08 00 00 00
+#
+name: Skyworth_Power
+type: parsed
+protocol: NEC
+address: 04 00 00 00
+command: 08 00 00 00
+#
+name: Grundig_Power
+type: parsed
+protocol: RC5
+address: 00 00 00 00
+command: 0C 00 00 00

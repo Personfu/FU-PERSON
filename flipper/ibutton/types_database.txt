@@ -1,0 +1,121 @@
+# ============================================================================
+#  FLLC - FU PERSON | iButton Type Database & Attack Guide
+# ============================================================================
+#  Complete reference for iButton (1-Wire) technology exploitation.
+#  Flipper Zero supports read, write, and emulation of iButtons.
+# ============================================================================
+
+# ============================================================================
+#  iBUTTON TYPES
+# ============================================================================
+#
+#  FAMILY | MODEL      | MEMORY  | SECURITY     | CLONABLE | COMMON USE
+#  -------|------------|---------|--------------|----------|------------------
+#  01h    | DS1990A    | ID only | NONE         | YES      | Access control
+#  02h    | DS1991     | 512B    | Password     | PARTIAL  | Secure access
+#  04h    | DS1994     | 4096B   | NONE         | YES      | Data logging
+#  06h    | DS1993     | 512B    | NONE         | YES      | Memory button
+#  08h    | DS1992     | 128B    | NONE         | YES      | Memory button
+#  0Ah    | DS1995     | 16KB    | NONE         | YES      | Data storage
+#  0Bh    | DS1985     | ID only | NONE         | YES      | Legacy access
+#  0Ch    | DS1996     | 64KB    | NONE         | YES      | Data logging
+#  10h    | DS18S20    | N/A     | NONE         | N/A      | Temperature
+#  12h    | DS2406     | 128B    | NONE         | YES      | Switch/sensor
+#  14h    | DS1971     | 256B    | EPROM        | NO       | Write-once
+#  1Ah    | DS1963S    | 512B    | SHA-1        | NO       | Monetary
+#  1Ch    | DS28E04    | 4096B   | PIO          | PARTIAL  | Smart access
+#  1Dh    | DS2423     | 512B    | Counter      | PARTIAL  | Counting
+#  21h    | DS1921     | 2048B   | Password     | PARTIAL  | Thermochron
+#  22h    | DS1922     | 8192B   | Password     | PARTIAL  | Thermochron
+#  24h    | DS2415     | N/A     | NONE         | N/A      | Real-time clock
+#  26h    | DS2438     | 40B     | NONE         | YES      | Smart battery
+#  28h    | DS18B20    | N/A     | NONE         | N/A      | Temperature
+#  29h    | DS2408     | 128B    | NONE         | YES      | 8-ch switch
+#  2Dh    | DS2431     | 1024B   | EPROM        | NO       | EEPROM
+#  33h    | DS1961S    | 512B    | SHA-1        | NO       | Monetary
+#  37h    | DS1977     | 32KB    | Password     | PARTIAL  | High-cap memory
+#  3Ah    | DS2413     | N/A     | NONE         | YES      | Dual I/O
+#  41h    | DS1922E    | 8192B   | Password     | PARTIAL  | Thermochron
+#  42h    | DS28EA00   | N/A     | NONE         | N/A      | Temperature
+#  43h    | DS28EC20   | 20480B  | SHA-256      | NO       | Secure memory
+
+# ============================================================================
+#  MOST COMMON: DS1990A (Family 01h) — ACCESS CONTROL
+# ============================================================================
+#
+#  The DS1990A is the #1 iButton for physical access control.
+#  It contains ONLY a 48-bit unique serial number (no memory, no crypto).
+#
+#  UID FORMAT: [Family Code(8)][Serial Number(48)][CRC(8)] = 8 bytes total
+#  Example: 01:A2:B3:C4:D5:E6:00:CRC
+#
+#  SECURITY: ZERO. The serial number is broadcast in plaintext.
+#  Read it once -> emulate forever.
+#
+#  Flipper Zero workflow:
+#  1. iButton -> Read
+#  2. Touch Flipper's iButton pad to the target key
+#  3. Flipper reads the full 8-byte UID
+#  4. Save -> Emulate (Flipper acts as the key)
+#  5. Or Write to blank RW1990/TM1990 clone button
+
+# ============================================================================
+#  WRITABLE iBUTTON BLANKS
+# ============================================================================
+#
+#  BLANK TYPE  | COMPATIBLE WITH | WRITE METHOD  | COST
+#  ------------|-----------------|---------------|------
+#  RW1990      | DS1990A (01h)   | Flipper Write | ~$1
+#  TM1990      | DS1990A (01h)   | Flipper Write | ~$1
+#  TM2004      | Multiple        | Flipper Write | ~$2
+#  RW2004      | Multiple        | Special tool  | ~$3
+#
+#  RW1990 is the most common and cheapest clone button.
+#  Available on Amazon/AliExpress in bulk (50 for ~$25).
+
+# ============================================================================
+#  iBUTTON ATTACK SCENARIOS
+# ============================================================================
+#
+#  SCENARIO 1: APARTMENT INTERCOM
+#    Most apartment buildings in Eastern Europe and Russia use
+#    DS1990A iButtons for intercom/door access.
+#    Read one resident's key -> clone -> access entire building.
+#    Many intercoms accept ANY DS1990A key that's been registered.
+#
+#  SCENARIO 2: ELEVATOR ACCESS
+#    Some buildings restrict elevator access using iButtons.
+#    Clone a resident's key to access restricted floors.
+#
+#  SCENARIO 3: PARKING GATE
+#    iButton readers at parking garage entrances.
+#    Read the attendant's master key for unlimited access.
+#
+#  SCENARIO 4: LAUNDRY ROOM
+#    Coin-op machines with iButton balance stored on DS1961S.
+#    DS1961S uses SHA-1 which is harder to clone.
+#    But some systems only check the UID (DS1990A mode).
+#
+#  SCENARIO 5: GYM / POOL ACCESS
+#    Fitness facilities often use basic iButton readers.
+#    DS1990A with no encryption = instant clone.
+
+# ============================================================================
+#  iBUTTON READ TECHNIQUES
+# ============================================================================
+#
+#  The Flipper's iButton pad is on the BOTTOM of the device.
+#  Two copper contacts must touch the iButton simultaneously.
+#
+#  CONTACT TIPS:
+#  - Center of iButton must touch BOTH Flipper contacts
+#  - Apply firm pressure for good electrical contact
+#  - If read fails, rotate the iButton slightly and retry
+#  - Clean both contacts with alcohol if dirty
+#  - Read distance: ZERO (must make physical contact)
+#
+#  SOCIAL ENGINEERING:
+#  - "Hey, my key stopped working. Can I try yours to test if
+#     it's the reader or my key?" (read their key while "testing")
+#  - Offer to "fix" someone's non-working key
+#  - Maintenance worker disguise: "Testing all keys in the system"

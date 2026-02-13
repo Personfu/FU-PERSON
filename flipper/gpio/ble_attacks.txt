@@ -1,0 +1,132 @@
+# ============================================================================
+#  FLLC - FU PERSON | BLE Attack Reference (via ESP32 GPIO)
+# ============================================================================
+#  Bluetooth Low Energy attack techniques using ESP32 through Flipper.
+#  ESP32 has built-in BLE capability — Flipper Zero does not.
+# ============================================================================
+
+# ============================================================================
+#  BLE SCANNING COMMANDS
+# ============================================================================
+#
+#  scan ble                  Basic BLE scan (10 seconds)
+#  scan ble 60               Extended BLE scan (60 seconds)
+#  scan ble -v               Verbose mode (show all advertisement data)
+#
+#  OUTPUT FIELDS:
+#    MAC Address    — Device Bluetooth MAC
+#    RSSI           — Signal strength (dBm, closer = stronger)
+#    Name           — Advertised device name (if any)
+#    Type           — Classic / BLE / Dual-mode
+#    Manufacturer   — OUI-based manufacturer ID
+#    Services       — Advertised BLE services (UUIDs)
+
+# ============================================================================
+#  BLE DEVICE IDENTIFICATION
+# ============================================================================
+#
+#  COMMON BLE DEVICE SIGNATURES:
+#
+#  MANUFACTURER ID | DEVICE TYPE
+#  ----------------|--------------------------------------------
+#  0x004C (Apple)  | iPhone, iPad, AirPods, AirTag, Apple Watch
+#  0x0006 (MS)     | Windows laptops, Surface, Xbox controller
+#  0x0075 (Samsung)| Galaxy phones, Galaxy Watch, Galaxy Buds
+#  0x00E0 (Google) | Pixel phones, Chromecast, Nest
+#  0x010F (FitBit) | Fitbit trackers and watches
+#  0x0059 (Nordic) | Generic BLE devices (nRF chips)
+#  0x0157 (Xiaomi) | Mi Band, Xiaomi devices
+#  0x038F (Garmin) | Garmin watches and trackers
+#  0x0087 (Tile)   | Tile trackers
+#
+#  APPLE DEVICE TYPE BYTES (Continuity Protocol):
+#    0x07: AirPods
+#    0x09: AirPods Pro
+#    0x0A: AirPods Max
+#    0x0E: AirPods Pro 2
+#    0x12: AirTag
+#    0x14: AirPods 3
+
+# ============================================================================
+#  BLE ATTACK TECHNIQUES
+# ============================================================================
+#
+#  ATTACK 1: BLE SPAM (Apple/Android Notification Flood)
+#    Sends fake BLE advertisements that trigger pop-up dialogs.
+#    iOS: Fake AirPods/AirTag nearby notifications
+#    Android: Fake Google Fast Pair notifications
+#    Samsung: Fake Galaxy device nearby notifications
+#
+#    ESP32 command: attack -t ble_spam
+#    Or: Use dedicated "BLE Spam" Flipper app
+#
+#  ATTACK 2: BLE TRACKING
+#    Monitor a device's BLE MAC address over time.
+#    NOTE: Modern devices randomize their MAC every ~15 minutes.
+#    But: Apple Continuity data contains a rotating key that
+#    can be correlated across MAC changes.
+#
+#    scan ble 300              # Long scan, track devices
+#    # Look for stable patterns in advertising data
+#
+#  ATTACK 3: BLE SERVICE ENUMERATION
+#    Connect to a BLE device and enumerate its services/characteristics.
+#    Can reveal: device info, battery level, sensor data, control endpoints.
+#
+#    # Requires custom ESP32 firmware or nRF Connect app
+#
+#  ATTACK 4: AIRTAG DETECTION
+#    Detect Apple AirTags in the area.
+#    Useful for: Counter-surveillance (finding tracking devices).
+#
+#    scan ble -v               # Look for 0x004C manufacturer + 0x12 type
+
+# ============================================================================
+#  BLE + WIFI CORRELATION
+# ============================================================================
+#
+#  TECHNIQUE: Cross-reference BLE and WiFi data to fingerprint devices.
+#
+#  Many phones have:
+#    - WiFi MAC: XX:XX:XX:XX:XX:XX (randomized per network)
+#    - BLE MAC:  YY:YY:YY:YY:YY:YY (randomized every 15 min)
+#    - Probe requests: "Looking for HomeNetwork123"
+#    - BLE advertisements: Apple Continuity / Google Fast Pair
+#
+#  By correlating TIMING of WiFi and BLE transmissions from the
+#  same physical device, you can track individuals even with
+#  MAC randomization.
+#
+#  WORKFLOW:
+#  1. Run simultaneous WiFi probe sniff + BLE scan
+#  2. Timestamp all captures
+#  3. Correlate: signals appearing/disappearing at same times
+#     = same physical device
+#  4. Build device fingerprint: Probe targets + BLE type + timing
+
+# ============================================================================
+#  ESP32 BLE CAPABILITIES BEYOND FLIPPER
+# ============================================================================
+#
+#  The ESP32 can do things the Flipper Zero cannot with BLE:
+#
+#  1. ACT AS A BLE PERIPHERAL
+#     Advertise as any BLE device (fake AirPods, fake speaker)
+#     Lure devices into connecting
+#
+#  2. BLE GATT SERVER/CLIENT
+#     Full BLE protocol stack for service interaction
+#     Read/write characteristics on connected devices
+#
+#  3. BLE MESH PARTICIPATION
+#     Join BLE mesh networks (smart home, industrial)
+#     Intercept mesh traffic
+#
+#  4. BLE DIRECTION FINDING
+#     With multiple ESP32s, triangulate BLE device positions
+#     Create a passive tracking grid
+#
+#  5. LONG-RANGE BLE SCANNING
+#     ESP32 with external antenna: up to 100m BLE range
+#     Stock antenna: ~30-50m range
+#     Flipper internal antenna: ~10-15m range

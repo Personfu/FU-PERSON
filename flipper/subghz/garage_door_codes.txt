@@ -1,0 +1,124 @@
+# ============================================================================
+#  FLLC - FU PERSON | Garage Door & Gate System Reference
+# ============================================================================
+#  Target-specific information for garage door and gate exploitation.
+#  Use with Flipper Zero Sub-GHz Read and Read RAW modes.
+# ============================================================================
+
+# ============================================================================
+#  SYSTEM-SPECIFIC ATTACK GUIDE
+# ============================================================================
+#
+# === CHAMBERLAIN / LIFTMASTER / CRAFTSMAN (MyQ) ===
+#  Protocol: Security+ 2.0 (rolling code)
+#  Frequency: 310 MHz or 315 MHz
+#  Attack: Rolljam (requires external jammer or timing)
+#  Notes:
+#    - Yellow "Learn" button = Security+ 1.0 (easier to attack)
+#    - Purple "Learn" button = Security+ 2.0 (harder)
+#    - MyQ WiFi doesn't change RF vulnerability
+#    - Older models (pre-2011) may use fixed code at 390 MHz
+#
+# === GENIE (Overhead Door) ===
+#  Protocol: Intellicode (rolling code, KeeLoq-based)
+#  Frequency: 315 MHz or 390 MHz
+#  Attack: Rolljam
+#  Notes:
+#    - Intellicode 1 = KeeLoq (well-documented weakness)
+#    - Intellicode 2 = Enhanced KeeLoq
+#    - Older "DIP switch" models (12-bit fixed): FULLY VULNERABLE
+#      Capture once, replay forever
+#
+# === LINEAR / MULTI-CODE ===
+#  Protocol: Linear Fixed Code (10-bit)
+#  Frequency: 310 MHz or 318 MHz
+#  Attack: Direct capture & replay, OR brute force (1024 combinations)
+#  Notes:
+#    - Only 10 DIP switches = 1024 possible codes
+#    - At ~100ms per code, brute force takes ~2 minutes
+#    - Flipper can iterate through all combinations
+#    - MegaCode: Linear's rolling code upgrade (harder)
+#
+# === NICE / NICE FLOR-S ===
+#  Protocol: Nice FLO (fixed) / Nice FloR-S (rolling)
+#  Frequency: 433.920 MHz
+#  Attack: FLO = capture & replay. FloR-S = rolljam.
+#  Notes:
+#    - FLO remotes have 12-bit fixed code — fully clonable
+#    - FloR-S uses KeeLoq derivative
+#    - SMILO remotes = Nice FLO compatible
+#
+# === CAME ===
+#  Protocol: CAME Fixed (12-bit) / CAME TOP (rolling)
+#  Frequency: 433.920 MHz
+#  Attack: Fixed = capture & replay. TOP = rolljam.
+#  Notes:
+#    - 12-bit fixed code = 4096 combinations
+#    - CAME TOP 432 uses rolling code
+#    - CAME TWIN remotes use fixed code
+#
+# === MARANTEC ===
+#  Protocol: Marantec (fixed 12-bit or rolling)
+#  Frequency: 433.920 MHz or 868.300 MHz
+#  Attack: Depends on model age
+#  Notes:
+#    - Models with DIP switches = fixed code
+#    - Modern models use rolling code
+#    - Frequency varies by market (EU: 868, others: 433)
+#
+# === HORMANN ===
+#  Protocol: Hormann HSM (fixed) / BiSecur (rolling)
+#  Frequency: 868.300 MHz
+#  Attack: HSM = capture & replay. BiSecur = very difficult.
+#  Notes:
+#    - HSM2/HSM4 remotes: fixed code at 868.3 MHz
+#    - BiSecur (blue button remotes): 128-bit rolling, very secure
+#    - HSM remotes still widely deployed in Europe
+#
+# === FAAC ===
+#  Protocol: FAAC SLH (rolling code)
+#  Frequency: 868.350 MHz
+#  Attack: Rolljam possible on older models
+#  Notes:
+#    - SLH = Self Learning Hopping code
+#    - Older FAAC remotes may use fixed codes
+#    - XT series uses stronger encryption
+#
+# === BFT ===
+#  Protocol: BFT Mitto (rolling code)
+#  Frequency: 433.920 MHz
+#  Attack: Rolljam on older models, newer use KeeLoq variant
+#  Notes:
+#    - Mitto 2/4 are very common in Southern Europe
+#    - D111xxx models are easier targets
+#
+# ============================================================================
+#  BRUTE FORCE FEASIBILITY
+# ============================================================================
+#
+#  CODE LENGTH | COMBINATIONS | TIME @ 100ms/code | FEASIBLE?
+#  ------------|--------------|-------------------|----------
+#  8-bit       | 256          | 26 seconds        | YES
+#  10-bit      | 1,024        | 1.7 minutes       | YES
+#  12-bit      | 4,096        | 6.8 minutes       | YES
+#  16-bit      | 65,536       | 1.8 hours         | MAYBE
+#  20-bit      | 1,048,576    | 29 hours          | NO (practical)
+#  24-bit      | 16,777,216   | 19 days           | NO
+#  Rolling     | N/A          | N/A               | Rolljam only
+#
+# ============================================================================
+#  DIP SWITCH TO CODE MAPPING (Linear/Multi-Code)
+# ============================================================================
+#
+#  DIP switches are numbered 1-10 (left to right).
+#  Each switch has 3 positions: UP(+), DOWN(-), CENTER(0)
+#
+#  For Flipper Sub-GHz Add Manually:
+#    Protocol: Linear
+#    Frequency: 310000000 (310 MHz)
+#    Data: Convert DIP positions to binary
+#          + = 1, - = 0, Center = floating (try both)
+#
+#  Example: Switches ++--0++0--
+#    Binary: 1100X1100X (X = test 0 and 1)
+#    4 combinations to test (2 floating switches)

