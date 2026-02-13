@@ -17,6 +17,8 @@
 [![PowerShell](https://img.shields.io/badge/Engine-PowerShell-FF00FF?style=for-the-badge)]()
 [![Dependencies](https://img.shields.io/badge/Dependencies-ZERO-00FF88?style=for-the-badge)]()
 [![FLLC](https://img.shields.io/badge/FLLC-2026-7B2FBE?style=for-the-badge)]()
+[![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows)]()
+[![Stars](https://img.shields.io/github/stars/Personfu/FU-PERSON?style=for-the-badge&color=FFD700)]()
 
 </div>
 
@@ -27,6 +29,12 @@
 ```
 Property of FLLC | Source-Available | Authorized Use Only
 ```
+
+## Why This Exists
+
+Standard pentest toolkits need Kali, need Python, need admin access, need time. This doesn't. **One USB stick. One PowerShell script. Sixty seconds.** No installations. No dependencies. No traces. Works on any Windows PC manufactured in the last 15 years.
+
+**The methodology:** Separate what must be automated (USB extraction) from what must be manual (Flipper Zero, field ops). Build every tool in the language the target already has (PowerShell). Make the operator's job as close to "plug in and leave" as physically possible.
 
 ---
 
