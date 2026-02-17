@@ -42,11 +42,11 @@ Standard pentest toolkits need Kali, need Python, need admin access, need time. 
 
 | Device | Role | Automation |
 |--------|------|------------|
-| **USB Tri-Drive (SD + MicroSD)** | Data extraction + OSINT + network recon | **Fully automated** — insert and walk away |
+| **USB Drive** | Data extraction + OSINT + network recon | **Fully automated** — insert and walk away |
 | **Flipper Zero** | RF/NFC/IR/BadUSB field operations | **Manual** — you operate it |
-| **ESP32 DevKit V1.1** | WiFi wardriving + BLE scanning | **Standalone** — plugs into tri-drive or runs solo |
-| **Galaxy S20+** | Headless pentest platform (screen broken, ADB only) | **ADB controlled** — no screen needed |
-| **Nintendo DSi** | Homebrew + WiFi recon | **Manual** — standalone handheld |
+| **ESP32** | WiFi wardriving + BLE scanning | **Standalone** — plugs into tri-drive or runs solo |
+| **Andriod** | Headless pentest platform (screen broken, ADB only) | **ADB controlled** — no screen needed |
+| **Nintendo DSi** | Jailbreak + WiFi recon | **Manual** — standalone handheld |
 
 ---
 
