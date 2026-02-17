@@ -3,12 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FU PERSON OSINT Finder — Dashboard</title>
+    <meta name="description" content="FU PERSON OSINT Finder Dashboard — Real-time public intelligence search platform by FLLC.net">
+    <title>FU PERSON (Find You Person) OSINT Finder — Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
+    <style>
+        /* Search progress bar */
+        #search-progress {
+            display: none;
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 255, 65, 0.1);
+            overflow: hidden;
+            margin-top: -1px;
+            position: relative;
+        }
+        #search-progress::after {
+            content: '';
+            display: block;
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+            animation: progressSlide 1.2s ease-in-out infinite;
+        }
+        @keyframes progressSlide {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(400%); }
+        }
+
+        /* Status bar */
+        .status-bar {
+            padding: 4px 16px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 20px;
+            transition: all 0.3s ease;
+        }
+        .status-info { color: #00bfff; }
+        .status-success { color: #00ff41; }
+        .status-error { color: #ff4444; }
+        .status-warning { color: #ffaa00; }
+
+        /* Terminal links */
+        .term-link {
+            color: #00bfff;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 2px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .term-link:hover {
+            color: #66d9ff;
+            text-decoration-style: solid;
+        }
+
+        /* Terminal colors */
+        .term-accent { color: #ff00ff; }
+        .term-warning { color: #ffaa00; }
+        .term-dim { color: #555; }
+
+        /* History items */
+        .history-item {
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 3px;
+            transition: background 0.2s;
+        }
+        .history-item:hover {
+            background: rgba(0, 255, 65, 0.1);
+        }
+        .history-type {
+            color: #ff00ff;
+            font-weight: 600;
+        }
+        .history-query {
+            color: #00ff41;
+        }
+        .history-empty {
+            color: #555;
+            font-style: italic;
+            padding: 4px 8px;
+        }
+        .history-clear {
+            padding: 4px 8px;
+            margin-top: 4px;
+        }
+        .history-clear a {
+            color: #ff4444;
+            text-decoration: none;
+            font-size: 11px;
+        }
+        .history-clear a:hover {
+            text-decoration: underline;
+        }
+
+        /* Search button states */
+        .search-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Tier badge */
+        .nav-tier-active {
+            background: #00ff41 !important;
+            color: #0a0a0a !important;
+        }
+
+        /* Modal visible state */
+        .modal-visible {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Welcome screen */
+        .welcome-header {
+            color: #ff00ff;
+            margin-bottom: 8px;
+        }
+        .welcome-section {
+            margin: 8px 0;
+        }
+    </style>
 </head>
 <body>
     <canvas id="matrix-bg" aria-hidden="true"></canvas>
@@ -27,9 +147,7 @@
             <div class="sidebar-section">
                 <h3>Search History</h3>
                 <ul class="search-history">
-                    <li>person: John Doe</li>
-                    <li>phone: +1-555-0123</li>
-                    <li>email: j.doe@example.com</li>
+                    <li class="history-empty">No searches yet</li>
                 </ul>
             </div>
             <div class="sidebar-section">
@@ -45,7 +163,7 @@
             </div>
             <div class="sidebar-section tier-display">
                 <h3>Tier</h3>
-                <p id="tier-info">FREE TIER — 2/3 searches remaining</p>
+                <p id="tier-info">FREE TIER — 3/3 searches remaining today</p>
             </div>
         </aside>
 
@@ -60,9 +178,14 @@
                         <option value="ip">IP</option>
                         <option value="username">Username</option>
                     </select>
-                    <input type="text" id="search-query" name="query" placeholder="Enter search term..." autocomplete="off">
+                    <input type="text" id="search-query" name="query" placeholder="John Doe" autocomplete="off">
                     <button type="submit" class="search-btn" id="search-btn">Search</button>
                 </form>
+                <div id="search-progress"></div>
+            </div>
+
+            <div class="status-bar">
+                <span id="status-message"></span>
             </div>
 
             <div class="results-area">
@@ -75,51 +198,83 @@
                     </div>
                 </div>
                 <div id="results-terminal" class="terminal-results">
-                    <pre id="results-content">
-<span class="term-prompt">root@fllc:~$</span> osint search person "John Doe"
+                    <pre id="results-content"><span class="term-prompt">root@fllc:~$</span> osint --help
 
-[+] Querying public records...
-[+] Cross-referencing 88+ social platforms...
+<span class="welcome-header">═══════════════════════════════════════════════════════════
+ FU PERSON OSINT Finder — Real-Time Intelligence Platform
+═══════════════════════════════════════════════════════════</span>
 
-══════════════════════════════════════════════════════════
- PERSON SEARCH: John Doe — PUBLIC DATABASE RESULT
-══════════════════════════════════════════════════════════
+<span class="welcome-section"><span class="term-success">[+] System ready. All modules operational.</span>
+<span class="term-info">[*] Using real public APIs — no mock data.</span></span>
 
-[*] Name: John Doe
-[*] Possible Addresses:
-    • 123 Main St, Anytown, CA 90210
-    • 456 Oak Ave, Somewhere, NY 10001
+<span class="welcome-section"><span class="term-info">── Available Search Types ───────────────────────────────</span>
+<span class="term-success">  DOMAIN</span>    DNS records, WHOIS/RDAP, subdomains, tech detection
+<span class="term-success">  IP</span>        Geolocation, ISP, ASN, reverse DNS, threat intel
+<span class="term-success">  EMAIL</span>     MX validation, breach check links, email patterns
+<span class="term-success">  PERSON</span>    People search engines, social media, public records
+<span class="term-success">  PHONE</span>     Area code lookup, reverse phone directories
+<span class="term-success">  USERNAME</span>  40+ platform links, GitHub/GitLab API verification</span>
 
-[*] Phone Numbers:
-    • +1-555-123-4567 (Mobile)
-    • +1-555-987-6543 (Landline)
+<span class="welcome-section"><span class="term-info">── Real APIs Used ──────────────────────────────────────</span>
+<span class="term-dim">  • Google DNS-over-HTTPS (dns.google)</span>
+<span class="term-dim">  • ip-api.com geolocation</span>
+<span class="term-dim">  • RDAP (rdap.org) for WHOIS data</span>
+<span class="term-dim">  • GitHub API for username verification</span>
+<span class="term-dim">  • GitLab API for username verification</span></span>
 
-[*] Email Addresses:
-    • john.doe@example.com
-    • jdoe@gmail.com
+<span class="welcome-section"><span class="term-info">── Export Formats ──────────────────────────────────────</span>
+<span class="term-dim">  • JSON — Full structured data</span>
+<span class="term-dim">  • CSV  — Spreadsheet compatible</span>
+<span class="term-dim">  • PDF  — Printable report</span></span>
 
-[*] Social Media Profiles Found:
-    • Twitter: @johndoe
-    • LinkedIn: linkedin.com/in/johndoe
-    • Facebook: facebook.com/johndoe
-
-[*] Public Records:
-    • Voter registration (California)
-    • Business filings (2020)
-    • Court records: 1 public case
-
-[+] All results from publicly available databases.
-                    </pre>
+<span class="term-warning">[!] Select a search type and enter a query above to begin.</span>
+<span class="term-dim">[*] All data sourced from publicly available databases.</span></pre>
                 </div>
             </div>
         </main>
     </div>
 
+    <footer class="app-footer">
+        <a href="index.html">Home</a> |
+        <a href="privacy.html">Privacy Policy</a> |
+        <a href="terms.html">Terms of Service</a> |
+        <span class="term-dim">FLLC 2026 | preston@fllc.net</span>
+    </footer>
+
+    <div id="notifications"></div>
+
     <div id="subscription-modal" class="modal" aria-hidden="true">
         <div class="modal-content">
             <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
-            <h2>SUBSCRIPTION REQUIRED</h2>
-            <p>Upgrade to Pro to unlock unlimited searches</p>
+            <h2>UPGRADE YOUR PLAN</h2>
+            <p>Unlock unlimited searches and advanced OSINT features</p>
+
+            <div id="account-info" class="account-info-bar"></div>
+
+            <div class="tier-selector">
+                <div class="tier-option" data-tier="pro" id="tier-opt-pro">
+                    <h4>PRO</h4>
+                    <span class="tier-price">$9.99<small>/mo</small></span>
+                    <ul>
+                        <li>Unlimited searches</li>
+                        <li>PDF export</li>
+                        <li>Priority results</li>
+                    </ul>
+                </div>
+                <div class="tier-option tier-popular" data-tier="elite" id="tier-opt-elite">
+                    <span class="popular-badge">BEST VALUE</span>
+                    <h4>ELITE</h4>
+                    <span class="tier-price">$29.99<small>/mo</small></span>
+                    <ul>
+                        <li>Everything in Pro</li>
+                        <li>All export formats</li>
+                        <li>Social media deep scan</li>
+                        <li>API access</li>
+                        <li>Breach monitoring</li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="plan-comparison">
                 <table>
                     <thead>
@@ -127,12 +282,19 @@
                     </thead>
                     <tbody>
                         <tr><td>Searches/day</td><td>3</td><td>Unlimited</td><td>Unlimited</td></tr>
-                        <tr><td>Export</td><td>—</td><td>PDF</td><td>All formats</td></tr>
-                        <tr><td>API</td><td>—</td><td>—</td><td>Yes</td></tr>
+                        <tr><td>Export</td><td>---</td><td>PDF</td><td>PDF + JSON + CSV</td></tr>
+                        <tr><td>Social Media</td><td>---</td><td>---</td><td>Deep Scan</td></tr>
+                        <tr><td>API Access</td><td>---</td><td>---</td><td>Full REST API</td></tr>
+                        <tr><td>Breach Monitor</td><td>---</td><td>---</td><td>Real-time</td></tr>
                     </tbody>
                 </table>
             </div>
+
             <form id="subscribe-form" class="subscribe-form">
+                <div class="form-row">
+                    <label for="sub-email">Email Address</label>
+                    <input type="email" id="sub-email" placeholder="you@example.com" required>
+                </div>
                 <div class="form-row">
                     <label for="card-number">Card Number</label>
                     <input type="text" id="card-number" placeholder="4242 4242 4242 4242" maxlength="19">
@@ -147,7 +309,7 @@
                         <input type="text" id="card-cvc" placeholder="123" maxlength="4">
                     </div>
                 </div>
-                <button type="submit" class="subscribe-btn">Subscribe Now</button>
+                <button type="submit" class="subscribe-btn">Subscribe Now — <span id="subscribe-price">$9.99</span>/mo</button>
             </form>
         </div>
     </div>

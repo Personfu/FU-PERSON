@@ -1,6 +1,8 @@
 <div align="center">
 
-# FU PERSON v2.0
+# FU PERSON v3.1
+
+### **F**ind yo**U** **PERSON**
 
 ```
     ███████╗██╗   ██╗    ██████╗ ███████╗██████╗ ███████╗ ██████╗ ███╗   ██╗
@@ -11,9 +13,9 @@
     ╚═╝      ╚═════╝     ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝
 ```
 
-**Integrated Security Operations Platform**
+**Find You Person — Integrated Security & OSINT Operations Platform**
 
-[![Version](https://img.shields.io/badge/Version-2.0-00FFFF?style=for-the-badge)]()
+[![Version](https://img.shields.io/badge/Version-3.0-00FFFF?style=for-the-badge)]()
 [![PowerShell](https://img.shields.io/badge/Engine-PowerShell-FF00FF?style=for-the-badge)]()
 [![Dependencies](https://img.shields.io/badge/Dependencies-ZERO-00FF88?style=for-the-badge)]()
 [![FLLC](https://img.shields.io/badge/FLLC-2026-7B2FBE?style=for-the-badge)]()
@@ -24,7 +26,7 @@
 
 ---
 
-> Five devices. One objective. Everything automated where it can be. Everything manual where it must be.
+> **FU** = **F**ind yo**U**. Five devices. One objective. Everything automated where it can be. Everything manual where it must be.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
@@ -119,6 +121,7 @@ root@fuperson:~# ./harvest.ps1 --silent --auto
 [Phase 12/13] ██████████ Clipboard history + PowerShell transcript logs
 [Phase 13/13] ██████████ Trace cleanup (PS history, Run dialog MRU, prefetch, logs)
 [+] EXTRACTION COMPLETE — 13/13 phases — loot saved to MicroSD:\loot\HOSTNAME_TIMESTAMP\
+[+] Stealth mode: 15-phase anti-forensic cleanup available
 [+] Elapsed: 58 seconds
 ```
 
@@ -346,7 +349,7 @@ Full setup: `mobile/dsi/DSI_FULL_SETUP.md` | Toolkit: `mobile/dsi/dsi_toolkit.py
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║  FU PERSON OSINT FINDER — https://fllc.net/osint            ║
-║  Find Anyone. Know Everything. Legally.                      ║
+║  Find You Person. Find Anyone. Know Everything. Legally.     ║
 ║                                                              ║
 ║  All data sourced from publicly available databases.         ║
 ║  Subscription required for full access.                      ║
@@ -361,6 +364,7 @@ Full setup: `mobile/dsi/DSI_FULL_SETUP.md` | Toolkit: `mobile/dsi/dsi_toolkit.py
 | Domain Intel | --- | Unlimited | Unlimited + history |
 | IP Geolocation | --- | Unlimited | Unlimited + ISP |
 | Social Media Sweep | --- | --- | 88+ platforms |
+| Billing & Account | --- | Email + Card | Full management |
 | Export (PDF/JSON/CSV) | --- | PDF only | All formats |
 
 **Web frontend:** `web/index.html` | **OSINT dashboard:** `web/app.html`
@@ -382,7 +386,7 @@ root@fuperson:~# ls payloads/windows/
 | `evasion.ps1` | AMSI/ETW/Defender bypass framework | Patch + unhook + blind |
 | `ai_evasion.ps1` | AI/ML EDR evasion | Behavioral randomization |
 | `privesc.ps1` | Windows privilege escalation scanner | 20+ vectors |
-| `persistence_engine.ps1` | 12-method persistence | WMI, COM, DLL sideload |
+| `persistence_engine.ps1` | 12-method persistence | WMI, COM, DLL sideload, Accessibility, AppInit, File handler, Logon script |
 | `cloud_harvester.ps1` | M365/Google/Azure/AWS tokens | Token + session theft |
 | `comms_harvester.ps1` | Teams/Slack/Discord/Signal | Message + file extraction |
 | `crypto_hunter.ps1` | Wallet + seed phrase hunting | 11 wallets + regex |
@@ -434,8 +438,8 @@ FU-PERSON/
 │   │       ├── recon.ps1          Port scan, host discovery, WiFi, shares
 │   │       ├── launcher.ps1       Master menu for all tools
 │   │       ├── device_sync.ps1    Multi-device loot synchronization
-│   │       ├── stealth_mode.ps1   Ultra-quiet trace elimination
-│   │       └── report_generator.ps1  Encrypted loot report builder
+│   │       ├── stealth_mode.ps1   15-phase anti-forensic cleanup
+│   │       └── report_generator.ps1  AES-256 encrypted loot report builder
 │   ├── microsd/                   → Copy to MicroSD (I:)
 │   │   └── .loot_target           Drive identification marker
 │   └── flipper_badusb/            → Copy to Flipper Zero
@@ -495,6 +499,8 @@ FU-PERSON/
 ├── web/                            ██ FLLC.NET OSINT FINDER
 │   ├── index.html                 Landing page + subscription
 │   ├── app.html                   OSINT dashboard
+│   ├── privacy.html               Privacy policy
+│   ├── terms.html                 Terms of service
 │   ├── css/                       Styles + animations
 │   └── js/                        App logic + matrix effect
 │
@@ -560,7 +566,7 @@ root@fuperson:~# # Production: https://fllc.net/osint
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│  FU PERSON Source-Available License v1.0                                 │
+│  FU PERSON (Find You Person) Source-Available License v1.0               │
 │  Copyright 2025-2026 FLLC. All rights reserved.                         │
 │                                                                          │
 │  Authorized security testing only. Unauthorized computer access is a     │
@@ -579,7 +585,7 @@ root@fuperson:~# # Production: https://fllc.net/osint
 ```
 ╔═══════════════════════════════════════╗
 ║          FLLC  |  2026               ║
-║    Insert. Extract. Retrieve.         ║
+║   Find You Person. Always.            ║
 ╚═══════════════════════════════════════╝
 ```
 

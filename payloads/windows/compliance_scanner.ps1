@@ -1,20 +1,11 @@
-<# ============================================================================
-    FLLC | FU PERSON | COMPLIANCE SCANNER v1.777
-    Automated NIST 800-53 / CIS v8 / PCI-DSS 4.0 / SOC 2 Audit Engine
-    
-    Scans target system and maps findings to compliance control IDs.
-    Generates audit-ready reports with pass/fail/partial scoring.
-    
-    Phases:
-      1 — Access Control (AC)
-      2 — Audit & Accountability (AU)
-      3 — Identification & Authentication (IA)
-      4 — System & Communications Protection (SC)
-      5 — System & Information Integrity (SI)
-      6 — Configuration Management (CM)
-      7 — Risk Assessment (RA)
-      8 — Report Generation
-============================================================================ #>
+﻿<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | COMPLIANCE SCANNER v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  NIST/CIS/PCI/SOC2 Audit Scanner                                ║
+   ║  8-phase compliance assessment | Gap analysis                     ║
+   ║  TXT/JSON/CSV output | Compliance score calculation              ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 $ErrorActionPreference = 'SilentlyContinue'
 $SCAN_VERSION = "1.777"
@@ -54,7 +45,7 @@ function Add-Finding {
 function Test-AccessControls {
     Write-Host "`n=== PHASE 1: ACCESS CONTROL ===" -ForegroundColor Cyan
     
-    # AC-2: Account Management — check for stale/disabled/guest accounts
+    # AC-2: Account Management - check for stale/disabled/guest accounts
     $staleThreshold = (Get-Date).AddDays(-90)
     $localUsers = Get-LocalUser 2>$null
     $staleAccounts = $localUsers | Where-Object {
@@ -74,7 +65,7 @@ function Test-AccessControls {
         Add-Finding "NIST AC-2" "Guest account ENABLED" "FAIL" "Guest account should be disabled" "5.1" "2.1" "CC6.1"
     }
     
-    # AC-6: Least Privilege — check admin group membership
+    # AC-6: Least Privilege - check admin group membership
     $admins = net localgroup Administrators 2>$null
     $adminCount = ($admins | Where-Object { $_ -match "^\w" -and $_ -notmatch "^(The command|Members|---)" }).Count
     if ($adminCount -le 2) {
@@ -83,7 +74,7 @@ function Test-AccessControls {
         Add-Finding "NIST AC-6" "Excessive admin accounts" "FAIL" "$adminCount accounts in Administrators group" "5.4" "7.1" "CC6.3"
     }
     
-    # AC-7: Unsuccessful Logon Attempts — check lockout policy
+    # AC-7: Unsuccessful Logon Attempts - check lockout policy
     $lockoutInfo = net accounts 2>$null
     $lockoutThreshold = ($lockoutInfo | Select-String "Lockout threshold") -replace '.*:\s+', ''
     if ($lockoutThreshold -match "^\d+$" -and [int]$lockoutThreshold -le 5 -and [int]$lockoutThreshold -gt 0) {
@@ -99,7 +90,7 @@ function Test-AccessControls {
 function Test-AuditControls {
     Write-Host "`n=== PHASE 2: AUDIT & ACCOUNTABILITY ===" -ForegroundColor Cyan
     
-    # AU-2: Audit Events — check if audit policy is enabled
+    # AU-2: Audit Events - check if audit policy is enabled
     $auditPolicy = auditpol /get /category:* 2>$null
     $successAudits = ($auditPolicy | Select-String "Success").Count
     $failureAudits = ($auditPolicy | Select-String "Failure").Count
@@ -112,7 +103,7 @@ function Test-AuditControls {
         Add-Finding "NIST AU-2" "No audit policies" "FAIL" "Auditing not configured" "8.2" "10.2" "CC7.2"
     }
     
-    # AU-8: Time Stamps — check NTP configuration
+    # AU-8: Time Stamps - check NTP configuration
     $w32tmStatus = w32tm /query /status 2>$null
     if ($w32tmStatus -match "Leap Indicator") {
         Add-Finding "NIST AU-8" "Time synchronization active" "PASS" "W32Time service operational" "8.4" "10.4" "CC7.2"
@@ -120,7 +111,7 @@ function Test-AuditControls {
         Add-Finding "NIST AU-8" "Time sync not verified" "PARTIAL" "W32Time service status unclear" "8.4" "10.4" "CC7.2"
     }
     
-    # AU-12: Audit Generation — check Windows Event Log sizes
+    # AU-12: Audit Generation - check Windows Event Log sizes
     $secLog = Get-WinEvent -ListLog Security 2>$null
     if ($secLog) {
         $sizeMB = [math]::Round($secLog.MaximumSizeInBytes / 1MB, 1)
@@ -183,7 +174,7 @@ function Test-AuthControls {
 function Test-SystemProtection {
     Write-Host "`n=== PHASE 4: SYSTEM & COMMS PROTECTION ===" -ForegroundColor Cyan
     
-    # SC-7: Boundary Protection — Windows Firewall
+    # SC-7: Boundary Protection - Windows Firewall
     $fwProfiles = Get-NetFirewallProfile 2>$null
     $enabledProfiles = $fwProfiles | Where-Object { $_.Enabled -eq $true }
     if ($enabledProfiles.Count -eq 3) {
@@ -194,7 +185,7 @@ function Test-SystemProtection {
         Add-Finding "NIST SC-7" "Firewall DISABLED" "FAIL" "No firewall profiles enabled" "4.1" "1.3" "CC6.6"
     }
     
-    # SC-8: Transmission Confidentiality — TLS configuration
+    # SC-8: Transmission Confidentiality - TLS configuration
     $tls12 = Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client" 2>$null
     $tls13 = Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Client" 2>$null
     
@@ -204,7 +195,7 @@ function Test-SystemProtection {
         Add-Finding "NIST SC-8" "TLS configuration unclear" "PARTIAL" "Verify TLS 1.2+ is enforced" "3.10" "4.2" "CC6.6"
     }
     
-    # SC-13: Cryptographic Protection — BitLocker
+    # SC-13: Cryptographic Protection - BitLocker
     $bitlocker = Get-BitLockerVolume -MountPoint "C:" 2>$null
     if ($bitlocker.ProtectionStatus -eq "On") {
         Add-Finding "NIST SC-13" "BitLocker encryption active" "PASS" "C: drive encrypted with $($bitlocker.EncryptionMethod)" "" "3.4" "CC6.6"
@@ -227,7 +218,7 @@ function Test-SystemProtection {
 function Test-SystemIntegrity {
     Write-Host "`n=== PHASE 5: SYSTEM & INFO INTEGRITY ===" -ForegroundColor Cyan
     
-    # SI-2: Flaw Remediation — check for pending updates
+    # SI-2: Flaw Remediation - check for pending updates
     try {
         $updateSession = New-Object -ComObject Microsoft.Update.Session
         $searcher = $updateSession.CreateUpdateSearcher()
@@ -243,7 +234,7 @@ function Test-SystemIntegrity {
         Add-Finding "NIST SI-2" "Update status unknown" "PARTIAL" "Could not query Windows Update" "7.1" "6.3" "CC7.1"
     }
     
-    # SI-3: Malicious Code Protection — Antivirus status
+    # SI-3: Malicious Code Protection - Antivirus status
     $avStatus = Get-MpComputerStatus 2>$null
     if ($avStatus) {
         if ($avStatus.RealTimeProtectionEnabled) {
@@ -263,7 +254,7 @@ function Test-SystemIntegrity {
         }
     }
     
-    # SI-4: System Monitoring — Sysmon presence
+    # SI-4: System Monitoring - Sysmon presence
     $sysmon = Get-Service Sysmon* 2>$null
     if ($sysmon -and $sysmon.Status -eq "Running") {
         Add-Finding "NIST SI-4" "Sysmon monitoring active" "PASS" "Enhanced system monitoring in place" "8.5" "10.6" "CC7.2"
@@ -278,7 +269,7 @@ function Test-SystemIntegrity {
 function Test-ConfigManagement {
     Write-Host "`n=== PHASE 6: CONFIGURATION MANAGEMENT ===" -ForegroundColor Cyan
     
-    # CM-6: Configuration Settings — PowerShell execution policy
+    # CM-6: Configuration Settings - PowerShell execution policy
     $execPolicy = Get-ExecutionPolicy
     if ($execPolicy -eq "Restricted" -or $execPolicy -eq "AllSigned") {
         Add-Finding "NIST CM-6" "PowerShell execution restricted" "PASS" "Policy: $execPolicy" "4.2" "2.2" "CC6.1"
@@ -288,7 +279,7 @@ function Test-ConfigManagement {
         Add-Finding "NIST CM-6" "PowerShell execution UNRESTRICTED" "FAIL" "Policy: $execPolicy" "4.2" "2.2" "CC6.1"
     }
     
-    # CM-7: Least Functionality — unnecessary services
+    # CM-7: Least Functionality - unnecessary services
     $riskyServices = @("SNMP", "Telnet", "RemoteRegistry", "SSDPSRV", "upnphost")
     $runningRisky = @()
     foreach ($svc in $riskyServices) {
@@ -303,7 +294,7 @@ function Test-ConfigManagement {
         Add-Finding "NIST CM-7" "Unnecessary services detected" "FAIL" "Running: $($runningRisky -join ', ')" "4.1" "2.2" "CC6.6"
     }
     
-    # CM-11: User-Installed Software — check for unauthorized software
+    # CM-11: User-Installed Software - check for unauthorized software
     $installedApps = Get-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" 2>$null |
         Where-Object { $_.DisplayName } | Select-Object DisplayName
     Add-Finding "NIST CM-11" "Software inventory collected" "PASS" "$($installedApps.Count) applications installed" "2.1" "2.4" "CC6.8"
@@ -315,7 +306,7 @@ function Test-ConfigManagement {
 function Test-RiskAssessment {
     Write-Host "`n=== PHASE 7: RISK ASSESSMENT ===" -ForegroundColor Cyan
     
-    # RA-5: Vulnerability Scanning — check for common misconfigs
+    # RA-5: Vulnerability Scanning - check for common misconfigs
     
     # SMBv1 check
     $smbv1 = Get-SmbServerConfiguration 2>$null | Select-Object EnableSMB1Protocol

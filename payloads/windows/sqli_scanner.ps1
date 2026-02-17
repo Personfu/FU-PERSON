@@ -1,22 +1,11 @@
-﻿<#
-============================================================================
-  FLLC — Automated SQL Injection Scanner
-  ──────────────────────────────────────────────
-  
-  Drop-and-forget SQLi discovery engine.
-  
-  Pipeline:
-    1. Discover running web services (ports 80, 443, 3000, 5000, 8000, 8080, 8443, 8888)
-    2. Crawl discovered endpoints for form inputs and URL parameters
-    3. Test each parameter with 40+ injection payloads
-    4. Detect: error-based, boolean-blind, time-blind, UNION-based SQLi
-    5. Extract database type + version when exploitable
-    6. Dump results to Micro SD
-  
-  AUTHORIZED PENETRATION TESTING USE ONLY.
-  FLLC — FLLC
-============================================================================
-#>
+﻿<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | SQL INJECTION SCANNER v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  SQL Injection Automation for Local Web Services                 ║
+   ║  Error-based | Union-based | Blind (boolean + time)              ║
+   ║  Multi-DBMS support | WAF detection | Payload encoding            ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 param(
     [string]$OutputDir = "$PSScriptRoot\..\collected\sqli",
@@ -308,7 +297,7 @@ $allPoints = @()
 foreach ($ep in $openEndpoints) {
     $points = Crawl-Endpoint $ep
     $allPoints += $points
-    Log "  $ep — $($points.Count) injection points"
+    Log "  $ep - $($points.Count) injection points"
 }
 
 Log "[TEST] Testing $($allPoints.Count) injection points with $($ERROR_PAYLOADS.Count + $TIME_PAYLOADS.Count) payloads..."
@@ -430,7 +419,7 @@ $summary | ConvertTo-Json -Depth 5 | Out-File -FilePath $jsonFile -Encoding UTF8
 $txtFile = Join-Path $OutputDir "sqli_summary.txt"
 $txt = @"
 ════════════════════════════════════════════════════════════
-  FLLC SQLi SCAN — $env:COMPUTERNAME
+  FLLC SQLi SCAN - $env:COMPUTERNAME
 ════════════════════════════════════════════════════════════
   Time:          $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
   Endpoints:     $($openEndpoints.Count) web services found
@@ -442,7 +431,7 @@ $txt = @"
 "@
 
 foreach ($r in $results) {
-    $txt += "[SQLi] $($r.type.ToUpper()) — $($r.db_type)`n"
+    $txt += "[SQLi] $($r.type.ToUpper()) - $($r.db_type)`n"
     $txt += "  URL:     $($r.url)`n"
     $txt += "  Param:   $($r.param) ($($r.method))`n"
     $txt += "  Payload: $($r.payload)`n"

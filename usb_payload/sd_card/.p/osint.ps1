@@ -1,9 +1,9 @@
-<# ═══════════════════════════════════════════════════════════════════════
+﻿<# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | OSINT LOOKUP v2.0
    ╔══════════════════════════════════════════════════════════════════╗
    ║  Pure PowerShell. Zero dependencies. Runs from USB.              ║
    ║  People search, reverse phone/email, public records, social      ║
-   ║  media enumeration — all using native Windows HTTP and DNS.      ║
+   ║  media enumeration - all using native Windows HTTP and DNS.      ║
    ║  88+ platform coverage | Breach DB links | Social media sweep    ║
    ╚══════════════════════════════════════════════════════════════════╝
 ═══════════════════════════════════════════════════════════════════════ #>
@@ -286,7 +286,7 @@ function Search-Email {
     # Check MX record for email domain
     $domain = $Email.Split("@")[1]
     if ($domain) {
-        Write-Host "`n    [DNS] MX records for $domain:" -ForegroundColor Yellow
+        Write-Host "`n    [DNS] MX records for ${domain}:" -ForegroundColor Yellow
         try {
             $mx = Resolve-DnsName $domain -Type MX -ErrorAction Stop
             $mx | ForEach-Object { Write-Host "      $($_.NameExchange) (Priority: $($_.Preference))" -ForegroundColor Gray }

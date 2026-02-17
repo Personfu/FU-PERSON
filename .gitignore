@@ -56,6 +56,17 @@ config.local.*
 *.spec
 *.manifest
 
+# ─── Test / Build Artifacts ────────────────────────────────
+.cyberworld_test/
+test_cyberworld_sd/
+mobile/dsi/cyberworld/src/build/
+mobile/dsi/cyberworld/src/*.arm9
+mobile/dsi/cyberworld/src/*.nds
+
+# ─── Loot Directories (generated at runtime) ──────────────
+usb_payload/microsd/loot/
+collected/
+
 # ─── HTML previews (exclude web frontend) ────────────────
 *.html
 !web/*.html

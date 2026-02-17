@@ -1,4 +1,4 @@
-<# ═══════════════════════════════════════════════════════════════════════
+﻿<# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | NETWORK RECON v2.0
    ╔══════════════════════════════════════════════════════════════════╗
    ║  Pure PowerShell. Zero dependencies. Runs from USB.              ║
@@ -298,7 +298,7 @@ function Run-FullRecon {
     
     New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
     
-    Write-Host "`n  [*] FULL RECON MODE — Output: $OutputDir" -ForegroundColor Cyan
+    Write-Host "`n  [*] FULL RECON MODE - Output: $OutputDir" -ForegroundColor Cyan
     
     # WiFi
     Write-Host "`n  === PHASE 1: WiFi ===" -ForegroundColor Yellow

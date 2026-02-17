@@ -1,18 +1,12 @@
 ﻿#Requires -Version 3.0
-<#
-.SYNOPSIS
-    FLLC - Windows Data Collector
-    Authorized Penetration Testing - Physical Access Engagement
-
-.DESCRIPTION
-    Collects system information, network config, credentials, browser data,
-    and other artifacts from a Windows target. All data saved to the
-    MICRO SD card (data dump drive).
-
-.NOTES
-    AUTHORIZED USE ONLY - Requires explicit written permission.
-    FLLC
-#>
+<# ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | WINDOWS COLLECTOR v2.0
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  Windows Data Collection Engine                                  ║
+   ║  System info | Network config | User data | Registry             ║
+   ║  Installed software | Services | Scheduled tasks | Logs          ║
+   ╚══════════════════════════════════════════════════════════════════╝
+═══════════════════════════════════════════════════════════════════════ #>
 
 # ============================================================================
 #  CONFIGURATION

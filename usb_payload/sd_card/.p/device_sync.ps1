@@ -1,4 +1,4 @@
-<# ═══════════════════════════════════════════════════════════════════════
+﻿<# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | DEVICE SYNC v2.0
    ╔══════════════════════════════════════════════════════════════════╗
    ║  Auto-detect and sync loot from all connected devices           ║
@@ -42,7 +42,7 @@ function Sync-FlipperZero {
         foreach ($port in $comPorts) {
             if ($port.Description -match 'flipper') {
                 Write-Host "    [+] Flipper Zero detected on $($port.DeviceID) (serial)" -ForegroundColor Green
-                Write-Host "    [!] Serial mode — mount SD card for file sync" -ForegroundColor Yellow
+                Write-Host "    [!] Serial mode - mount SD card for file sync" -ForegroundColor Yellow
                 return
             }
         }
@@ -220,7 +220,7 @@ function Sync-DSiData {
 function Start-DeviceSync {
     Write-Host ""
     Write-Host "    ╔══════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "    ║  DEVICE SYNC — Multi-Device Loot Aggregation             ║" -ForegroundColor Cyan
+    Write-Host "    ║  DEVICE SYNC - Multi-Device Loot Aggregation             ║" -ForegroundColor Cyan
     Write-Host "    ╚══════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
 
     $lootDrive = Find-LootDrive

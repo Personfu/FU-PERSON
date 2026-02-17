@@ -22,6 +22,7 @@ from dataclasses import dataclass, field, asdict
 from typing import List, Dict, Optional, Tuple, Set
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from collections import defaultdict
+import urllib.parse
 import warnings
 
 warnings.filterwarnings("ignore")

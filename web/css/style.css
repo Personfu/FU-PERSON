@@ -330,6 +330,17 @@ body {
     color: var(--text-dim);
     font-size: 0.85rem;
 }
+.footer-links {
+    margin-top: 0.5rem;
+}
+.footer-links a {
+    color: var(--accent);
+    text-decoration: none;
+    margin: 0 4px;
+}
+.footer-links a:hover {
+    text-decoration: underline;
+}
 
 /* ─── App Layout ─── */
 .nav-bar {
@@ -714,6 +725,168 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-dim);
+}
+
+/* ── Tier Badges ─────────────────────────────────────────── */
+.tier-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+}
+.tier-free {
+    background: var(--border);
+    color: var(--text-dim);
+}
+.tier-pro {
+    background: #00ff41;
+    color: #0a0a0a;
+}
+.tier-elite {
+    background: #ff00ff;
+    color: #0a0a0a;
+}
+
+/* ── Feature Lock/Unlock Indicators ──────────────────────── */
+.feature-locked {
+    opacity: 0.4;
+    pointer-events: none;
+    position: relative;
+}
+.feature-locked::after {
+    content: '🔒';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+}
+.feature-unlocked {
+    opacity: 1;
+}
+
+/* ── Notification Popups ─────────────────────────────────── */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    z-index: 10000;
+    border-radius: 4px;
+    animation: slideIn 0.3s ease;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+.notification-success { border-color: #00ff41; }
+.notification-warning { border-color: #ffaa00; }
+.notification-error   { border-color: #ff4444; }
+.notification-info    { border-color: #00bfff; }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── Tier Selector (Modal) ───────────────────────────────── */
+.tier-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+.tier-option {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    position: relative;
+    background: var(--bg);
+}
+.tier-option:hover {
+    border-color: var(--accent);
+    background: rgba(0, 255, 65, 0.05);
+}
+.tier-option.tier-selected {
+    border-color: #00ff41;
+    background: rgba(0, 255, 65, 0.1);
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+}
+.tier-option.tier-current {
+    border-color: var(--cyan);
+}
+.tier-option h4 {
+    color: var(--accent);
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+.tier-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+}
+.tier-price small {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+}
+.tier-option ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    text-align: left;
+    font-size: 12px;
+    color: var(--text-dim);
+}
+.tier-option ul li::before {
+    content: '[+] ';
+    color: #00ff41;
+}
+.tier-popular {
+    border-color: #ff00ff;
+}
+.popular-badge {
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background: #ff00ff;
+    color: #0a0a0a;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 2px;
+}
+.account-info-bar {
+    font-size: 12px;
+    padding: 6px 0;
+    margin-bottom: 8px;
+    min-height: 20px;
+}
+
+/* ── App Footer ──────────────────────────────────────────── */
+.app-footer {
+    text-align: center;
+    padding: 12px 20px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+}
+.app-footer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+.app-footer a:hover {
+    text-decoration: underline;
 }
 
 /* Responsive */

