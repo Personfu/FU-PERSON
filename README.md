@@ -15,7 +15,7 @@
 
 **Find You Person — Integrated Security & OSINT Operations Platform**
 
-[![Version](https://img.shields.io/badge/Version-3.0-00FFFF?style=for-the-badge)]()
+[![Version](https://img.shields.io/badge/Version-3.1-00FFFF?style=for-the-badge)]()
 [![PowerShell](https://img.shields.io/badge/Engine-PowerShell-FF00FF?style=for-the-badge)]()
 [![Dependencies](https://img.shields.io/badge/Dependencies-ZERO-00FF88?style=for-the-badge)]()
 [![FLLC](https://img.shields.io/badge/FLLC-2026-7B2FBE?style=for-the-badge)]()
