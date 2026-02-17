@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FU PERSON OSINT Finder — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <canvas id="matrix-bg" aria-hidden="true"></canvas>
+    <div class="scanline-overlay" aria-hidden="true"></div>
+
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-logo">FU PERSON</a>
+        <div class="nav-right">
+            <span class="nav-user">user@fllc.net</span>
+            <button class="nav-upgrade" id="btn-upgrade">Upgrade</button>
+        </div>
+    </nav>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Search History</h3>
+                <ul class="search-history">
+                    <li>person: John Doe</li>
+                    <li>phone: +1-555-0123</li>
+                    <li>email: j.doe@example.com</li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Quick Links</h3>
+                <ul class="quick-links">
+                    <li><a href="#" data-type="person">People</a></li>
+                    <li><a href="#" data-type="phone">Phone</a></li>
+                    <li><a href="#" data-type="email">Email</a></li>
+                    <li><a href="#" data-type="domain">Domain</a></li>
+                    <li><a href="#" data-type="ip">IP</a></li>
+                    <li><a href="#" data-type="username">Username</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section tier-display">
+                <h3>Tier</h3>
+                <p id="tier-info">FREE TIER — 2/3 searches remaining</p>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <div class="search-section">
+                <form id="search-form" class="search-form">
+                    <select id="search-type" name="type">
+                        <option value="person">Person</option>
+                        <option value="phone">Phone</option>
+                        <option value="email">Email</option>
+                        <option value="domain">Domain</option>
+                        <option value="ip">IP</option>
+                        <option value="username">Username</option>
+                    </select>
+                    <input type="text" id="search-query" name="query" placeholder="Enter search term..." autocomplete="off">
+                    <button type="submit" class="search-btn" id="search-btn">Search</button>
+                </form>
+            </div>
+
+            <div class="results-area">
+                <div class="results-header">
+                    <h3>Results</h3>
+                    <div class="export-buttons">
+                        <button class="export-btn" id="export-pdf" title="Export to PDF">PDF</button>
+                        <button class="export-btn" id="export-json" title="Export to JSON">JSON</button>
+                        <button class="export-btn" id="export-csv" title="Export to CSV">CSV</button>
+                    </div>
+                </div>
+                <div id="results-terminal" class="terminal-results">
+                    <pre id="results-content">
+<span class="term-prompt">root@fllc:~$</span> osint search person "John Doe"
+
+[+] Querying public records...
+[+] Cross-referencing 88+ social platforms...
+
+══════════════════════════════════════════════════════════
+ PERSON SEARCH: John Doe — PUBLIC DATABASE RESULT
+══════════════════════════════════════════════════════════
+
+[*] Name: John Doe
+[*] Possible Addresses:
+    • 123 Main St, Anytown, CA 90210
+    • 456 Oak Ave, Somewhere, NY 10001
+
+[*] Phone Numbers:
+    • +1-555-123-4567 (Mobile)
+    • +1-555-987-6543 (Landline)
+
+[*] Email Addresses:
+    • john.doe@example.com
+    • jdoe@gmail.com
+
+[*] Social Media Profiles Found:
+    • Twitter: @johndoe
+    • LinkedIn: linkedin.com/in/johndoe
+    • Facebook: facebook.com/johndoe
+
+[*] Public Records:
+    • Voter registration (California)
+    • Business filings (2020)
+    • Court records: 1 public case
+
+[+] All results from publicly available databases.
+                    </pre>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="subscription-modal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+            <h2>SUBSCRIPTION REQUIRED</h2>
+            <p>Upgrade to Pro to unlock unlimited searches</p>
+            <div class="plan-comparison">
+                <table>
+                    <thead>
+                        <tr><th>Feature</th><th>Free</th><th>Pro</th><th>Elite</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Searches/day</td><td>3</td><td>Unlimited</td><td>Unlimited</td></tr>
+                        <tr><td>Export</td><td>—</td><td>PDF</td><td>All formats</td></tr>
+                        <tr><td>API</td><td>—</td><td>—</td><td>Yes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <form id="subscribe-form" class="subscribe-form">
+                <div class="form-row">
+                    <label for="card-number">Card Number</label>
+                    <input type="text" id="card-number" placeholder="4242 4242 4242 4242" maxlength="19">
+                </div>
+                <div class="form-row-inline">
+                    <div class="form-row">
+                        <label for="card-exp">Exp (MM/YY)</label>
+                        <input type="text" id="card-exp" placeholder="12/28" maxlength="5">
+                    </div>
+                    <div class="form-row">
+                        <label for="card-cvc">CVC</label>
+                        <input type="text" id="card-cvc" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+                <button type="submit" class="subscribe-btn">Subscribe Now</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/matrix.js"></script>
+    <script src="js/osint.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

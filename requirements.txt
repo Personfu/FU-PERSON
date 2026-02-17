@@ -1,8 +1,22 @@
-requests>=2.31.0
-beautifulsoup4>=4.12.0
-dnspython>=2.4.0
-urllib3>=2.0.0
-lxml>=4.9.0
-colorama>=0.4.6
-duckduckgo-search>=4.0
+# FU PERSON - Core Dependencies
+# Install: pip install -r requirements.txt
 
+# HTTP client
+requests>=2.31.0
+urllib3>=2.0.0
+
+# HTML parsing
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# DNS resolution
+dnspython>=2.4.0
+
+# Terminal colors (cross-platform)
+colorama>=0.4.6
+
+# PDF report generation
+fpdf2>=2.7.0
+
+# Web search (optional, for extended people finder)
+duckduckgo-search>=4.0

@@ -1,43 +1,49 @@
-﻿@echo off
+@echo off
+title FU PERSON - Install Dependencies
 color 0B
-title FLLC - First Time Setup
-mode con: cols=80 lines=30
+mode con: cols=80 lines=35
+cd /d "%~dp0.."
 
-cls
+:: Kali-style small banner
 echo.
-echo  ============================================================
-echo  =                                                          =
-echo  =     FLLC - FIRST TIME SETUP                       =
-echo  =     Installing Python Dependencies                       =
-echo  =                                                          =
-echo  ============================================================
+echo     ___ ___     ___  ___  ___  ___
+echo    ] - ] - [   ] __ ] __]  _ ] __
+echo    ]_  _____]  ]  _ ] _] ___ ] _
+echo      ]_[     ]  [___][___][___][___]
 echo.
-echo  Checking Python installation...
+echo    ╔══════════════════════════════════════════════════════════╗
+echo    ║  FU PERSON - First Time Setup / Install Dependencies    ║
+echo    ╚══════════════════════════════════════════════════════════╝
 echo.
-python --version
+echo    [*] Checking Python installation...
+
+python --version 2>nul
 if errorlevel 1 (
-    echo.
-    echo  ERROR: Python is not installed or not in PATH!
-    echo  Download Python from: https://www.python.org/downloads/
-    echo  Make sure to check "Add Python to PATH" during install!
+    echo    [!] ERROR: Python is not installed or not in PATH!
+    echo    [!] Download Python from: https://www.python.org/downloads/
+    echo    [!] Make sure to check "Add Python to PATH" during install!
     echo.
     pause
-    exit
+    exit /b 1
 )
+echo    [+] Python found
 echo.
-echo  Python found! Installing required packages...
+echo    [*] Installing required packages from requirements.txt...
+echo    ────────────────────────────────────────────────────────────
 echo.
-pip install -r "%~dp0requirements.txt"
+
+pip install -r "%~dp0..\requirements.txt"
+
 echo.
-echo  ============================================================
-echo  =     SETUP COMPLETE!                                      =
-echo  =                                                          =
-echo  =     You can now double-click any of these to start:      =
-echo  =       - LAUNCH.bat        (Main menu)                    =
-echo  =       - Run_Galaxy_Recon.bat                              =
-echo  =       - Run_Pentest_Suite.bat                             =
-echo  =       - Run_OSINT_Recon.bat                               =
-echo  =                                                          =
-echo  ============================================================
+echo    ────────────────────────────────────────────────────────────
+echo    [+] Setup complete!
+echo.
+echo    ╔══════════════════════════════════════════════════════════╗
+echo    ║  You can now run:                                        ║
+echo    ║    - deploy\LAUNCH.bat         (Main menu)               ║
+echo    ║    - deploy\Run_Galaxy_Recon.bat                         ║
+echo    ║    - deploy\Run_Pentest_Suite.bat                        ║
+echo    ║    - deploy\Run_OSINT_Recon.bat                         ║
+echo    ╚══════════════════════════════════════════════════════════╝
 echo.
 pause

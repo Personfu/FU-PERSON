@@ -1,10 +1,11 @@
-﻿#!/data/data/com.termux/files/usr/bin/bash
-# ============================================================================
-#  FLLC - S20+ Headless Automated Reconnaissance
-# ============================================================================
-#  Runs a complete passive and active recon sweep using the phone's
-#  WiFi, GPS, and cellular capabilities. Designed for headless operation.
-#
+#!/data/data/com.termux/files/usr/bin/bash
+# ═══════════════════════════════════════════════════════════════════════
+#  FLLC | FU PERSON | S20+ HEADLESS RECON
+#  ╔══════════════════════════════════════════════════════════════════╗
+#  ║  Automated Reconnaissance — WiFi, GPS, Cellular                  ║
+#  ║  Passive & active recon sweep, headless operation               ║
+#  ╚══════════════════════════════════════════════════════════════════╝
+# ═══════════════════════════════════════════════════════════════════════
 #  Usage:
 #    ./headless_recon.sh                     # Full recon
 #    ./headless_recon.sh --target 192.168.1.0/24  # Target specific network
@@ -12,7 +13,6 @@
 #    ./headless_recon.sh --output /sdcard/recon  # Custom output dir
 #
 #  Ref: NoorQureshi/kali-linux-cheatsheet, Werewolf-p/nmap-cheat-sheet
-# ============================================================================
 
 set -e
 

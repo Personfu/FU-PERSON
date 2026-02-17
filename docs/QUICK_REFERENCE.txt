@@ -1,263 +1,174 @@
-﻿╔═══════════════════════════════════════════════════════════════╗
-║   FLLC - PENTEST SUITE QUICK REFERENCE                ║
-║   Professional Security Assessment Platform v2.0             ║
-╚═══════════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║    ███████╗██╗     ██╗      ██████╗     ██████╗  ██████╗ ███████╗███████╗    ║
+║    ██╔════╝██║     ██║     ██╔═══██╗    ██╔══██╗██╔═══██╗██╔════╝██╔════╝    ║
+║    █████╗  ██║     ██║     ██║   ██║    ██████╔╝██║   ██║███████╗███████╗    ║
+║    ██╔══╝  ██║     ██║     ██║   ██║    ██╔══██╗██║   ██║╚════██║╚════██║    ║
+║    ██║     ███████╗███████╗╚██████╔╝    ██║  ██║╚██████╔╝███████║███████║    ║
+║    ╚═╝     ╚══════╝╚══════╝ ╚═════╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚══════╝    ║
+║                                                                              ║
+║    FLLC - PENTEST SUITE QUICK REFERENCE | Professional v2.0                 ║
+║    Kali Linux / Hacker Terminal Edition                                      ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-⚠️  AUTHORIZATION REQUIRED - ALL SCANS LOGGED ⚠️
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [!] AUTHORIZATION REQUIRED — ALL SCANS LOGGED                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 PRE-ENGAGEMENT CHECKLIST
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  [root@fuperson]─[~/pre-engagement] PRE-ENGAGEMENT CHECKLIST                  │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-□ Signed MSA/SOW with client
-□ Scope defined (domains, IPs, exclusions)
-□ Testing window agreed
-□ Emergency contacts confirmed
-□ Certificate of insurance current
-□ NDA executed
-□ Kickoff call completed
-□ Rules of engagement documented
+  [ ] Signed MSA/SOW with client
+  [ ] Scope defined (domains, IPs, exclusions)
+  [ ] Testing window agreed
+  [ ] Emergency contacts confirmed
+  [ ] Certificate of insurance current
+  [ ] NDA executed
+  [ ] Kickoff call completed
+  [ ] Rules of engagement documented
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 QUICK START COMMANDS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [+] QUICK COMMAND REFERENCE — 5 DEVICES                                     ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║  Device 1: CLI Pentest Suite                                                 ║
+║  Device 2: Web Interface                                                     ║
+║  Device 3: OSINT Recon Suite                                                 ║
+║  Device 4: Compliance Scanner                                                ║
+║  Device 5: Full Stack Deployment                                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-# CLI Tool - Basic Scan
-python3 pentest_suite.py client-domain.com --authorized
+┌─── DEVICE 1: CLI PENTEST ───────────────────────────────────────────────────┐
+│ root@fuperson:~# python3 pentest_suite.py client-domain.com --authorized     │
+│ root@fuperson:~# python3 pentest_suite.py client-domain.com --authorized \    │
+│   --full-scan --output ./reports/                                            │
+│ root@fuperson:~# python3 pentest_suite.py client-domain.com --passive-only    │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-# CLI Tool - Full Assessment
-python3 pentest_suite.py client-domain.com --authorized \
-  --full-scan --output ./reports/
+┌─── DEVICE 2: WEB INTERFACE ─────────────────────────────────────────────────┐
+│ root@fuperson:~# open pentest-suite-pro.html                                  │
+│ [*] Or deploy: cp pentest-suite-pro.html /var/www/html/pentest/              │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-# Web Interface
-open pentest-suite-pro.html
+┌─── DEVICE 3: OSINT RECON SUITE ───────────────────────────────────────────────┐
+│ root@fuperson:~# python osint_recon_suite.py --target fllc.net                │
+│ root@fuperson:~# python osint_recon_suite.py --person "John Doe"              │
+│ root@fuperson:~# python osint_recon_suite.py --person "John" --target co.com  │
+│ root@fuperson:~# python osint_recon_suite.py --stress https://tgt.com --auth  │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-# OSINT/Breach Check Only
-python3 pentest_suite.py client-domain.com --passive-only
+┌─── DEVICE 4: COMPLIANCE SCANNER ──────────────────────────────────────────────┐
+│ PS C:\> .\compliance_scanner.ps1                                              │
+│ [*] Outputs: compliance_report.txt | .json | .csv                             │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🎯 CAPABILITIES MATRIX
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌─── DEVICE 5: FULL STACK / DOCKER ─────────────────────────────────────────────┐
+│ root@fuperson:~# docker pull owasp/zap2docker-stable                           │
+│ root@fuperson:~# docker pull paoloo/sqlmap                                     │
+│ root@fuperson:~# sudo apt-get install nmap masscan nikto sqlmap wireshark     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [+] CAPABILITIES MATRIX                                                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
 Module              | Passive | Active | Info Gathered
 --------------------|---------|--------|---------------------------
-DNS Enumeration     |   ✓     |   ✓    | Records, subdomains
-Port Scanning       |         |   ✓    | Open ports, services
-SSL/TLS Analysis    |   ✓     |   ✓    | Certs, ciphers, expiry
-Web Crawling        |   ✓     |   ✓    | Pages, forms, files
-Directory Enum      |         |   ✓    | Hidden paths, configs
-File Download       |   ✓     |   ✓    | Documents, data
-Breach Intelligence |   ✓     |        | Leaked credentials
+DNS Enumeration     |   [+]   |   [+]  | Records, subdomains
+Port Scanning       |   [-]   |   [+]  | Open ports, services
+SSL/TLS Analysis    |   [+]   |   [+]  | Certs, ciphers, expiry
+Web Crawling        |   [+]   |   [+]  | Pages, forms, files
+Directory Enum      |   [-]   |   [+]  | Hidden paths, configs
+File Download       |   [+]   |   [+]  | Documents, data
+Breach Intelligence |   [+]   |   [-]  | Leaked credentials
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚡ COMMON WORKFLOWS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [*] COMMON WORKFLOWS                                                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-┌─────────────────────────────────────────────────────────────┐
-│ WORKFLOW 1: Commercial Client ($4,000-$4,500)              │
-└─────────────────────────────────────────────────────────────┘
+┌─ WORKFLOW 1: Commercial Client ($4,000-$4,500) ──────────────────────────────┐
+│ Day 1: Pre-engagement  → Sign SOW, kickoff, confirm window                   │
+│ Day 2-3: Active Testing → Full pentest, document, report critical           │
+│ Day 4: Reporting → JSON/CSV, exec summary, technical findings                │
+│ Day 5: Delivery → Debrief, Q&A, schedule follow-up scan                      │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-Day 1: Pre-engagement
-  → Sign SOW with scope
-  → Kickoff call
-  → Confirm testing window
+┌─ WORKFLOW 2: Government Agency (SPECIAL PROTOCOLS) ───────────────────────────┐
+│ Pre-approval (2-4w): → Official channels, CISO approval, FedRAMP scope         │
+│ Execution: → Gov-approved tools, agency protocols, SOC reporting            │
+│ Post: → Official channels, classified handling, remediation                 │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-Day 2-3: Active Testing
-  → Run full pentest suite
-  → Document findings in real-time
-  → Report critical issues immediately
+┌─ WORKFLOW 3: Internal FLLC Assets (ONGOING) ────────────────────────────────┐
+│ Weekly: Passive OSINT → Breach monitoring, DNS, cert expiry                   │
+│ Monthly: Active Scan → Full pentest, client review, baseline                 │
+│ Quarterly: Deep Assessment → Full audit, threat model, verification           │
+└──────────────────────────────────────────────────────────────────────────────┘
 
-Day 4: Reporting
-  → Generate JSON/CSV exports
-  → Create executive summary
-  → Write technical findings
-  → Prepare remediation roadmap
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [!] SEVERITY GUIDELINES                                                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-Day 5: Delivery
-  → Client debrief meeting
-  → Q&A on findings
-  → Schedule follow-up scan
+CRITICAL (Immediate)    [!!!] RCE, SQLi, exposed .git, unauth admin, credential leak
+HIGH (7 days)           [!]   Weak TLS, exposed admin, known CVEs, missing HSTS
+MEDIUM (30 days)        [*]   Missing headers, dir listing, info disclosure
+LOW (90 days)           [-]   Banner disclosure, extra ports, misconfig
+INFO (Document)         [+]   DNS records, standard ports, valid certs
 
-┌─────────────────────────────────────────────────────────────┐
-│ WORKFLOW 2: Government Agency (SPECIAL PROTOCOLS)          │
-└─────────────────────────────────────────────────────────────┘
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [*] DELIVERABLES CHECKLIST                                                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-Pre-approval (2-4 weeks):
-  → Submit through official channels
-  → Obtain agency CISO approval
-  → Define scope per FedRAMP/FISMA
-  → Security clearance verification
+  [ ] JSON findings export (machine-readable)
+  [ ] CSV vulnerability list (Excel-compatible)
+  [ ] Executive summary (non-technical)
+  [ ] Technical findings report (detailed)
+  [ ] Remediation roadmap (prioritized)
+  [ ] Risk scoring matrix
+  [ ] Evidence screenshots/files
+  [ ] Attack narrative (if applicable)
+  [ ] Compliance mapping (PCI/HIPAA/SOC2)
+  [ ] Retest offer (30-day validation)
 
-Execution (Controlled window):
-  → Use government-approved tools only
-  → Follow agency-specific protocols
-  → Real-time reporting to SOC
-  → Maintain detailed audit trail
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [!] INCIDENT RESPONSE                                                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-Post-engagement:
-  → Report through official channels
-  → Classified findings handling
-  → Remediation coordination
-  → Follow-up validation
+  If active compromise discovered:
+  1. STOP all testing immediately
+  2. Document (screenshots, logs)
+  3. Contact client emergency contact
+  4. Escalate to CISO/security team
+  5. Verbal briefing
+  6. Follow client IR procedures
+  7. Document communications
+  8. Offer emergency remediation
 
-┌─────────────────────────────────────────────────────────────┐
-│ WORKFLOW 3: Internal FLLC Assets (ONGOING)          │
-└─────────────────────────────────────────────────────────────┘
+  Template: "This is FLLC conducting authorized pentest. Active compromise
+  on [SYSTEM]. Finding: [DESC] | Severity: CRITICAL | Action: [STEPS]"
 
-Weekly: Passive OSINT
-  → Breach database monitoring
-  → DNS changes detection
-  → Certificate expiration checks
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [+] PRICING REFERENCE                                                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-Monthly: Active Scan
-  → Full pentest of fllc.net
-  → Client infrastructure review
-  → Update security baseline
+  Base: $4,000-$4,500 (2-5 days, full suite, 30-day validation)
+  Add: +$297/mo monitoring | +$1,200/qtr reassessment | +$500 training
 
-Quarterly: Deep Assessment
-  → Comprehensive audit
-  → Threat modeling update
-  → Remediation verification
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [*] CONTACTS                                                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔍 SEVERITY GUIDELINES
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  FLLC Security Operations | preston@fllc.net | https://fllc.net
+  Office: Tue/Thu 0900-1700 MST | <24hr standard, <4hr critical
 
-CRITICAL (Immediate action required)
-  • Unauthenticated RCE
-  • SQL injection
-  • Exposed .git with credentials
-  • Admin panel without auth
-  • Active credential leaks
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  [!] LEGAL REMINDER                                                          ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║  [+] Stay in scope  [+] Stop if compromise  [+] Document everything         ║
+║  [-] Never test without auth  [-] Never exceed scope  [-] Never retain data  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-HIGH (Fix within 7 days)
-  • Weak SSL/TLS ciphers
-  • Exposed admin panels
-  • Outdated software (known CVEs)
-  • Missing HSTS on auth pages
-  • Password forms over HTTP
-
-MEDIUM (Fix within 30 days)
-  • Missing security headers
-  • Directory listing enabled
-  • Information disclosure
-  • Verbose error messages
-  • Predictable tokens
-
-LOW (Fix within 90 days)
-  • Banner disclosure
-  • Unnecessary open ports
-  • Missing hardening
-  • Non-critical misconfigurations
-
-INFO (Documentation/Baseline)
-  • DNS records
-  • Open standard ports
-  • Valid SSL certificates
-  • Standard configurations
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📊 DELIVERABLES CHECKLIST
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-□ JSON findings export (machine-readable)
-□ CSV vulnerability list (Excel-compatible)
-□ Executive summary (non-technical)
-□ Technical findings report (detailed)
-□ Remediation roadmap (prioritized)
-□ Risk scoring matrix
-□ Evidence screenshots/files
-□ Attack narrative (if applicable)
-□ Compliance mapping (PCI/HIPAA/SOC2)
-□ Retest offer (30-day validation)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚨 INCIDENT RESPONSE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-If you discover active compromise during testing:
-
-1. STOP all testing immediately
-2. Document current state (screenshots, logs)
-3. Contact client emergency contact
-4. Escalate to client CISO/security team
-5. Provide immediate verbal briefing
-6. Follow client incident response procedures
-7. Document all communications
-8. Offer emergency remediation support
-
-Emergency Contact Template:
-  "This is FLLC from FLLC conducting
-   authorized penetration testing. I've discovered evidence
-   of active compromise on [SYSTEM]. Immediate action required.
-   
-   Finding: [BRIEF DESCRIPTION]
-   Severity: CRITICAL
-   Recommended Action: [IMMEDIATE STEPS]
-   
-   Standing by for further instructions."
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💰 PRICING REFERENCE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Base Security Assessment: $4,000 - $4,500
-  • 2-5 day engagement
-  • Full pentest suite
-  • Comprehensive reporting
-  • 30-day validation scan
-
-Add-Ons:
-  • Ongoing monitoring: +$297/month
-  • Quarterly reassessment: +$1,200/quarter
-  • Security training: +$500
-  • Remediation support: $150/hour
-
-Enterprise/Government: Custom pricing
-  • Multi-site assessments
-  • Compliance-specific testing
-  • Red team operations
-  • 24/7 monitoring
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📞 CONTACTS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-FLLC Security Operations
-FLLC, Founder & Lead Security Architect
-
-Website: https://fllc.net
-Email: preston@fllc.net
-Stripe: https://buy.stripe.com/6oU5kDbaleJA6TIaKk8EM00
-
-Office Hours: Tue/Thu 0900-1700 MST
-Response Time: <24hrs standard, <4hrs critical
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚖️  LEGAL REMINDER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Your government clearance means you're held to HIGHER standards.
-
-Even with authorization:
-  ✓ Stay within defined scope
-  ✓ Stop if you find active compromise
-  ✓ Document everything
-  ✓ Report through proper channels
-  ✓ Maintain confidentiality
-  ✓ Follow data handling procedures
-
-NEVER:
-  ✗ Test without written authorization
-  ✗ Exceed defined scope
-  ✗ Retain client data unnecessarily
-  ✗ Discuss findings publicly
-  ✗ Use findings for personal gain
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Last Updated: 2026-02-10
-Version: 2.0 Professional Edition
-FLLC | FLLC | Government-Cleared IT Operations
-
-FOR AUTHORIZED USE ONLY - MAINTAIN OPERATIONAL SECURITY
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  FLLC | Quick Reference | v2.0 | 2026 | FOR AUTHORIZED USE ONLY               │
+└──────────────────────────────────────────────────────────────────────────────┘

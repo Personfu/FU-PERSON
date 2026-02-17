@@ -1,0 +1,246 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   FLLC | FU PERSON | ANIMATIONS
+   Matrix rain, glitch effects, typing animations, scanline overlay
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Glitch Effect ──────────────────────────────────────────────────── */
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+        text-shadow: -2px 0 #ff0040, 2px 0 #00ffff;
+    }
+    20% {
+        transform: translate(-3px, 2px);
+        text-shadow: 2px 0 #ff0040, -2px 0 #00ffff;
+    }
+    40% {
+        transform: translate(3px, -1px);
+        text-shadow: -2px 0 #00ffff, 2px 0 #ff0040;
+    }
+    60% {
+        transform: translate(-1px, 1px);
+        text-shadow: 2px 0 #ff00ff, -2px 0 #00ff41;
+    }
+    80% {
+        transform: translate(2px, -2px);
+        text-shadow: -2px 0 #ff0040, 2px 0 #00ffff;
+    }
+    100% {
+        transform: translate(0);
+        text-shadow: -2px 0 #ff0040, 2px 0 #00ffff;
+    }
+}
+
+.glitch-text {
+    animation: glitch 0.3s infinite;
+    position: relative;
+}
+
+.glitch-text:hover {
+    animation: glitch 0.1s infinite;
+}
+
+/* ── Typing Cursor ──────────────────────────────────────────────────── */
+@keyframes typing-blink {
+    0%, 50% { border-right-color: #00ff41; }
+    51%, 100% { border-right-color: transparent; }
+}
+
+.typing-cursor {
+    border-right: 2px solid #00ff41;
+    animation: typing-blink 1s step-end infinite;
+    padding-right: 4px;
+}
+
+.typing-cursor::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+}
+
+/* ── Scanline ───────────────────────────────────────────────────────── */
+@keyframes scanline {
+    0% { transform: translateY(-100vh); }
+    100% { transform: translateY(100vh); }
+}
+
+.scanline-overlay::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 255, 65, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+    animation: scanline 8s linear infinite;
+}
+
+/* ── Glow Pulse ─────────────────────────────────────────────────────── */
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 5px #00ff41, 0 0 10px #00ff41, 0 0 20px #00ff41;
+    }
+    50% {
+        text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 40px #00ff41, 0 0 60px #00ff41;
+    }
+}
+
+.glow-text {
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* ── Fade In ────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+/* ── Slide Up ───────────────────────────────────────────────────────── */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.slide-up-delay-1 {
+    animation: slideUp 0.6s ease-out 0.1s forwards;
+    opacity: 0;
+}
+
+.slide-up-delay-2 {
+    animation: slideUp 0.6s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+.slide-up-delay-3 {
+    animation: slideUp 0.6s ease-out 0.3s forwards;
+    opacity: 0;
+}
+
+.slide-up-delay-4 {
+    animation: slideUp 0.6s ease-out 0.4s forwards;
+    opacity: 0;
+}
+
+.slide-up-delay-5 {
+    animation: slideUp 0.6s ease-out 0.5s forwards;
+    opacity: 0;
+}
+
+/* ── Flicker ────────────────────────────────────────────────────────── */
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    5% { opacity: 0.8; }
+    10% { opacity: 1; }
+    15% { opacity: 0.6; }
+    20% { opacity: 1; }
+    50% { opacity: 0.95; }
+    55% { opacity: 1; }
+    80% { opacity: 0.9; }
+    85% { opacity: 1; }
+}
+
+.flicker {
+    animation: flicker 3s linear infinite;
+}
+
+/* ── Matrix Text Fall ───────────────────────────────────────────────── */
+@keyframes matrix-text {
+    0% {
+        opacity: 1;
+        transform: translateY(-100%);
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100vh);
+    }
+}
+
+.matrix-char {
+    animation: matrix-text 2s linear infinite;
+    display: inline-block;
+    color: #00ff41;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Pulse ──────────────────────────────────────────────────────────── */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── Border Glow ────────────────────────────────────────────────────── */
+@keyframes border-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
+        border-color: rgba(0, 255, 65, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(0, 255, 65, 0.6), 0 0 30px rgba(0, 255, 65, 0.2);
+        border-color: rgba(0, 255, 65, 0.8);
+    }
+}
+
+.border-glow {
+    animation: border-glow 3s ease-in-out infinite;
+}
+
+/* ── Typewriter ─────────────────────────────────────────────────────── */
+@keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+.typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typewriter 2s steps(40) 0.5s forwards;
+    width: 0;
+}
+
+/* ── Spin (for loading) ─────────────────────────────────────────────── */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+/* ── RGB Shift (cyberpunk) ──────────────────────────────────────────── */
+@keyframes rgb-shift {
+    0% { text-shadow: -1px 0 #ff0040, 1px 0 #00ffff; }
+    33% { text-shadow: 1px 0 #ff00ff, -1px 0 #00ff41; }
+    66% { text-shadow: -1px 0 #00ffff, 1px 0 #ff0040; }
+    100% { text-shadow: 1px 0 #00ff41, -1px 0 #ff00ff; }
+}
+
+.rgb-shift {
+    animation: rgb-shift 4s linear infinite;
+}

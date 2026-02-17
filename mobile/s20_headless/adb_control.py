@@ -1,10 +1,16 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
-FLLC - S20+ ADB Remote Control
-=======================================
-Control the headless Samsung Galaxy S20+ (broken screen) from your PC.
-Uses ADB over USB or WiFi to execute commands, transfer files,
-and manage the attack platform.
+# ═══════════════════════════════════════════════════════════════════════
+#  FLLC | FU PERSON | S20+ ADB CONTROL
+#  ╔══════════════════════════════════════════════════════════════════╗
+#  ║  Remote Control — Headless Galaxy S20+ (broken screen)         ║
+#  ║  ADB over USB/WiFi — commands, transfer, attack platform        ║
+#  ╚══════════════════════════════════════════════════════════════════╝
+# ═══════════════════════════════════════════════════════════════════════
+#
+# Control the headless Samsung Galaxy S20+ (broken screen) from your PC.
+# Uses ADB over USB or WiFi to execute commands, transfer files,
+# and manage the attack platform.
 
 Requirements (on PC):
     pip install adbutils rich

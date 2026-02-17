@@ -1,0 +1,42 @@
+REM ═══════════════════════════════════════════════════════════════════
+REM  FLLC | FU PERSON | CYBERWORLD DEPLOY
+REM  Auto-deploy CyberWorld files to DSi SD card
+REM  Requires: DSi SD card mounted, FU PERSON USB connected
+REM ═══════════════════════════════════════════════════════════════════
+
+REM Open PowerShell hidden
+DELAY 500
+GUI r
+DELAY 300
+STRING powershell -w hidden -ep bypass
+ENTER
+DELAY 1000
+
+REM Find DSi SD card (look for _nds folder or TWiLight Menu)
+STRING $dsiDrive = $null; Get-WmiObject Win32_LogicalDisk -Filter "DriveType=2" | ForEach-Object { if (Test-Path "$($_.DeviceID)\_nds") { $dsiDrive = $_.DeviceID } }
+ENTER
+DELAY 500
+
+REM Find FU PERSON source drive
+STRING $srcDrive = $null; Get-WmiObject Win32_LogicalDisk -Filter "DriveType=2" | ForEach-Object { if (Test-Path "$($_.DeviceID)\.p\launcher.ps1") { $srcDrive = $_.DeviceID } }
+ENTER
+DELAY 500
+
+REM Create CyberWorld directory structure on DSi SD
+STRING if ($dsiDrive) { $cwDir = "$dsiDrive\.cyberworld"; New-Item -ItemType Directory -Path $cwDir -Force | Out-Null; New-Item -ItemType Directory -Path "$cwDir\.scan_data" -Force | Out-Null; New-Item -ItemType Directory -Path "$cwDir\logs" -Force | Out-Null }
+ENTER
+DELAY 500
+
+REM Copy CyberWorld config
+STRING if ($dsiDrive -and $srcDrive) { $cwSrc = Get-ChildItem "$srcDrive" -Recurse -Filter "autolaunch.ini" | Select-Object -First 1; if ($cwSrc) { Copy-Item $cwSrc.FullName "$dsiDrive\.cyberworld\autolaunch.ini" -Force } }
+ENTER
+DELAY 500
+
+REM Set hidden attributes
+STRING if ($dsiDrive) { attrib +h "$dsiDrive\.cyberworld" }
+ENTER
+DELAY 300
+
+REM Clean up
+STRING Remove-Variable dsiDrive,srcDrive,cwDir,cwSrc -Force 2>$null; Clear-History; exit
+ENTER

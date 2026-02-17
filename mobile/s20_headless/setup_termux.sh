@@ -1,8 +1,11 @@
-﻿#!/bin/bash
-# ============================================================================
-#  FLLC - Samsung Galaxy S20+ Headless Attack Platform
-#  Termux Bootstrap & Tool Installation
-# ============================================================================
+#!/bin/bash
+# ═══════════════════════════════════════════════════════════════════════
+#  FLLC | FU PERSON | S20+ HEADLESS PLATFORM
+#  ╔══════════════════════════════════════════════════════════════════╗
+#  ║  Termux Bootstrap & Tool Installation                          ║
+#  ║  Galaxy S20+ with Magisk root                                   ║
+#  ╚══════════════════════════════════════════════════════════════════╝
+# ═══════════════════════════════════════════════════════════════════════
 #  Prerequisites:
 #    - Samsung Galaxy S20+ with Magisk root
 #    - Termux installed (F-Droid version, NOT Play Store)
@@ -18,7 +21,6 @@
 #    4. scrcpy (screen mirror): scrcpy --no-video (audio/control only)
 #
 #  Ref: topjohnwu/Magisk for root
-# ============================================================================
 
 set -e
 

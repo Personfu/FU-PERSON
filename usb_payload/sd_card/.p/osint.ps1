@@ -1,9 +1,11 @@
 <# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | OSINT LOOKUP v2.0
-   Pure PowerShell. Zero dependencies. Runs from USB.
-   
-   People search, reverse phone/email, public records, social media
-   enumeration — all using native Windows HTTP and DNS.
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  Pure PowerShell. Zero dependencies. Runs from USB.              ║
+   ║  People search, reverse phone/email, public records, social      ║
+   ║  media enumeration — all using native Windows HTTP and DNS.      ║
+   ║  88+ platform coverage | Breach DB links | Social media sweep    ║
+   ╚══════════════════════════════════════════════════════════════════╝
 ═══════════════════════════════════════════════════════════════════════ #>
 
 $ErrorActionPreference = 'SilentlyContinue'

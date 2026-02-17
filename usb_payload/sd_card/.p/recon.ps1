@@ -1,9 +1,11 @@
 <# ═══════════════════════════════════════════════════════════════════════
    FLLC | FU PERSON | NETWORK RECON v2.0
-   Pure PowerShell. Zero dependencies. Runs from USB.
-   
-   Port scanning, ARP discovery, WiFi analysis, service fingerprinting,
-   share enumeration, route mapping — all native Windows.
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  Pure PowerShell. Zero dependencies. Runs from USB.              ║
+   ║  Port scanning, ARP discovery, WiFi analysis, service            ║
+   ║  fingerprinting, share enumeration, route mapping.               ║
+   ║  Bluetooth discovery | USB history | Kali nmap-style output      ║
+   ╚══════════════════════════════════════════════════════════════════╝
 ═══════════════════════════════════════════════════════════════════════ #>
 
 $ErrorActionPreference = 'SilentlyContinue'

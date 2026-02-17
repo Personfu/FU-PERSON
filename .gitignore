@@ -56,5 +56,6 @@ config.local.*
 *.spec
 *.manifest
 
-# ─── HTML previews ───────────────────────────────────────
+# ─── HTML previews (exclude web frontend) ────────────────
 *.html
+!web/*.html

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ============================================================================
  *  config.h — FLLC Wardriver v3.1 Configuration
  *
@@ -36,6 +36,9 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
+
+// ── PINEAPPLE MODE (Evil Twin + Captive Portal) ────────────────────
+#include "pineapple.h"
 
 // ──── Firmware Identity ──────────────────────────────────────────────────
 #define FW_NAME        "FLLC-WD"

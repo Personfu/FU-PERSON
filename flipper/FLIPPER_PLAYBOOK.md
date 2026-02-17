@@ -1,9 +1,12 @@
-# Flipper Zero — FU PERSON MEGA Arsenal v2.0
+# Flipper Zero — Full Tactical Playbook
 
-**FLLC | 35 BadUSB Payloads | 7 IR Databases | 8 Sub-GHz References | 5 NFC Tools | RFID + iButton + GPIO**
-
-> *"Every frequency. Every protocol. Every attack vector. One device."*
-> — PERSON FU
+```
+╔══════════════════════════════════════════════════════════════╗
+║  FLLC FLIPPER ZERO OPERATIONS MANUAL                         ║
+║  35+ BadUSB payloads | Sub-GHz | NFC | IR | RFID | GPIO     ║
+║  Status: FULLY OPERATIONAL                                    ║
+╚══════════════════════════════════════════════════════════════╝
+```
 
 ---
 

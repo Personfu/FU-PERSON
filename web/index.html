@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLLC.net — FU PERSON OSINT Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <canvas id="matrix-bg" aria-hidden="true"></canvas>
+
+    <div class="scanline-overlay" aria-hidden="true"></div>
+
+    <div class="container">
+        <header class="header">
+            <pre class="banner" aria-label="FU PERSON ASCII art">
+    ███████╗██╗   ██╗    ██████╗ ███████╗██████╗ ███████╗ ██████╗ ███╗   ██╗
+    ██╔════╝██║   ██║    ██╔══██╗██╔════╝██╔══██╗██╔════╝██╔═══██╗████╗  ██║
+    █████╗  ██║   ██║    ██████╔╝█████╗  ██████╔╝███████╗██║   ██║██╔██╗ ██║
+    ██╔══╝  ██║   ██║    ██╔═══╝ ██╔══╝  ██╔══██╗╚════██║██║   ██║██║╚██╗██║
+    ██║     ╚██████╔╝    ██║     ███████╗██║  ██║███████║╚██████╔╝██║ ╚████║
+    ╚═╝      ╚═════╝     ╚═╝     ╚══════╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝
+            </pre>
+        </header>
+
+        <section class="hero">
+            <h1 class="glow-text">FU PERSON OSINT FINDER</h1>
+            <p class="subtitle">Find Anyone. Know Everything. Legally.</p>
+            <p class="tagline">All data sourced from publicly available databases</p>
+            <a href="app.html" class="cta-btn">Start Searching</a>
+        </section>
+
+        <section class="features" id="features">
+            <h2 class="section-title">Capabilities</h2>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <h3>People Search</h3>
+                    <p>Search public records, social profiles, addresses</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Phone Lookup</h3>
+                    <p>Reverse phone, carrier info, caller ID</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Email Trace</h3>
+                    <p>Email verification, breach checks, domain info</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Domain Intel</h3>
+                    <p>DNS records, subdomains, tech stack, WHOIS</p>
+                </article>
+                <article class="feature-card">
+                    <h3>IP Geolocation</h3>
+                    <p>Location, ISP, ASN, threat intelligence</p>
+                </article>
+                <article class="feature-card">
+                    <h3>Social Media Sweep</h3>
+                    <p>Username search across 88+ platforms</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="pricing" id="pricing">
+            <h2 class="section-title">Plans</h2>
+            <div class="pricing-grid">
+                <article class="pricing-card">
+                    <h3>Free</h3>
+                    <div class="price">$0<span>/mo</span></div>
+                    <ul>
+                        <li>3 searches/day</li>
+                        <li>Basic results</li>
+                        <li>No export</li>
+                    </ul>
+                    <button class="pricing-btn" disabled>Current Plan</button>
+                </article>
+                <article class="pricing-card popular">
+                    <span class="badge">MOST POPULAR</span>
+                    <h3>Pro</h3>
+                    <div class="price">$9.99<span>/mo</span></div>
+                    <ul>
+                        <li>Unlimited searches</li>
+                        <li>Full results</li>
+                        <li>PDF export</li>
+                    </ul>
+                    <a href="app.html#upgrade" class="pricing-btn">Upgrade</a>
+                </article>
+                <article class="pricing-card">
+                    <h3>Elite</h3>
+                    <div class="price">$29.99<span>/mo</span></div>
+                    <ul>
+                        <li>Everything in Pro</li>
+                        <li>Deep search</li>
+                        <li>Breach data</li>
+                        <li>All export formats</li>
+                        <li>API access</li>
+                    </ul>
+                    <a href="app.html#upgrade" class="pricing-btn">Upgrade</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="legal">
+            <p>All data sourced from publicly available databases. FU PERSON OSINT Finder does not access private, protected, or classified information. Users must comply with all applicable laws.</p>
+        </section>
+
+        <section class="testimonials">
+            <h2 class="section-title">Terminal Outputs</h2>
+            <div class="terminal-mock">
+                <div class="terminal-bar"><span>fu-person-osint — user@fllc.net</span></div>
+                <pre class="terminal-output">
+<span class="term-prompt">root@fllc:~$</span> osint search person "John Doe"
+[+] Querying public records...
+[+] Cross-referencing 88+ social platforms...
+[+] Results: 12 matches found (PUBLIC DATABASE RESULT)
+<span class="term-prompt">root@fllc:~$</span> osint search phone "+1-555-123-4567"
+[+] Carrier: AT&T Wireless
+[+] Location: US (California)
+[+] Type: Mobile (PUBLIC DATABASE RESULT)
+                </pre>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>FLLC 2026 | preston@fllc.net | All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <script src="js/matrix.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

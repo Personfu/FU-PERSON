@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # FU PERSON v2.0
 
@@ -27,82 +27,136 @@
 > Five devices. One objective. Everything automated where it can be. Everything manual where it must be.
 
 ```
-Property of FLLC | Source-Available | Authorized Use Only
+┌──────────────────────────────────────────────────────────────────────────┐
+│  Property of FLLC  |  Source-Available  |  Authorized Use Only           │
+│  OSINT Finder: https://fllc.net/osint  |  Subscriptions Available       │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Why This Exists
+---
+
+## `[root@fuperson]─[~/why]`
 
 Standard pentest toolkits need Kali, need Python, need admin access, need time. This doesn't. **One USB stick. One PowerShell script. Sixty seconds.** No installations. No dependencies. No traces. Works on any Windows PC manufactured in the last 15 years.
 
-**The methodology:** Separate what must be automated (USB extraction) from what must be manual (Flipper Zero, field ops). Build every tool in the language the target already has (PowerShell). Make the operator's job as close to "plug in and leave" as physically possible.
+```
+[*] Methodology: Separate automated (USB extraction) from manual (Flipper, field ops)
+[*] Language:    PowerShell — already on every Windows target since 2009
+[*] Objective:   Plug in. Walk away. Retrieve later.
+[+] Status:      OPERATIONAL
+```
 
 ---
 
-## The Arsenal
+## `[root@fuperson]─[~/arsenal]`
 
-| Device | Role | Automation |
-|--------|------|------------|
-| **USB Tri-Drive (SD + MicroSD)** | Data extraction + OSINT + network recon | **Fully automated** — insert and walk away |
-| **Flipper Zero** | RF/NFC/IR/BadUSB field operations | **Manual** — you operate it |
-| **ESP32 DevKit V1.1** | WiFi wardriving + BLE scanning | **Standalone** — plugs into tri-drive or runs solo |
-| **Galaxy S20+** | Headless pentest platform (screen broken, ADB only) | **ADB controlled** — no screen needed |
-| **Nintendo DSi** | Homebrew + WiFi recon | **Manual** — standalone handheld |
+| Device | Role | Automation | Status |
+|--------|------|------------|--------|
+| **USB Drive** | Data extraction + OSINT + network recon | **Fully automated** — insert and walk away | `[ACTIVE]` |
+| **Flipper Zero** | RF/NFC/IR/BadUSB field operations | **Manual** — you operate it | `[ACTIVE]` |
+| **ESP32** | WiFi pineapple + scanning | **Standalone** — plugs into tri-drive or runs solo | `[ACTIVE]` |
+| **Android (S20+)** | Pentest platform, output to USB drive | **ADB controlled** — headless, no screen | `[ACTIVE]` |
+| **Nintendo DSi** | Jailbreak + WiFi recon + CyberWorld cover | **Manual** — blend in, play Pokemon, scan WiFi | `[ACTIVE]` |
+
+```
+root@fuperson:~# ./device_sync.ps1 --detect-all
+[+] USB Tri-Drive .............. CONNECTED (H:, I:)
+[+] Flipper Zero ............... CONNECTED (COM4)
+[+] ESP32 DevKit ............... CONNECTED (COM7)
+[+] Galaxy S20+ ................ CONNECTED (ADB: authorized)
+[+] Nintendo DSi ............... STANDALONE (SD card ready)
+[*] All 5 devices operational. Ready for deployment.
+```
 
 ---
 
-## 1. USB TRI-DRIVE (The Main Weapon)
+## `[root@fuperson]─[~/automation-matrix]`
+
+```
+╔══════════════════════════════════════════════════════════════════════╗
+║                    AUTOMATION CAPABILITY MATRIX                      ║
+╠══════════════════╦════════════╦═══════════════╦══════════════════════╣
+║ Capability       ║ USB Drive  ║ Flipper Zero  ║ ESP32 / S20+ / DSi  ║
+╠══════════════════╬════════════╬═══════════════╬══════════════════════╣
+║ Data Extraction  ║  AUTO      ║  BADUSB       ║  ---                 ║
+║ WiFi Passwords   ║  AUTO      ║  BADUSB       ║  SCAN                ║
+║ Network Recon    ║  AUTO      ║  ---          ║  S20+: AUTO          ║
+║ OSINT Lookup     ║  INTERACT  ║  ---          ║  ---                 ║
+║ RF Operations    ║  ---       ║  MANUAL       ║  ---                 ║
+║ NFC/RFID Clone   ║  ---       ║  MANUAL       ║  ---                 ║
+║ WiFi Pineapple   ║  ---       ║  GPIO         ║  ESP32: AUTO         ║
+║ BLE Scanning     ║  ---       ║  GPIO         ║  ESP32: AUTO         ║
+║ Deauth Detection ║  ---       ║  ---          ║  ESP32: AUTO         ║
+║ Loot Aggregation ║  AUTO      ║  SYNC         ║  SYNC                ║
+║ CyberWorld Cover ║  ---       ║  ---          ║  DSi: ACTIVE         ║
+║ Stealth Mode     ║  AUTO      ║  ---          ║  ---                 ║
+╚══════════════════╩════════════╩═══════════════╩══════════════════════╝
+```
+
+---
+
+## `01` USB DRIVE — The Main Weapon
 
 **Everything is PowerShell. Zero dependencies. Works on any Windows PC since 2009.**
 
-### What It Does
+### `[root@fuperson]─[~/usb/extraction-phases]`
 
-Insert the USB tri-drive. One script silently extracts everything from the target PC and dumps it to the MicroSD card.
-
-| Phase | What Gets Extracted |
-|-------|---------------------|
-| 1 | System info, users, admins, processes, services, AV status, USB history |
-| 2 | IP config, ARP, connections, routes, DNS cache, shares, firewall, domain info |
-| 3 | **Every saved WiFi password** (SSID + plaintext key) |
-| 4 | Browser data from **7 browsers** (logins, cookies, history, bookmarks) + DPAPI keys |
-| 5 | Credential Manager, RDP sessions, PuTTY, SSH keys, AWS/Azure/GCP tokens, Git creds |
-| 6 | Discord, Telegram, Slack, Teams, Signal, VPN configs, Thunderbird, FileZilla, WinSCP |
-| 7 | Password grep, .env files, recent docs, KeePass DBs, certificates, Sticky Notes |
-| 8 | 11 crypto wallets (Exodus, MetaMask, Phantom, Bitcoin Core...) + seed phrase search |
-| 9 | Priv esc recon (unquoted paths, writable dirs, autologon, DLL hijack opportunities) |
-| 10 | Full screenshot + clipboard text |
-| 11 | Trace cleanup (PS history, Run dialog MRU, prefetch) |
-
-**Time: ~60 seconds. Output: `MicroSD:\loot\HOSTNAME_TIMESTAMP\`**
-
-### How To Deploy (5 minutes, one time)
-
-**Step 1** — Run `usb_payload\DEPLOY.bat` on YOUR PC. This copies:
-- **SD card** gets `setup.bat` (social engineering trigger) + hidden `.p\` folder with all tools
-- **MicroSD** gets `.loot_target` marker + `loot\` directory
-
-**Step 2** — Insert the USB tri-drive into the target PC.
-
-**Trigger options:**
-- **Flipper Zero BadUSB** — Types the launch command in 2 seconds. Zero-click. (copy `usb_payload\flipper_badusb\usb_harvest.txt` to Flipper)
-- **Social engineering** — Target sees `setup.bat` labeled as "USB 3.0 Driver Setup" and clicks it
-- **Manual** — Open PowerShell, run: `powershell -NoP -W Hidden -Exec Bypass -File "H:\.p\harvest.ps1"`
-
-**Step 3** — Walk away. Retrieve MicroSD later. All data is in `loot\`.
-
-### Interactive Tools (also on the SD card)
-
-The SD card also contains tools you can run interactively from the target PC:
+Insert the USB drive. One script silently extracts everything and dumps to loot directory.
 
 ```
-.p\launcher.ps1  — Master menu (launches everything below)
-.p\osint.ps1     — People/phone/email/domain/IP lookup
-.p\recon.ps1     — Port scanning, host discovery, WiFi analysis, shares
-.p\harvest.ps1   — Silent data extraction (auto or manual)
+root@fuperson:~# ./harvest.ps1 --silent --auto
+[Phase 01/13] ██████████ System info, users, admins, processes, services, AV, USB history
+[Phase 02/13] ██████████ IP config, ARP, connections, routes, DNS cache, shares, firewall
+[Phase 03/13] ██████████ Every saved WiFi password (SSID + plaintext key)
+[Phase 04/13] ██████████ Browser data — 7 browsers (logins, cookies, history, bookmarks, DPAPI)
+[Phase 05/13] ██████████ Credential Manager, RDP, PuTTY, SSH keys, AWS/Azure/GCP, Git creds
+[Phase 06/13] ██████████ Discord, Telegram, Slack, Teams, Signal, VPN, Thunderbird, FileZilla
+[Phase 07/13] ██████████ Password grep, .env files, KeePass DBs, certs, Sticky Notes
+[Phase 08/13] ██████████ 11 crypto wallets + seed phrase search
+[Phase 09/13] ██████████ Priv esc recon (unquoted paths, writable dirs, DLL hijack)
+[Phase 10/13] ██████████ Full screenshot + clipboard text
+[Phase 11/13] ██████████ Browser session tokens (Chrome, Edge, Firefox active sessions)
+[Phase 12/13] ██████████ Clipboard history + PowerShell transcript logs
+[Phase 13/13] ██████████ Trace cleanup (PS history, Run dialog MRU, prefetch, logs)
+[+] EXTRACTION COMPLETE — 13/13 phases — loot saved to MicroSD:\loot\HOSTNAME_TIMESTAMP\
+[+] Elapsed: 58 seconds
 ```
 
-Run the launcher: `powershell -Exec Bypass -File "H:\.p\launcher.ps1"`
+### `[root@fuperson]─[~/usb/deployment]`
 
-### OSINT Capabilities (PowerShell, no installs needed)
+```bash
+# Step 1: Deploy (one time, on YOUR PC)
+root@fuperson:~# usb_payload/DEPLOY.bat
+[+] SD card (H:) ............... setup.bat + .p/ payload folder deployed
+[+] MicroSD (I:) ............... .loot_target marker + loot/ directory created
+[+] Flipper BadUSB ............. usb_harvest.txt ready for copy
+
+# Step 2: Trigger (on target)
+# Option A: Flipper Zero BadUSB — types launch command in 2 seconds. Zero-click.
+# Option B: Social engineering — target sees "USB 3.0 Driver Setup" and runs it
+# Option C: Manual — powershell -NoP -W Hidden -Exec Bypass -File "H:\.p\harvest.ps1"
+
+# Step 3: Retrieve MicroSD. All data in loot\ folder.
+```
+
+### `[root@fuperson]─[~/usb/interactive-tools]`
+
+```
+root@fuperson:~# powershell -Exec Bypass -File "H:\.p\launcher.ps1"
+
+╔══════════════════════════════════════════════════════════════╗
+║  [1] SILENT HARVEST      Extract all data (auto, hidden)    ║
+║  [2] NETWORK RECON       Ports, hosts, WiFi, shares         ║
+║  [3] OSINT TOOLKIT       People, phone, email, domain, IP   ║
+║  [4] FULL AUTO           Harvest + recon (background)        ║
+║  [5] DEVICE SYNC         Sync loot from all connected devs  ║
+║  [6] DEPLOY ALL          Push payloads to all devices        ║
+║  [7] STEALTH MODE        Ultra-quiet, clear all traces       ║
+║  [0] EXIT                                                    ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+### `[root@fuperson]─[~/usb/osint-capabilities]`
 
 | Feature | Details |
 |---------|---------|
@@ -113,270 +167,420 @@ Run the launcher: `powershell -Exec Bypass -File "H:\.p\launcher.ps1"`
 | **IP lookup** | GeoIP + reverse DNS + Shodan/Censys/AbuseIPDB links |
 | **Public records** | Court records, SEC filings, FEC donations, patents, corporate filings |
 | **Breach data** | HaveIBeenPwned, DeHashed, IntelX, LeakCheck links |
+| **Social media** | Username enumeration across 88+ platforms |
 
-### Network Recon Capabilities (PowerShell, no installs needed)
+### `[root@fuperson]─[~/usb/network-recon]`
 
 | Feature | Details |
 |---------|---------|
 | **Port scanner** | Async, 100+ threads, top 100 ports, service fingerprinting |
 | **Host discovery** | ARP + ICMP sweep, auto-detect subnet, MAC + hostname resolution |
 | **WiFi analysis** | All saved passwords + nearby networks + current connection details |
-| **Share enumeration** | SMB shares, common admin shares (C$, ADMIN$), mapped drives |
-| **Full auto recon** | Runs everything above, saves to MicroSD |
+| **Share enum** | SMB shares, common admin shares (C$, ADMIN$), mapped drives |
+| **Bluetooth** | BT device discovery, paired device history, service enumeration |
+| **USB history** | Previously connected USB devices, serial numbers, timestamps |
+| **Full auto recon** | Runs everything above, saves to loot directory |
 
 ---
 
-## 2. FLIPPER ZERO (Standalone Field Tool)
+## `02` FLIPPER ZERO — Standalone Field Tool
 
 The Flipper is your hands-on operations device. **You control it. It does not auto-launch.**
 
-### BadUSB Arsenal (35+ payloads ready to go)
+### `[root@fuperson]─[~/flipper/badusb-arsenal]`
 
-Copy the `flipper/badusb/` folder to your Flipper Zero SD card.
+```
+root@fuperson:~# ls flipper/badusb/ | wc -l
+35+ payloads ready to deploy
+```
 
-| Payload | What It Does |
-|---------|-------------|
-| `wifi_passwords.txt` | Dumps all saved WiFi passwords |
-| `rapid_exfil.txt` | Fast system info exfiltration |
-| `credential_dump.txt` | Windows Credential Manager dump |
-| `browser_harvest.txt` | Browser data extraction |
-| `sam_dump.txt` | SAM/SYSTEM registry hive copy |
-| `reverse_shell.txt` | PowerShell reverse shell |
-| `net_diag.txt` | Base64 encoded reverse shell (AV bypass) |
-| `disable_defender.txt` | Disable Windows Defender |
-| `rdp_enable.txt` | Enable Remote Desktop |
-| `persistence_install.txt` | Install persistent backdoor |
-| `ad_enum.txt` | Active Directory enumeration |
-| `cloud_creds.txt` | Cloud credential harvesting |
-| `crypto_wallet.txt` | Crypto wallet extraction |
-| `uac_bypass.txt` | UAC bypass |
-| `lsass_dump.txt` | LSASS memory dump |
-| ...and 20+ more | See `flipper/badusb/` |
+| Payload | What It Does | Stealth |
+|---------|-------------|---------|
+| `phantom_usb.txt` | Zero-touch auto-deploy master chain | `███████` |
+| `rapid_exfil.txt` | Fast system info exfiltration | `██████░` |
+| `credential_dump.txt` | Windows Credential Manager dump | `█████░░` |
+| `browser_harvest.txt` | Browser data extraction (all 7) | `██████░` |
+| `sam_dump.txt` | SAM/SYSTEM registry hive copy | `████░░░` |
+| `reverse_shell.txt` | PowerShell reverse shell | `█████░░` |
+| `net_diag.txt` | Base64 encoded reverse shell (AV bypass) | `███████` |
+| `disable_defender.txt` | Disable Windows Defender | `███░░░░` |
+| `rdp_enable.txt` | Enable Remote Desktop | `████░░░` |
+| `persistence_install.txt` | Install persistent backdoor | `██████░` |
+| `ad_enum.txt` | Active Directory enumeration | `█████░░` |
+| `cloud_creds.txt` | Cloud credential harvesting | `██████░` |
+| `crypto_wallet.txt` | Crypto wallet extraction | `██████░` |
+| `uac_bypass.txt` | 3-method UAC bypass | `████░░░` |
+| `lsass_dump.txt` | LSASS memory dump | `███░░░░` |
+| `cyberworld_deploy.txt` | Deploy CyberWorld to DSi SD card | `███████` |
+| ...and 20+ more | See `flipper/badusb/` | |
 
-### Other Flipper Modules
+### `[root@fuperson]─[~/flipper/modules]`
 
 | Module | Location | Content |
 |--------|----------|---------|
-| **Sub-GHz** | `flipper/subghz/` | Frequency database, garage codes, IoT devices, protocol reference |
-| **NFC** | `flipper/nfc/` | Mifare keys, NDEF payloads, card formats, EMV reference, attack playbook |
-| **Infrared** | `flipper/infrared/` | Universal remotes: TV, AC, soundbar, projector, fan, LED, STB |
-| **RFID** | `flipper/rfid/` | Format database for all common RFID systems |
-| **iButton** | `flipper/ibutton/` | Type database |
-| **GPIO** | `flipper/gpio/` | ESP32 Marauder commands, BLE attacks, advanced recon |
+| **Sub-GHz** | `flipper/subghz/` | Frequency DB, garage codes, IoT devices, protocol reference, vehicle keyfobs |
+| **NFC** | `flipper/nfc/` | 150+ MIFARE keys, NDEF payloads, card formats, EMV reference, attack playbook |
+| **Infrared** | `flipper/infrared/` | 290+ signals: TV, AC, soundbar, projector, fan, LED, STB universals |
+| **RFID** | `flipper/rfid/` | 19 protocol format database with attack playbooks |
+| **iButton** | `flipper/ibutton/` | 25+ model type database with cloning guide |
+| **GPIO** | `flipper/gpio/` | ESP32 Marauder commands, BLE attacks, advanced recon, auto-recon sequences |
 
 Full tactical guide: `flipper/FLIPPER_PLAYBOOK.md`
 
 ---
 
-## 3. ESP32 DevKit V1.1 (WiFi/BLE Wardriver)
+## `03` ESP32 — WiFi Pineapple + Scanner
 
-DIYMalls ESP32 DevKit V1.1 firmware for WiFi and BLE reconnaissance.
+DIYMalls ESP32 DevKit V1.1 running custom firmware. WiFi pineapple mode + wardriving + BLE recon.
 
-| Feature | Details |
-|---------|---------|
-| WiFi scanning | Channel hopping, SSID/BSSID/signal/encryption logging |
-| Deauth detection | Detect deauthentication attacks in progress |
-| Probe capture | Log device probe requests (reveals hidden SSIDs devices look for) |
-| BLE scanning | Discover Bluetooth LE devices in range |
-| Evil Twin | Clone an AP for credential harvesting |
-| Beacon spam | Flood area with fake SSIDs |
-| PMKID capture | WPA handshake-free password attack material |
-| SD card logging | All data logged to MicroSD in PCAP/JSON format |
-
-**Firmware:** `firmware/esp32/FLLC_wardriver/`
-**Flash tool:** `firmware/esp32/flash_esp32.py`
-**Pin config:** `firmware/esp32/FLLC_wardriver/config.h` (set for DIYMalls V1.1)
-
----
-
-## 4. GALAXY S20+ (Headless, No Screen)
-
-**The screen is broken. Everything is ADB over USB.**
-
-### Setup
-
-```bash
-# Connect via USB, enable ADB (must be pre-enabled)
-adb devices
-
-# Install Termux
-adb install termux.apk
-
-# Push setup script
-adb push mobile/s20_headless/setup_termux.sh /sdcard/
-adb push mobile/s20_headless/magisk_setup.sh /sdcard/
-
-# Run setup inside Termux
-adb shell am start -n com.termux/.HomeActivity
-adb shell input text 'bash /sdcard/setup_termux.sh'
-adb shell input keyevent 66
+```
+root@fuperson:~# ./flash_esp32.py --port COM7 --firmware FLLC_wardriver
+[*] Flashing FLLC Wardriver firmware...
+[+] WiFi scanning .............. ENABLED
+[+] Deauth detection ........... ENABLED
+[+] Probe capture .............. ENABLED
+[+] BLE scanning ............... ENABLED
+[+] Evil Twin (Pineapple) ...... ENABLED
+[+] Captive Portal ............. ENABLED
+[+] Beacon Spam ................ ENABLED
+[+] PMKID Capture .............. ENABLED
+[+] SD card logging ............ ENABLED (PCAP/JSON)
+[+] Firmware flashed successfully. Device ready.
 ```
 
-### Capabilities (once set up)
+| Mode | Description |
+|------|-------------|
+| **Wardriver** | Passive WiFi/BLE scanning with GPS-less timestamped logging |
+| **Pineapple** | Evil Twin AP + captive portal for credential harvesting |
+| **Deauth Monitor** | Detect active deauth attacks on surrounding networks |
+| **Probe Hunter** | Log probe requests revealing hidden SSIDs devices search for |
+| **Beacon Flood** | Spam area with fake SSIDs for confusion/cover |
+| **PMKID Grabber** | WPA handshake-free password attack material capture |
 
-| Feature | Script |
-|---------|--------|
-| Termux full setup | `mobile/s20_headless/setup_termux.sh` |
-| Magisk root setup | `mobile/s20_headless/magisk_setup.sh` |
-| WiFi attacks (Kali) | `mobile/s20_headless/wifi_attacks.sh` |
-| Headless recon | `mobile/s20_headless/headless_recon.sh` |
-| ADB remote control | `mobile/s20_headless/adb_control.py` |
-| Screen mirror setup | `mobile/s20_headless/scrcpy_setup.bat` |
-
----
-
-## 5. NINTENDO DSi (Homebrew)
-
-Full jailbreak and homebrew setup guide: `mobile/dsi/DSI_FULL_SETUP.md`
-
-Toolkit helper: `mobile/dsi/dsi_toolkit.py`
+**Firmware:** `firmware/esp32/FLLC_wardriver/` | **Config:** `config.h` + `pineapple.h`
 
 ---
 
-## Extended Modules
+## `04` ANDROID — Galaxy S20+ Headless Platform
 
-These are additional PowerShell scripts in `payloads/windows/` for advanced operations. They require more time and elevated privileges — not for quick USB drops, but for deeper engagements.
+**The screen is broken. Everything is ADB over USB. It becomes a weapon.**
 
-| Script | Purpose |
-|--------|---------|
-| `auto_pwn.ps1` | 15-phase master orchestrator (uses everything below) |
-| `evasion.ps1` | AMSI/ETW/Defender bypass framework |
-| `ai_evasion.ps1` | AI/ML EDR evasion (behavioral randomization, telemetry blinding) |
-| `privesc.ps1` | Windows privilege escalation scanner |
-| `persistence_engine.ps1` | 12-method persistence (WMI, COM hijack, DLL sideload, named pipes) |
-| `cloud_harvester.ps1` | M365/Google/Azure/AWS token harvesting |
-| `comms_harvester.ps1` | Teams/Slack/Discord/Signal data extraction |
-| `crypto_hunter.ps1` | Wallet + seed phrase hunting |
-| `compliance_scanner.ps1` | NIST/CIS/PCI/SOC2 audit scanner |
-| `sqli_scanner.ps1` | SQL injection automation for local web services |
-| `npp_exploit.ps1` | Notepad++ DLL hijack + config injection |
-| `input_monitor.py` | Keystroke/screenshot logger (requires Python on target) |
-| `linux_collector.sh` | Linux data collection (12-phase, cloud/container aware) |
+```bash
+root@fuperson:~# adb devices
+List of devices attached
+R5CR1234567     device
+
+root@fuperson:~# ./setup_termux.sh
+[+] Installing Termux packages .......... nmap, sqlmap, aircrack-ng, hashcat, tor
+[+] Installing Kali tools ............... nethunter, bettercap, wifite, responder
+[+] Configuring Magisk root ............. SU access granted
+[+] Setting up USB output ............... loot dumps to /sdcard/loot/
+[+] Headless recon scripts .............. deployed
+[*] Galaxy S20+ pentest platform ready.
+```
+
+| Feature | Script | Output |
+|---------|--------|--------|
+| Termux full setup | `setup_termux.sh` | Installs 40+ pentest tools |
+| Magisk root | `magisk_setup.sh` | Full root access |
+| WiFi attacks | `wifi_attacks.sh` | Deauth, evil twin, handshake capture |
+| Headless recon | `headless_recon.sh` | Full network scan, output to USB |
+| USB loot dump | `usb_output.sh` | Auto-detect USB, dump all loot |
+| ADB remote control | `adb_control.py` | Full device automation from PC |
+| Screen mirror | `scrcpy_setup.bat` | Mirror screen to PC via USB |
 
 ---
 
-## Laptop Tools (Python, for YOUR machine)
+## `05` NINTENDO DSi — CyberWorld Cover
 
-These run on your own computer. They need Python installed.
+**Blend in. Play Pokemon. Scan WiFi. Take notes. Nobody suspects a DSi.**
+
+### `[root@fuperson]─[~/dsi/cyberworld]`
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║              ░█▀▀░█░█░█▀▄░█▀▀░█▀▄░█░█░█▀█░█▀▄░█░░░█▀▄     ║
+║              ░█░░░░█░░█▀▄░█▀▀░██▀░█▄█░█░█░██▀░█░░░█░█     ║
+║              ░▀▀▀░░▀░░▀▀░░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀▀░     ║
+║                                                              ║
+║  Pokemon-style RPG where you catch EXPLOITS, not creatures.  ║
+║  Battle system based on real attack categories.              ║
+║  WiFi recon runs silently in the background.                 ║
+║  Perfect cover story — you're just playing a game.           ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+**CyberWorld** is a Pokemon-themed hacking game concept for the DSi. While you appear to be playing a Game Boy-style RPG, the DSi silently runs WiFi reconnaissance via homebrew tools in the background.
+
+| Element | CyberWorld Equivalent |
+|---------|----------------------|
+| Pokemon | **Daemons** — digital entities based on real exploits/tools |
+| Types | Network, Web, Binary, Social, Crypto, Wireless, Physical, Zero-Day |
+| Gym Leaders | Sysadmins defending their network segments |
+| Elite Four | SOC Analysts |
+| Champion | The CISO |
+| Regions | LAN Valley, WAN Wasteland, Darknet Depths, Cloud Citadel |
+| Items | Wireshark Lens, Burp Proxy Shield, Hashcat Hammer, Nmap Scanner |
+| Starter Daemons | `Ping` (Network), `XSSling` (Web), `Stacksmash` (Binary) |
+
+Full game design: `mobile/dsi/cyberworld/CYBERWORLD.md`
+Daemon bestiary (50+ creatures): `mobile/dsi/cyberworld/DAEMONS.md`
+ROM patch guide: `mobile/dsi/cyberworld/rom_patches.md`
+
+### `[root@fuperson]─[~/dsi/capabilities]`
+
+| Capability | Details |
+|------------|---------|
+| 200+ classic games | Pokemon collection (35+), NDS, GBA, GB, NES, SNES |
+| CyberWorld cover | Play "Pokemon" while scanning WiFi |
+| WiFi recon | Covert SSID/BSSID scanning via homebrew |
+| Data transfer | DSi FTP to dump scan data |
+| Blend-in factor | **Maximum** — nobody suspects a kid's handheld |
+
+Full setup: `mobile/dsi/DSI_FULL_SETUP.md` | Toolkit: `mobile/dsi/dsi_toolkit.py`
+
+---
+
+## `[root@fuperson]─[~/fllc-osint-finder]`
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  FU PERSON OSINT FINDER — https://fllc.net/osint            ║
+║  Find Anyone. Know Everything. Legally.                      ║
+║                                                              ║
+║  All data sourced from publicly available databases.         ║
+║  Subscription required for full access.                      ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+| Feature | Free Tier | Pro ($9.99/mo) | Elite ($29.99/mo) |
+|---------|-----------|----------------|-------------------|
+| People Search | 3/day | Unlimited | Unlimited + deep |
+| Phone Lookup | 1/day | Unlimited | Unlimited + carrier |
+| Email Trace | 1/day | Unlimited | Unlimited + breach |
+| Domain Intel | --- | Unlimited | Unlimited + history |
+| IP Geolocation | --- | Unlimited | Unlimited + ISP |
+| Social Media Sweep | --- | --- | 88+ platforms |
+| Export (PDF/JSON/CSV) | --- | PDF only | All formats |
+
+**Web frontend:** `web/index.html` | **OSINT dashboard:** `web/app.html`
+
+---
+
+## `[root@fuperson]─[~/extended-modules]`
+
+Advanced PowerShell scripts for deeper engagements. Require more time and elevated privileges.
+
+```
+root@fuperson:~# ls payloads/windows/
+[*] Loading attack modules...
+```
+
+| Script | Purpose | Technique |
+|--------|---------|-----------|
+| `auto_pwn.ps1` | 15-phase master orchestrator | Uses all modules below |
+| `evasion.ps1` | AMSI/ETW/Defender bypass framework | Patch + unhook + blind |
+| `ai_evasion.ps1` | AI/ML EDR evasion | Behavioral randomization |
+| `privesc.ps1` | Windows privilege escalation scanner | 20+ vectors |
+| `persistence_engine.ps1` | 12-method persistence | WMI, COM, DLL sideload |
+| `cloud_harvester.ps1` | M365/Google/Azure/AWS tokens | Token + session theft |
+| `comms_harvester.ps1` | Teams/Slack/Discord/Signal | Message + file extraction |
+| `crypto_hunter.ps1` | Wallet + seed phrase hunting | 11 wallets + regex |
+| `compliance_scanner.ps1` | NIST/CIS/PCI/SOC2 audit | Gap analysis + report |
+| `sqli_scanner.ps1` | SQL injection automation | Local web services |
+| `npp_exploit.ps1` | Notepad++ DLL hijack | Config injection |
+| `input_monitor.py` | Keystroke/screenshot logger | Requires Python |
+| `linux_collector.sh` | Linux data collection (12-phase) | Cloud/container aware |
+
+---
+
+## `[root@fuperson]─[~/laptop-tools]`
+
+Python tools for YOUR machine. Require Python installed.
+
+```bash
+root@fuperson:~# pip install -r requirements.txt
+root@fuperson:~# python core/people_finder.py --target "John Doe"
+[*] Searching 88+ platforms...
+[+] Found 47 matches across 12 platforms
+[+] Report saved: people_finder_reports/john_doe_20260216.json
+```
 
 | Tool | What It Does |
 |------|-------------|
 | `core/pentest_suite.py` | Automated penetration testing |
-| `core/osint_recon_suite.py` | OSINT reconnaissance |
+| `core/osint_recon_suite.py` | OSINT reconnaissance engine |
 | `core/galaxy_recon_suite.py` | Deep intelligence platform |
 | `core/people_finder.py` | 88+ platform people search |
-| `core/repo_collector.py` | GitHub repository data aggregation |
+| `core/repo_collector.py` | GitHub repository aggregation |
 | `core/list_consolidator.py` | Wordlist consolidation engine |
 | `core/data/` | Pre-consolidated master wordlists |
 
-Setup: `pip install -r requirements.txt`
-
 ---
 
-## Repository Structure
+## `[root@fuperson]─[~/repo-structure]`
 
 ```
 FU-PERSON/
-|
-|-- usb_payload/                    ** READY-TO-DEPLOY USB FILES **
-|   |-- DEPLOY.bat                  One-click deployment to SD + MicroSD
-|   |-- sd_card/                    -> Copy to SD card (H:)
-|   |   |-- setup.bat              Social engineering trigger
-|   |   |-- README.txt             Bait file
-|   |   '-- .p/                    Hidden payload folder
-|   |       |-- harvest.ps1        Silent 11-phase data extraction
-|   |       |-- osint.ps1          People/phone/email/domain/IP lookup
-|   |       |-- recon.ps1          Port scan, host discovery, WiFi, shares
-|   |       '-- launcher.ps1       Master menu for all tools
-|   |-- microsd/                   -> Copy to MicroSD (I:)
-|   |   '-- .loot_target           Drive identification marker
-|   '-- flipper_badusb/            -> Copy to Flipper Zero
-|       '-- usb_harvest.txt        Zero-click auto-launch
-|
-|-- flipper/                        Flipper Zero standalone arsenal
-|   |-- badusb/                    35+ BadUSB payloads
-|   |-- subghz/                    Sub-GHz frequency data
-|   |-- nfc/                       NFC attack resources
-|   |-- infrared/                  Universal IR remotes
-|   |-- rfid/                      RFID format database
-|   |-- ibutton/                   iButton types
-|   |-- gpio/                      ESP32 GPIO integration
-|   '-- FLIPPER_PLAYBOOK.md        Full tactical guide
-|
-|-- firmware/esp32/                 ESP32 wardriver firmware
-|   |-- FLLC_wardriver/            Arduino project
-|   |-- platformio.ini             Build config
-|   '-- flash_esp32.py             Flash utility
-|
-|-- mobile/
-|   |-- s20_headless/              Galaxy S20+ (no screen, ADB only)
-|   '-- dsi/                       Nintendo DSi homebrew
-|
-|-- payloads/                       Extended attack modules
-|   |-- windows/                   15 PowerShell attack scripts
-|   '-- linux/                     Linux collector
-|
-|-- core/                           Python tools (for your laptop)
-|   |-- people_finder.py           88+ platform OSINT
-|   |-- pentest_suite.py           Pentest automation
-|   |-- osint_recon_suite.py       OSINT engine
-|   '-- data/                      Consolidated wordlists
-|
-|-- docs/                           Documentation
-|-- deploy/                         Legacy deployment scripts
-|-- recorder/                       Voice-activated recorder
-|
-|-- LICENSE                         Source-Available License
-|-- SECURITY.md                     Vulnerability disclosure
-'-- CONTRIBUTING.md                 Contribution policy
+│
+├── usb_payload/                    ██ READY-TO-DEPLOY USB FILES
+│   ├── DEPLOY.bat                  One-click deployment to SD + MicroSD
+│   ├── sd_card/                    → Copy to SD card (H:)
+│   │   ├── setup.bat              Social engineering trigger
+│   │   ├── README.txt             Bait file
+│   │   └── .p/                    Hidden payload folder
+│   │       ├── harvest.ps1        Silent 13-phase data extraction
+│   │       ├── osint.ps1          People/phone/email/domain/IP lookup
+│   │       ├── recon.ps1          Port scan, host discovery, WiFi, shares
+│   │       ├── launcher.ps1       Master menu for all tools
+│   │       ├── device_sync.ps1    Multi-device loot synchronization
+│   │       ├── stealth_mode.ps1   Ultra-quiet trace elimination
+│   │       └── report_generator.ps1  Encrypted loot report builder
+│   ├── microsd/                   → Copy to MicroSD (I:)
+│   │   └── .loot_target           Drive identification marker
+│   └── flipper_badusb/            → Copy to Flipper Zero
+│       └── usb_harvest.txt        Zero-click auto-launch
+│
+├── flipper/                        ██ FLIPPER ZERO ARSENAL
+│   ├── badusb/                    35+ BadUSB payloads
+│   ├── subghz/                    Sub-GHz frequency data
+│   ├── nfc/                       NFC attack resources
+│   ├── infrared/                  Universal IR remotes (290+ signals)
+│   ├── rfid/                      RFID format database
+│   ├── ibutton/                   iButton types
+│   ├── gpio/                      ESP32 GPIO integration
+│   └── FLIPPER_PLAYBOOK.md        Full tactical guide
+│
+├── firmware/esp32/                 ██ ESP32 WARDRIVER + PINEAPPLE
+│   ├── FLLC_wardriver/            Arduino project
+│   │   ├── FLLC_wardriver.ino     Main firmware
+│   │   ├── config.h               Hardware config
+│   │   ├── pineapple.h            Evil Twin + captive portal config
+│   │   └── oui.h                  OUI database
+│   ├── platformio.ini             Build config
+│   └── flash_esp32.py             Flash utility
+│
+├── mobile/
+│   ├── s20_headless/               ██ GALAXY S20+ HEADLESS PENTEST
+│   │   ├── setup_termux.sh        Termux bootstrap
+│   │   ├── magisk_setup.sh        Magisk root setup
+│   │   ├── wifi_attacks.sh        WiFi attack scripts
+│   │   ├── headless_recon.sh      Headless reconnaissance
+│   │   ├── usb_output.sh          Auto USB loot dump
+│   │   ├── adb_control.py         ADB remote control
+│   │   └── scrcpy_setup.bat       Screen mirror setup
+│   └── dsi/                        ██ NINTENDO DSi + CYBERWORLD
+│       ├── DSI_FULL_SETUP.md      Complete jailbreak guide
+│       ├── dsi_toolkit.py         DSi SD card builder
+│       └── cyberworld/            Pokemon-hacker game concept
+│           ├── CYBERWORLD.md      Game design document
+│           ├── DAEMONS.md         Daemon bestiary (50+ creatures)
+│           ├── rom_patches.md     ROM hack guide
+│           ├── autolaunch.ini     TWiLight Menu++ config
+│           └── covert_scan.py     Background WiFi scanner
+│
+├── payloads/                       ██ EXTENDED ATTACK MODULES
+│   ├── windows/                   15 PowerShell attack scripts
+│   └── linux/                     Linux collector
+│
+├── core/                           ██ PYTHON TOOLS (your laptop)
+│   ├── people_finder.py           88+ platform OSINT
+│   ├── pentest_suite.py           Pentest automation
+│   ├── osint_recon_suite.py       OSINT engine
+│   ├── galaxy_recon_suite.py      Deep intelligence
+│   ├── repo_collector.py          GitHub aggregator
+│   ├── list_consolidator.py       Wordlist engine
+│   └── data/                      Master wordlists
+│
+├── web/                            ██ FLLC.NET OSINT FINDER
+│   ├── index.html                 Landing page + subscription
+│   ├── app.html                   OSINT dashboard
+│   ├── css/                       Styles + animations
+│   └── js/                        App logic + matrix effect
+│
+├── docs/                           ██ DOCUMENTATION
+├── deploy/                         ██ DEPLOYMENT SCRIPTS
+├── recorder/                       ██ VOICE-ACTIVATED RECORDER
+│
+├── LICENSE                         Source-Available License
+├── SECURITY.md                     Vulnerability disclosure
+└── CONTRIBUTING.md                 Contribution policy
 ```
 
 ---
 
-## Quick Start
+## `[root@fuperson]─[~/quick-start]`
 
 ### USB Drop (automated extraction)
 
-```
-1. Run usb_payload\DEPLOY.bat          (deploys to SD + MicroSD)
-2. Insert USB tri-drive into target     (or use Flipper BadUSB)
-3. Retrieve MicroSD later               (data in loot\ folder)
+```bash
+root@fuperson:~# usb_payload/DEPLOY.bat          # Deploy to SD + MicroSD
+root@fuperson:~# # Insert USB into target         # Or use Flipper BadUSB
+root@fuperson:~# # Retrieve MicroSD later          # Data in loot/ folder
 ```
 
 ### Interactive OSINT/Recon (from USB)
 
-```
-powershell -Exec Bypass -File "H:\.p\launcher.ps1"
+```bash
+root@fuperson:~# powershell -Exec Bypass -File "H:\.p\launcher.ps1"
 ```
 
 ### Flipper Zero
 
-```
-Copy flipper\ contents to Flipper SD card. Operate manually.
+```bash
+root@fuperson:~# # Copy flipper/ contents to Flipper SD card. Operate manually.
 ```
 
 ### Galaxy S20+ (headless)
 
+```bash
+root@fuperson:~# adb shell am start -n com.termux/.HomeActivity
+root@fuperson:~# adb shell input text 'bash /sdcard/headless_recon.sh'
 ```
-adb connect. Push scripts. Execute via Termux. No screen needed.
+
+### CyberWorld (DSi cover)
+
+```bash
+root@fuperson:~# python mobile/dsi/dsi_toolkit.py --build-cyberworld
+[+] CyberWorld files deployed to DSi SD card
+[+] WiFi scanner configured for background operation
+[+] Cover story: active. You're just playing Pokemon.
+```
+
+### FLLC.net OSINT Finder
+
+```bash
+root@fuperson:~# # Open web/index.html in browser for local preview
+root@fuperson:~# # Production: https://fllc.net/osint
 ```
 
 ---
 
-## Legal
+## `[root@fuperson]─[~/legal]`
 
-**FU PERSON Source-Available License v1.0** — Copyright 2025-2026 FLLC.
-
-Authorized security testing only. Unauthorized computer access is a federal crime (18 U.S.C. 1030). You are solely responsible for legal compliance. Do not use against any system without explicit written authorization.
-
-Contact: preston@fllc.net
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│  FU PERSON Source-Available License v1.0                                 │
+│  Copyright 2025-2026 FLLC. All rights reserved.                         │
+│                                                                          │
+│  Authorized security testing only. Unauthorized computer access is a     │
+│  federal crime (18 U.S.C. 1030). You are solely responsible for legal    │
+│  compliance. Do not use against any system without explicit written       │
+│  authorization.                                                          │
+│                                                                          │
+│  Contact: preston@fllc.net                                               │
+└──────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 <div align="center">
 
-**FLLC** | 2026
-
-*Insert. Extract. Retrieve.*
+```
+╔═══════════════════════════════════════╗
+║          FLLC  |  2026               ║
+║    Insert. Extract. Retrieve.         ║
+╚═══════════════════════════════════════╝
+```
 
 </div>

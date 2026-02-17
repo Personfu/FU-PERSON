@@ -1,16 +1,23 @@
 # AI Threat Landscape 2026
 
-> FLLC Intelligence Brief — FU PERSON v1.777
+```
+╔══════════════════════════════════════════════════════════════╗
+║  FLLC INTELLIGENCE BRIEF — AI THREAT LANDSCAPE 2026          ║
+║  FU PERSON v1.777 | AI-Driven Threats & Countermeasures     ║
+╚══════════════════════════════════════════════════════════════╝
+```
 
----
+## `[root@fuperson]─[~/overview]`
 
-## Overview
+### Overview
 
 This document outlines the AI-driven threats FU PERSON is designed to counter and exploit in 2026.
 
 ---
 
-## AI-Powered Defense Systems (What We Evade)
+## `[root@fuperson]─[~/ai-defense-systems]`
+
+### AI-Powered Defense Systems (What We Evade)
 
 | Platform | AI Engine | Detection Method | FU PERSON Counter |
 |----------|-----------|-----------------|-------------------|
@@ -24,29 +31,33 @@ This document outlines the AI-driven threats FU PERSON is designed to counter an
 
 ---
 
-## AI Attack Techniques (What We Deploy)
+## `[root@fuperson]─[~/ai-attack-techniques]`
 
-### LLM Exploitation
-- **Prompt injection** — Direct, indirect, and token manipulation
-- **Model extraction** — Query-based surrogate model training
-- **Training data extraction** — Membership inference attacks
-- **Agent tool abuse** — Inject malicious tool calls through user data
+### AI Attack Techniques (What We Deploy)
 
-### Adversarial ML
-- **FGSM/PGD** — Gradient-based evasion of image classifiers
-- **Homoglyph substitution** — Bypass text-based NLP detectors
-- **Feature vector manipulation** — Poison ML input features
-- **Timing side channels** — Extract model architecture details
+**LLM Exploitation**
+- **[+] Prompt injection** — Direct, indirect, and token manipulation
+- **[+] Model extraction** — Query-based surrogate model training
+- **[+] Training data extraction** — Membership inference attacks
+- **[+] Agent tool abuse** — Inject malicious tool calls through user data
 
-### Post-Quantum Readiness
-- **AES-256-GCM** minimum for all symmetric operations
-- **SHA-3** alongside SHA-256 for forward compatibility
-- **Kyber/Dilithium** reference stubs for key exchange
-- **NIST PQC** migration path documented
+**Adversarial ML**
+- **[+] FGSM/PGD** — Gradient-based evasion of image classifiers
+- **[+] Homoglyph substitution** — Bypass text-based NLP detectors
+- **[+] Feature vector manipulation** — Poison ML input features
+- **[+] Timing side channels** — Extract model architecture details
+
+**Post-Quantum Readiness**
+- **[+] AES-256-GCM** minimum for all symmetric operations
+- **[+] SHA-3** alongside SHA-256 for forward compatibility
+- **[+] Kyber/Dilithium** reference stubs for key exchange
+- **[+] NIST PQC** migration path documented
 
 ---
 
-## Compliance Controls Tested
+## `[root@fuperson]─[~/compliance-controls]`
+
+### Compliance Controls Tested
 
 Every offensive module maps to a defensive compliance control:
 
@@ -62,4 +73,4 @@ Every offensive module maps to a defensive compliance control:
 
 ---
 
-**FLLC 2026** — FU PERSON by PERSON FU
+**FLLC | AI Threat Intelligence | 2026**

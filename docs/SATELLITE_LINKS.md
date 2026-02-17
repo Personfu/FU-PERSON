@@ -1,26 +1,34 @@
 # FLLC Satellite Repository Links
 
-> All FLLC repositories — FU PERSON ecosystem.
+```
+╔══════════════════════════════════════════════════════════════╗
+║  FLLC SATELLITE NETWORK                                      ║
+║  All repositories in the FU PERSON ecosystem                 ║
+╚══════════════════════════════════════════════════════════════╝
+```
 
----
+## `[root@fuperson]─[~/core-repos]`
 
-## Core Repositories
+```
+root@fuperson:~# cat /etc/fllc/repositories.conf
+```
 
 | Repository | Purpose | Status |
 |------------|---------|--------|
-| [FU-PERSON](https://github.com/Personfu/FU-PERSON) | Master toolkit — USB tri-drive, payloads, firmware, automation | v1.777 |
-| [java-programming](https://github.com/Personfu/java-programming) | Java security toolkit — PortScanner, SubnetScanner, AI red team, compliance | Active |
-| [FlipperPF](https://github.com/Personfu/FlipperPF) | Flipper Zero arsenal — BadUSB, SubGHz, NFC, IR, GPIO, tools | Active |
-| [WebDevelopment](https://github.com/Personfu/WebDevelopment) | Next.js 14 compliance dashboard — FLLC midnight neon theme | Active |
-| [sql-essentials](https://github.com/Personfu/sql-essentials-for-the-real-world-microcourse) | SQL security labs — injection, forensics, hardening, compliance | Active |
-| [elevenlabs-mcp](https://github.com/Personfu/elevenlabs-mcp) | Voice toolkit — audio forensics, deepfake detection, TTS pipeline | Active |
-| [tryhackme](https://github.com/Personfu/tryhackme) | Pentest cheatsheets — OSINT, web exploitation, AI red team, compliance | Active |
+| [FU-PERSON](https://github.com/Personfu/FU-PERSON) | Master toolkit — USB, payloads, firmware, automation, CyberWorld | `[ACTIVE]` v2.0 |
+| [java-programming](https://github.com/Personfu/java-programming) | Java security toolkit — PortScanner, AI red team, compliance | `[ACTIVE]` |
+| [FlipperPF](https://github.com/Personfu/FlipperPF) | Flipper Zero arsenal — BadUSB, SubGHz, NFC, IR, GPIO | `[ACTIVE]` |
+| [WebDevelopment](https://github.com/Personfu/WebDevelopment) | Next.js 14 compliance dashboard — FLLC midnight neon theme | `[ACTIVE]` |
+| [sql-essentials](https://github.com/Personfu/sql-essentials-for-the-real-world-microcourse) | SQL security labs — injection, forensics, hardening | `[ACTIVE]` |
+| [elevenlabs-mcp](https://github.com/Personfu/elevenlabs-mcp) | Voice toolkit — audio forensics, deepfake detection | `[ACTIVE]` |
+| [tryhackme](https://github.com/Personfu/tryhackme) | Pentest cheatsheets — OSINT, web exploitation, AI red team | `[ACTIVE]` |
 
----
+## `[root@fuperson]─[~/external-refs/offensive]`
 
-## External References
+```
+root@fuperson:~# cat /etc/fllc/offensive_sources.conf
+```
 
-### Offensive
 | Resource | URL |
 |----------|-----|
 | Unleashed Firmware | https://github.com/DarkFlippers/unleashed-firmware |
@@ -34,7 +42,8 @@
 | Shannon (AI Hacker) | https://github.com/KeygraphHQ/shannon |
 | Magisk | https://github.com/topjohnwu/Magisk |
 
-### OSINT
+## `[root@fuperson]─[~/external-refs/osint]`
+
 | Resource | URL |
 |----------|-----|
 | Waymore | https://github.com/xnl-h4ck3r/waymore |
@@ -46,7 +55,8 @@
 | PathFinder | https://github.com/Ringmast4r/PathFinder |
 | Socialscan | https://github.com/iojw/socialscan |
 
-### Infrastructure
+## `[root@fuperson]─[~/external-refs/infrastructure]`
+
 | Resource | URL |
 |----------|-----|
 | Nmap | https://github.com/nmap/nmap |
@@ -56,7 +66,8 @@
 | Hydra Launcher | https://github.com/hydralauncher/hydra |
 | Dwarfs | https://github.com/mhx/dwarfs |
 
-### Compliance & Reference
+## `[root@fuperson]─[~/external-refs/compliance]`
+
 | Resource | URL |
 |----------|-----|
 | NIST 800-53 r5 | https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final |
@@ -67,4 +78,7 @@
 
 ---
 
-**FLLC 2026** — FU PERSON by PERSON FU
+```
+FLLC 2026 — FU PERSON by PERSON FU
+```
+---

@@ -1,451 +1,461 @@
 # Security Tools Installation Guide
 
-This guide helps you install the 200+ security tools that can be integrated with the Penetration Testing Suite.
-
-## Quick Install (Kali Linux / Parrot OS)
-
-Most tools are pre-installed. Update with:
-```bash
-sudo apt update && sudo apt upgrade
+```
+╔══════════════════════════════════════════════════════════════╗
+║  FLLC ARMORY — TOOL INSTALLATION GUIDE                       ║
+║  200+ security tools for the FU PERSON ecosystem             ║
+╚══════════════════════════════════════════════════════════════╝
 ```
 
-## Category-by-Category Installation
+## `[root@fuperson]─[~/quick-install]`
+
+```bash
+# Kali Linux / Parrot OS — most tools pre-installed
+root@kali:~# apt update && apt upgrade -y
+[+] Package lists updated
+[+] All packages upgraded to latest versions
+```
+
+## `[root@fuperson]─[~/network-tools]`
 
 ### Network Tools
 
-#### Nmap
 ```bash
+# [+] Install nmap — the gold standard
 # Debian/Ubuntu/Kali
-sudo apt install nmap
+root@fuperson:~# sudo apt install nmap
 
 # macOS
-brew install nmap
+root@fuperson:~# brew install nmap
 
-# Windows
-# Download from https://nmap.org/download.html
+# Windows: Download from https://nmap.org/download.html
 ```
 
-#### Masscan
 ```bash
+# [+] Install masscan — blazing fast scanner
 # Debian/Ubuntu/Kali
-sudo apt install masscan
+root@fuperson:~# sudo apt install masscan
 
 # macOS
-brew install masscan
+root@fuperson:~# brew install masscan
 
 # Compile from source
-git clone https://github.com/robertdavidgraham/masscan
-cd masscan
-make
+root@fuperson:~# git clone https://github.com/robertdavidgraham/masscan
+root@fuperson:~# cd masscan && make
 ```
 
-#### RustScan
 ```bash
+# [*] Install rustscan — Rust-powered port scanner
 # Download from https://github.com/RustScan/RustScan/releases
-# Or install via cargo
-cargo install rustscan
+root@fuperson:~# cargo install rustscan
 ```
 
-#### Zmap
 ```bash
+# [+] Install zmap — internet-wide scanner
 # Debian/Ubuntu/Kali
-sudo apt install zmap
+root@fuperson:~# sudo apt install zmap
 
 # macOS
-brew install zmap
+root@fuperson:~# brew install zmap
 ```
+
+## `[root@fuperson]─[~/web-app-tools]`
 
 ### Web Application Tools
 
-#### Nikto
 ```bash
+# [+] Install nikto — web server scanner
 # Debian/Ubuntu/Kali
-sudo apt install nikto
+root@fuperson:~# sudo apt install nikto
 
 # macOS
-brew install nikto
+root@fuperson:~# brew install nikto
 
 # Or from source
-git clone https://github.com/sullo/nikto
+root@fuperson:~# git clone https://github.com/sullo/nikto
 ```
 
-#### SQLMap
 ```bash
+# [+] Install sqlmap — SQL injection framework
 # Debian/Ubuntu/Kali
-sudo apt install sqlmap
+root@fuperson:~# sudo apt install sqlmap
 
 # macOS
-brew install sqlmap
+root@fuperson:~# brew install sqlmap
 
 # Or from GitHub
-git clone https://github.com/sqlmapproject/sqlmap.git
+root@fuperson:~# git clone https://github.com/sqlmapproject/sqlmap.git
 ```
 
-#### Gobuster
 ```bash
+# [+] Install gobuster — directory/DNS bruteforcer
 # Debian/Ubuntu/Kali
-sudo apt install gobuster
+root@fuperson:~# sudo apt install gobuster
 
 # macOS
-brew install gobuster
+root@fuperson:~# brew install gobuster
 
 # Or via Go
-go install github.com/OJ/gobuster/v3@latest
+root@fuperson:~# go install github.com/OJ/gobuster/v3@latest
 ```
 
-#### DIRB
 ```bash
+# [+] Install dirb — web content scanner
 # Debian/Ubuntu/Kali
-sudo apt install dirb
+root@fuperson:~# sudo apt install dirb
 
 # Or from source
-git clone https://gitlab.com/kalilinux/packages/dirb.git
+root@fuperson:~# git clone https://gitlab.com/kalilinux/packages/dirb.git
 ```
 
-#### FFuF
 ```bash
+# [*] Install ffuf — fast web fuzzer
+root@fuperson:~# go install github.com/ffuf/ffuf/v2@latest
 # Download from https://github.com/ffuf/ffuf/releases
 # Or via Go
-go install github.com/ffuf/ffuf/v2@latest
+# go install github.com/ffuf/ffuf/v2@latest
 ```
 
-#### WPScan
 ```bash
+# [+] Install wpscan — WordPress security scanner
 # Debian/Ubuntu/Kali
-sudo apt install wpscan
+root@fuperson:~# sudo apt install wpscan
 
 # Or via Ruby gem
-gem install wpscan
+root@fuperson:~# gem install wpscan
 ```
 
-#### WhatWeb
 ```bash
+# [+] Install whatweb — web fingerprinting
 # Debian/Ubuntu/Kali
-sudo apt install whatweb
+root@fuperson:~# sudo apt install whatweb
 
 # Or from GitHub
-git clone https://github.com/urbanadventurer/WhatWeb.git
+root@fuperson:~# git clone https://github.com/urbanadventurer/WhatWeb.git
 ```
 
-#### WAFW00F
 ```bash
+# [+] Install wafw00f — WAF fingerprinting
 # Debian/Ubuntu/Kali
-sudo apt install wafw00f
+root@fuperson:~# sudo apt install wafw00f
 
 # Or from GitHub
-git clone https://github.com/EnableSecurity/wafw00f.git
+root@fuperson:~# git clone https://github.com/EnableSecurity/wafw00f.git
 ```
 
-#### Commix
 ```bash
+# [+] Install commix — command injection exploiter
 # Debian/Ubuntu/Kali
-sudo apt install commix
+root@fuperson:~# sudo apt install commix
 
 # Or from GitHub
-git clone https://github.com/commixproject/commix.git
+root@fuperson:~# git clone https://github.com/commixproject/commix.git
 ```
 
-#### NoSQLMap
 ```bash
-# From GitHub
-git clone https://github.com/codingo/NoSQLMap.git
-cd NoSQLMap
-python setup.py install
+# [*] Install NoSQLMap — NoSQL injection tool
+root@fuperson:~# git clone https://github.com/codingo/NoSQLMap.git
+root@fuperson:~# cd NoSQLMap && python setup.py install
 ```
+
+## `[root@fuperson]─[~/osint-tools]`
 
 ### OSINT Tools
 
-#### TheHarvester
 ```bash
+# [+] Install theHarvester — email/subdomain hunter
 # Debian/Ubuntu/Kali
-sudo apt install theharvester
+root@fuperson:~# sudo apt install theharvester
 
 # Or from GitHub
-git clone https://github.com/laramies/theHarvester.git
-cd theHarvester
-pip3 install -r requirements.txt
+root@fuperson:~# git clone https://github.com/laramies/theHarvester.git
+root@fuperson:~# cd theHarvester && pip3 install -r requirements.txt
 ```
 
-#### Amass
 ```bash
+# [+] Install amass — in-depth attack surface mapper
+root@fuperson:~# go install -v github.com/OWASP/Amass/v4/...@master
 # Download from https://github.com/OWASP/Amass/releases
 # Or via Go
-go install -v github.com/OWASP/Amass/v4/...@master
+# go install -v github.com/OWASP/Amass/v4/...@master
 ```
 
-#### Sublist3r
 ```bash
-# From GitHub
-git clone https://github.com/aboul3la/Sublist3r.git
-cd Sublist3r
-pip3 install -r requirements.txt
+# [*] Install sublist3r — subdomain enumeration
+root@fuperson:~# git clone https://github.com/aboul3la/Sublist3r.git
+root@fuperson:~# cd Sublist3r && pip3 install -r requirements.txt
 ```
 
-#### DNSRecon
 ```bash
+# [+] Install dnsrecon — DNS enumeration
 # Debian/Ubuntu/Kali
-sudo apt install dnsrecon
+root@fuperson:~# sudo apt install dnsrecon
 
 # Or from GitHub
-git clone https://github.com/darkoperator/dnsrecon.git
+root@fuperson:~# git clone https://github.com/darkoperator/dnsrecon.git
 ```
 
-#### DNSEnum
 ```bash
+# [+] Install dnsenum — DNS enumerator
 # Debian/Ubuntu/Kali
-sudo apt install dnsenum
+root@fuperson:~# sudo apt install dnsenum
 
 # Or from GitHub
-git clone https://github.com/fwaeytens/dnsenum.git
+root@fuperson:~# git clone https://github.com/fwaeytens/dnsenum.git
 ```
 
-#### Fierce
 ```bash
+# [+] Install fierce — DNS reconnaissance
 # Debian/Ubuntu/Kali
-sudo apt install fierce
+root@fuperson:~# sudo apt install fierce
 
 # Or from GitHub
-git clone https://github.com/mschwager/fierce.git
+root@fuperson:~# git clone https://github.com/mschwager/fierce.git
 ```
+
+## `[root@fuperson]─[~/ssl-tools]`
 
 ### SSL/TLS Tools
 
-#### SSLScan
 ```bash
+# [+] Install sslscan — SSL/TLS analyzer
 # Debian/Ubuntu/Kali
-sudo apt install sslscan
+root@fuperson:~# sudo apt install sslscan
 
 # macOS
-brew install sslscan
+root@fuperson:~# brew install sslscan
 ```
 
-#### testssl.sh
 ```bash
-# From GitHub
-git clone https://github.com/drwetter/testssl.sh.git
-cd testssl.sh
+# [*] Install testssl.sh — comprehensive TLS tester
+root@fuperson:~# git clone https://github.com/drwetter/testssl.sh.git
+root@fuperson:~# cd testssl.sh
 ```
 
-#### SSLyze
 ```bash
-# Via pip
-pip3 install sslyze
+# [+] Install sslyze — SSL configuration analyzer
+root@fuperson:~# pip3 install sslyze
 
 # Or from GitHub
-git clone https://github.com/nabla-c0d3/sslyze.git
+root@fuperson:~# git clone https://github.com/nabla-c0d3/sslyze.git
 ```
+
+## `[root@fuperson]─[~/password-tools]`
 
 ### Password Tools
 
-#### Hydra
 ```bash
+# [+] Install hydra — network login cracker
 # Debian/Ubuntu/Kali
-sudo apt install hydra
+root@fuperson:~# sudo apt install hydra
 
 # macOS
-brew install hydra
+root@fuperson:~# brew install hydra
 ```
 
-#### John the Ripper
 ```bash
+# [+] Install john — password cracker
 # Debian/Ubuntu/Kali
-sudo apt install john
+root@fuperson:~# sudo apt install john
 
 # macOS
-brew install john-jumbo
+root@fuperson:~# brew install john-jumbo
 ```
 
-#### Hashcat
 ```bash
+# [+] Install hashcat — GPU password recovery
 # Debian/Ubuntu/Kali
-sudo apt install hashcat
+root@fuperson:~# sudo apt install hashcat
 
 # macOS
-brew install hashcat
+root@fuperson:~# brew install hashcat
 
 # Or from GitHub
-git clone https://github.com/hashcat/hashcat.git
+root@fuperson:~# git clone https://github.com/hashcat/hashcat.git
 ```
+
+## `[root@fuperson]─[~/additional-tools]`
 
 ### Additional Recommended Tools
 
-#### Metasploit Framework
 ```bash
+# [+] Install Metasploit Framework — exploitation platform
 # Debian/Ubuntu/Kali
-sudo apt install metasploit-framework
+root@fuperson:~# sudo apt install metasploit-framework
 
 # Or from Rapid7
-curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
-chmod 755 msfinstall
-./msfinstall
+root@fuperson:~# curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall
+root@fuperson:~# chmod 755 msfinstall && ./msfinstall
 ```
 
-#### Burp Suite
 ```bash
+# [*] Burp Suite — web security testing
 # Download from https://portswigger.net/burp/communitydownload
 # Professional version available for purchase
 ```
 
-#### OWASP ZAP
 ```bash
+# [*] OWASP ZAP — security scanner
 # Download from https://www.zaproxy.org/download/
 # Or via Docker
-docker pull owasp/zap2docker-stable
+# docker pull owasp/zap2docker-stable
 ```
 
-#### Wireshark / TShark
 ```bash
+# [+] Install Wireshark / TShark — packet analysis
 # Debian/Ubuntu/Kali
-sudo apt install wireshark tshark
+root@fuperson:~# sudo apt install wireshark tshark
 
 # macOS
-brew install wireshark
+root@fuperson:~# brew install wireshark
 ```
 
-#### Aircrack-ng
 ```bash
+# [+] Install aircrack-ng — WiFi security auditing
 # Debian/Ubuntu/Kali
-sudo apt install aircrack-ng
+root@fuperson:~# sudo apt install aircrack-ng
 
 # macOS
-brew install aircrack-ng
+root@fuperson:~# brew install aircrack-ng
 ```
 
-## Docker Installation
+## `[root@fuperson]─[~/docker]`
 
-Many tools are available as Docker containers:
+### Docker Installation
 
 ```bash
-# OWASP ZAP
-docker pull owasp/zap2docker-stable
-
-# SQLMap
-docker pull paoloo/sqlmap
-
-# Nikto
-docker pull hysnsec/nikto
-
-# Nmap
-docker pull uzyexe/nmap
+# [+] Many tools available as Docker containers
+root@fuperson:~# docker pull owasp/zap2docker-stable   # OWASP ZAP
+root@fuperson:~# docker pull paoloo/sqlmap             # SQLMap
+root@fuperson:~# docker pull hysnsec/nikto             # Nikto
+root@fuperson:~# docker pull uzyexe/nmap                # Nmap
 ```
 
-## Python Tools (via pip)
+## `[root@fuperson]─[~/python]`
+
+### Python Tools (via pip)
 
 ```bash
-pip3 install sqlmap nikto theharvester amass recon-ng
+root@fuperson:~# pip3 install sqlmap nikto theharvester amass recon-ng
+[+] Python tools installed
 ```
 
-## Go Tools (via go install)
+## `[root@fuperson]─[~/go]`
+
+### Go Tools (via go install)
 
 ```bash
-go install github.com/OJ/gobuster/v3@latest
-go install github.com/ffuf/ffuf/v2@latest
-go install -v github.com/OWASP/Amass/v4/...@master
-go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+root@fuperson:~# go install github.com/OJ/gobuster/v3@latest
+root@fuperson:~# go install github.com/ffuf/ffuf/v2@latest
+root@fuperson:~# go install -v github.com/OWASP/Amass/v4/...@master
+root@fuperson:~# go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+[+] Go tools installed to $GOPATH/bin
 ```
 
-## Verification
+## `[root@fuperson]─[~/verification]`
 
-After installation, verify tools are available:
+### Verification
 
 ```bash
-# Check individual tools
-nmap --version
-nikto -Version
-sqlmap --version
-gobuster version
+# [+] Verify tools after installation
+root@fuperson:~# nmap --version
+root@fuperson:~# nikto -Version
+root@fuperson:~# sqlmap --version
+root@fuperson:~# gobuster version
 
 # Or run the suite - it will auto-detect available tools
-python pentest_suite.py <target> --authorized
+root@fuperson:~# python pentest_suite.py <target> --authorized
 ```
 
-## Wordlists
+## `[root@fuperson]─[~/wordlists]`
 
-Install wordlists for brute-forcing:
+### Wordlists
 
 ```bash
-# SecLists (comprehensive wordlist collection)
-git clone https://github.com/danielmiessler/SecLists.git
-cd SecLists
+# [+] Install SecLists — comprehensive wordlist collection
+root@fuperson:~# git clone https://github.com/danielmiessler/SecLists.git
+# cd SecLists
 
 # RockYou wordlist (if not already installed)
 # Usually in /usr/share/wordlists/rockyou.txt on Kali
 # Or download from: https://github.com/brannondorsey/naive-hashcat/releases
 ```
 
-## Troubleshooting
+## `[root@fuperson]─[~/troubleshooting]`
 
-### Tool Not Found
-- Verify installation: `which <tool>`
-- Check PATH: `echo $PATH`
-- Reinstall tool
-- Use full path to tool
+### Troubleshooting
 
-### Permission Issues
-- Some tools require root: `sudo <tool>`
-- Check file permissions: `chmod +x <tool>`
-
-### Python Dependencies
 ```bash
-pip3 install --upgrade pip
-pip3 install -r requirements.txt
+# [!] Tool Not Found
+# Verify installation: which <tool>
+# Check PATH: echo $PATH
+# Reinstall tool
+# Use full path to tool
+
+# [!] Permission Issues
+# Some tools require root: sudo <tool>
+# Check file permissions: chmod +x <tool>
 ```
 
-### Go Tools Not Working
 ```bash
-# Ensure Go is installed
-go version
+# [*] Python Dependencies
+root@fuperson:~# pip3 install --upgrade pip
+root@fuperson:~# pip3 install -r requirements.txt
+```
 
+```bash
+# [*] Go Tools Not Working
+root@fuperson:~# go version
 # Add Go bin to PATH
-export PATH=$PATH:$(go env GOPATH)/bin
+root@fuperson:~# export PATH=$PATH:$(go env GOPATH)/bin
 ```
 
-## Platform-Specific Notes
+## `[root@fuperson]─[~/platform-notes]`
 
-### Windows
-- Use WSL2 with Kali Linux for best compatibility
-- Or install tools individually
-- Some tools may require Cygwin
+### Platform-Specific Notes
 
-### macOS
-- Use Homebrew for most tools
-- Some tools may require Xcode Command Line Tools
-- Install via: `xcode-select --install`
+```bash
+# [-] Windows: Use WSL2 with Kali Linux for best compatibility
+# [-] macOS: Use Homebrew — brew install <tool>
+# [-] Linux: Use apt, yum, or pacman
+```
 
-### Linux
-- Use package manager (apt, yum, pacman)
-- Check tool repositories
-- Compile from source if needed
+- **Windows**: Use WSL2 with Kali Linux for best compatibility. Or install tools individually. Some tools may require Cygwin.
+- **macOS**: Use Homebrew for most tools. Some tools may require Xcode Command Line Tools. Install via: `xcode-select --install`
+- **Linux**: Use package manager (apt, yum, pacman). Check tool repositories. Compile from source if needed.
 
-## Automation Script
+## `[root@fuperson]─[~/automation]`
 
-Create a setup script:
+### Automation Script
 
 ```bash
 #!/bin/bash
 # install_tools.sh
 
-echo "Installing security tools..."
+echo "[*] Installing security tools..."
 
-# Network tools
-sudo apt install -y nmap masscan zmap rustscan
+# [+] Network tools
+root@fuperson:~# apt install -y nmap masscan zmap rustscan
 
-# Web tools
-sudo apt install -y nikto sqlmap gobuster dirb wpscan whatweb wafw00f commix
+# [+] Web tools
+root@fuperson:~# apt install -y nikto sqlmap gobuster dirb wpscan whatweb wafw00f commix
 
-# OSINT tools
-sudo apt install -y theharvester amass dnsrecon dnsenum fierce
+# [+] OSINT tools
+root@fuperson:~# apt install -y theharvester amass dnsrecon dnsenum fierce
 
-# SSL tools
-sudo apt install -y sslscan sslyze
+# [+] SSL tools
+root@fuperson:~# apt install -y sslscan sslyze
 
-# Password tools
-sudo apt install -y hydra john hashcat
+# [+] Password tools
+root@fuperson:~# apt install -y hydra john hashcat
 
-# Additional
-sudo apt install -y metasploit-framework wireshark aircrack-ng
+# [+] Additional
+root@fuperson:~# apt install -y metasploit-framework wireshark aircrack-ng
 
-echo "Installation complete!"
+echo "[+] Installation complete!"
+# Make executable: chmod +x install_tools.sh
 ```
 
-Make executable: `chmod +x install_tools.sh`
+---
+
+**FLLC | Armory Guide | 2026**

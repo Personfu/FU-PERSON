@@ -1,6 +1,12 @@
-# Nintendo DSi — Full Jailbreak + Game Library Setup
+# Nintendo DSi — Full Jailbreak + Game Library + CyberWorld Setup
 
-**FLLC | Complete guide from stock to fully loaded.**
+```
+╔══════════════════════════════════════════════════════════════╗
+║  FLLC DSi OPERATIONS MANUAL                                  ║
+║  Jailbreak + 200+ Games + CyberWorld Cover                   ║
+║  Blend in. Play Pokemon. Scan WiFi. Take notes.              ║
+╚══════════════════════════════════════════════════════════════╝
+```
 
 ---
 
@@ -405,6 +411,76 @@ tools/data/wifi_scans/scan_log.csv    → WiFi network database
 tools/data/wifi_scans/probes.csv      → Device probe requests
 tools/data/recon/                     → Network scan results
 ```
+
+---
+
+## Phase 5: CyberWorld Installation
+
+### `[root@fuperson]─[~/dsi/cyberworld-setup]`
+
+CyberWorld is a Pokemon-themed hacking game concept. While you play, the DSi runs WiFi reconnaissance in the background.
+
+### Step 1: Deploy CyberWorld Files
+
+```bash
+root@fuperson:~# python mobile/dsi/dsi_toolkit.py --build-cyberworld
+[+] Creating .cyberworld/ directory (hidden)
+[+] Deploying autolaunch.ini
+[+] Configuring WiFi scanner
+[+] Setting up scan data directory
+[+] CyberWorld deployment complete
+```
+
+Or manually:
+
+```
+1. Copy mobile/dsi/cyberworld/autolaunch.ini to SD:\.cyberworld\
+2. Create SD:\.cyberworld\.scan_data\ directory
+3. Create SD:\.cyberworld\logs\ directory
+4. Set .cyberworld folder to hidden: attrib +h .cyberworld
+```
+
+### Step 2: Configure Covert Scanning
+
+The DSi's built-in WiFi card can scan for networks while homebrew runs. The scan data is logged to the hidden `.cyberworld/.scan_data/` directory.
+
+| Setting | Value |
+|---------|-------|
+| Scan interval | Every 5 seconds |
+| Log format | CSV (SSID, BSSID, Signal, Channel, Encryption) |
+| Log location | `.cyberworld/.scan_data/` |
+| Max log size | 1MB per file (auto-rotate) |
+| FTP export | Disabled by default (enable in autolaunch.ini) |
+
+### Step 3: Cover Story
+
+```
+[+] Primary cover: Playing Pokemon on a Nintendo DSi
+[+] CyberWorld ROM loads automatically via TWiLight Menu++
+[+] WiFi scanning runs in background — invisible to player
+[+] Panic button: SELECT+START → shows normal game menu
+[*] Blend-in factor: MAXIMUM — nobody suspects a kid's handheld
+```
+
+### Step 4: Data Retrieval
+
+```bash
+# Option A: Remove SD card and read on PC
+root@fuperson:~# dir H:\.cyberworld\.scan_data\
+[+] wifi_scan_20260216_140000.csv (847 networks logged)
+
+# Option B: FTP transfer (if enabled)
+root@fuperson:~# ftp dsi-ip 2121
+
+# Option C: Flipper BadUSB auto-sync
+root@fuperson:~# # Use cyberworld_deploy.txt payload to sync
+```
+
+### Game Design Reference
+
+Full game design document: `mobile/dsi/cyberworld/CYBERWORLD.md`
+Daemon bestiary (50+ creatures): `mobile/dsi/cyberworld/DAEMONS.md`
+ROM patch guide: `mobile/dsi/cyberworld/rom_patches.md`
 
 ---
 

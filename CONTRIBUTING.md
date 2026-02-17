@@ -1,27 +1,64 @@
-﻿# Contributing
+# Contributing
 
-## Policy
+```
+╔══════════════════════════════════════════════════════════════╗
+║  FLLC CONTRIBUTION POLICY                                    ║
+║  Status: EXTERNAL CONTRIBUTIONS CLOSED                       ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+## `[root@fuperson]─[~/policy]`
 
 This repository is maintained by **FLLC**. External contributions are not accepted at this time.
 
-This software is provided under the FU PERSON Source-Available License v1.0. It is **not** open-source and is **not** accepting pull requests, patches, or feature requests from external parties.
+```
+[!] This software is NOT open-source
+[!] Pull requests from external parties will be REJECTED
+[!] Feature requests from external parties will be IGNORED
+[*] Licensed under: FU PERSON Source-Available License v1.0
+```
 
-## Reporting Issues
+## `[root@fuperson]─[~/reporting-issues]`
 
-If you have identified a **security vulnerability**, see `SECURITY.md` for responsible disclosure instructions.
+```
+root@fuperson:~# cat /etc/issue_protocol
+[*] Security vulnerability? ──→ See SECURITY.md
+[*] All other inquiries? ────→ preston@fllc.net
+[!] Do NOT open public issues for security bugs
+```
 
-For all other inquiries, contact **preston@fllc.net**.
+## `[root@fuperson]─[~/forking]`
 
-## Forking
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  Forking, cloning for redistribution, or creating derivative works   │
+│  for distribution is PROHIBITED under the License.                   │
+│  See LICENSE for full terms.                                         │
+└──────────────────────────────────────────────────────────────────────┘
+```
 
-Forking, cloning for redistribution, or creating derivative works for distribution is prohibited under the License. See `LICENSE` for full terms.
+## `[root@fuperson]─[~/internal-contributors]`
 
-## Internal Contributors
+FLLC team members follow standard branch-and-merge workflow:
 
-FLLC team members should follow standard branch-and-merge workflow:
+```
+root@fuperson:~# cat /etc/git_workflow
+[1] Branch from main
+[2] Use descriptive branch names:
+    ├── feature/   — New capabilities
+    ├── fix/       — Bug fixes
+    ├── firmware/  — ESP32/hardware changes
+    ├── flipper/   — Flipper Zero payloads
+    ├── web/       — FLLC.net frontend
+    └── cyber/     — CyberWorld content
+[3] Test locally before merging
+[4] Commit messages: clear, reference component
+[5] All commits to main require review
+```
 
-1. Branch from `main`
-2. Use descriptive branch names: `feature/`, `fix/`, `firmware/`
-3. Test locally before merging
-4. Commit messages should be clear and reference the component being changed
-5. All commits to `main` require review
+---
+
+```
+FLLC | 2026 | Authorized Personnel Only
+```
+---

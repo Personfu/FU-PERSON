@@ -1,49 +1,45 @@
-﻿@echo off
+@echo off
+title FU PERSON - OSINT Recon Suite
 color 0E
-title FLLC - OSINT Recon Suite
-mode con: cols=90 lines=45
+mode con: cols=80 lines=45
+cd /d "%~dp0.."
 
-cls
+:: Kali-style small banner
 echo.
-echo  ================================================================
-echo  =                                                              =
-echo  =     FLLC - OSINT RECON SUITE                          =
-echo  =     Open Source Intelligence Gathering                       =
-echo  =                                                              =
-echo  ================================================================
+echo     ___ ___     ___  ___  ___  ___
+echo    ] - ] - [   ] __ ] __]  _ ] __
+echo    ]_  _____]  ]  _ ] _] ___ ] _
+echo      ]_[     ]  [___][___][___][___]
 echo.
-echo  This tool performs OSINT reconnaissance including:
-echo    - DNS Records and Subdomains
-echo    - WHOIS Information
-echo    - Technology Detection
-echo    - Social Media Discovery
-echo    - Data Breach Checks
+echo    ╔══════════════════════════════════════════════════════════╗
+echo    ║  FU PERSON - OSINT Recon Suite                           ║
+echo    ║  Open Source Intelligence Gathering                      ║
+echo    ╚══════════════════════════════════════════════════════════╝
 echo.
-echo  ================================================================
+echo    [*] Capabilities: DNS Records, Subdomains, WHOIS,
+echo        Technology Detection, Social Media, Breach Checks
 echo.
-set /p target="  Enter target website (e.g. example.com): "
+echo    ────────────────────────────────────────────────────────────
+
+set /p target="    root@fuperson:~# target: "
 if "%target%"=="" (
     echo.
-    echo  ERROR: You must enter a target website!
+    echo    [!] ERROR: You must enter a target website!
     echo.
     pause
-    exit
+    exit /b 1
 )
 echo.
-echo  ================================================================
-echo  =     LAUNCHING OSINT RECON...                                 =
-echo  ================================================================
+echo    [*] Launching OSINT Recon on %target%...
+echo    ────────────────────────────────────────────────────────────
 echo.
 
-python "%~dp0osint_recon_suite.py" --target %target% --authorized
+python "core\osint_recon_suite.py" --target %target% --authorized
 
 echo.
-echo  ================================================================
-echo  =     RECON COMPLETE                                           =
-echo  =     Check the JSON report file in this folder                =
-echo  ================================================================
+echo    ────────────────────────────────────────────────────────────
+echo    [+] Recon complete - Check JSON report in deploy folder
 echo.
-echo  Your report files:
-dir /b "%~dp0osint_report_*.json" 2>nul
+dir /b osint_report_*.json 2>nul
 echo.
 pause

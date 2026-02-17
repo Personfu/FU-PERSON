@@ -1,9 +1,9 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 FLLC - Nintendo DSi Hacking Toolkit
 =============================================
 Concepts, tools, and utilities for leveraging a jailbroken Nintendo DSi
-as a covert penetration testing device.
+as a covert penetration testing device. Includes CyberWorld deployment.
 
 WHY THE DSi?
   - Nobody suspects a kids' gaming console
@@ -42,6 +42,80 @@ import struct
 import shutil
 from pathlib import Path
 from datetime import datetime
+
+
+# ============================================================================
+#  CYBERWORLD DEPLOYMENT
+# ============================================================================
+
+def build_cyberworld(sd_path):
+    """
+    Deploy CyberWorld covert scanning structure to DSi SD card.
+    Creates .cyberworld/ with autolaunch.ini, .scan_data/, and logs/.
+    """
+    script_dir = Path(__file__).resolve().parent
+    cyberworld_src = script_dir / 'cyberworld'
+
+    print("[+] Creating .cyberworld/ directory (hidden)")
+    cw_dir = Path(sd_path) / '.cyberworld'
+    cw_dir.mkdir(parents=True, exist_ok=True)
+
+    print("[+] Creating .cyberworld/.scan_data/ directory")
+    (cw_dir / '.scan_data').mkdir(exist_ok=True)
+
+    print("[+] Creating .cyberworld/logs/ directory")
+    (cw_dir / 'logs').mkdir(exist_ok=True)
+
+    print("[+] Deploying autolaunch.ini")
+    autolaunch_src = cyberworld_src / 'autolaunch.ini'
+    if autolaunch_src.exists():
+        shutil.copy(autolaunch_src, cw_dir / 'autolaunch.ini')
+    else:
+        # Embedded default if source not found
+        default_autolaunch = """; CYBERWORLD AUTO-LAUNCH CONFIGURATION
+; FLLC | FU PERSON | DSi Operations
+
+[CYBERWORLD]
+DEFAULT_ROM=sd:/roms/nds/CyberWorld_FireRed.nds
+AUTO_START=1
+SHOW_SPLASH=0
+
+[COVERT_SCAN]
+ENABLE_WIFI_SCAN=1
+SCAN_INTERVAL_MS=5000
+LOG_PATH=sd:/.cyberworld/.scan_data/
+LOG_FORMAT=csv
+HIDDEN_DIR=1
+
+[WIFI_SCANNER]
+SCAN_SSID=1
+SCAN_BSSID=1
+SCAN_SIGNAL=1
+SCAN_CHANNEL=1
+SCAN_ENCRYPTION=1
+PROBE_CAPTURE=1
+TIMESTAMP_UTC=1
+
+[DATA_SYNC]
+ENABLE_FTP=0
+FTP_PORT=2121
+"""
+        (cw_dir / 'autolaunch.ini').write_text(default_autolaunch)
+
+    print("[+] Configuring WiFi scanner")
+    print("[+] Setting up scan data directory")
+    scan_config = {
+        "scan_interval_sec": 5,
+        "log_format": "csv",
+        "log_location": ".cyberworld/.scan_data/",
+        "max_log_size_mb": 1,
+        "auto_rotate": True
+    }
+    (cw_dir / '.scan_data' / 'scan_config.json').write_text(
+        json.dumps(scan_config, indent=2)
+    )
+
+    print("[+] CyberWorld deployment complete")
 
 
 # ============================================================================
@@ -620,6 +694,8 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='FLLC - DSi Toolkit Builder')
     parser.add_argument('--sd', default=None, help='Path to DSi SD card')
+    parser.add_argument('--build-cyberworld', action='store_true',
+                        help='Deploy CyberWorld covert structure to SD card')
     args = parser.parse_args()
 
     sd = args.sd
@@ -627,4 +703,7 @@ if __name__ == '__main__':
         # Auto-detect or use local directory
         sd = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dsi_sd_contents')
 
-    build_dsi_sd(sd)
+    if args.build_cyberworld:
+        build_cyberworld(sd)
+    else:
+        build_dsi_sd(sd)
