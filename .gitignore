@@ -67,6 +67,26 @@ mobile/dsi/cyberworld/src/*.nds
 usb_payload/microsd/loot/
 collected/
 
+# ─── CVE Engine Cache & Monitor Data ────────────────────
+cve_cache.db
+*.sqlite
+.fuperson/
+
+# ─── Quantum Crypto Key Material ────────────────────────
+*.pqkey
+*.pqpub
+*.pqsec
+*.pqsig
+
+# ─── Integrity Checksums (regenerated) ──────────────────
+CHECKSUMS.sha256
+
+# ─── Digest Reports ────────────────────────────────────
+digests/
+
+# ─── Pre-commit ────────────────────────────────────────
+.secrets.baseline
+
 # ─── HTML previews (exclude web frontend) ────────────────
 *.html
 !web/*.html

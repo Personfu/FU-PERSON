@@ -1,22 +1,39 @@
-# FU PERSON - Core Dependencies
+# FU PERSON v4.0 - Core Dependencies
 # Install: pip install -r requirements.txt
 
-# HTTP client
+# === HTTP & Networking ===
 requests>=2.31.0
 urllib3>=2.0.0
 
-# HTML parsing
+# === HTML/XML Parsing ===
 beautifulsoup4>=4.12.0
 lxml>=4.9.0
 
-# DNS resolution
+# === DNS Resolution ===
 dnspython>=2.4.0
 
-# Terminal colors (cross-platform)
+# === Terminal Colors ===
 colorama>=0.4.6
 
-# PDF report generation
+# === PDF Report Generation ===
 fpdf2>=2.7.0
 
-# Web search (optional, for extended people finder)
+# === Web Search ===
 duckduckgo-search>=4.0
+
+# === SSH Tunneling (tunnel_proxy.py) ===
+paramiko>=3.4.0
+
+# === Disassembly / Reverse Engineering (reverse_engineer.py, exploit_dev.py) ===
+capstone>=5.0.0
+
+# === Malware Signature Matching (reverse_engineer.py) ===
+yara-python>=4.5.0
+
+# === Post-Quantum Cryptography (quantum_crypto.py) ===
+# Requires liboqs system library - see docs/QUANTUM_READINESS.md
+# oqs>=0.9.0
+
+# === Repo Security ===
+detect-secrets>=1.4.0
+pre-commit>=3.6.0
