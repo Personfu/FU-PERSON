@@ -1,0 +1,70 @@
+name: Dependency Audit
+
+on:
+  schedule:
+    # Weekly on Monday at 9am UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  audit-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check for known vulnerabilities
+        run: |
+          pip install pip-audit
+          echo "=== Auditing installed packages ==="
+          pip-audit --format json --output audit-results.json 2>/dev/null || true
+          pip-audit 2>/dev/null || true
+
+      - name: Check for outdated packages
+        run: |
+          echo "=== Checking for outdated packages ==="
+          pip list --outdated --format json > outdated.json 2>/dev/null || true
+          python -c "
+          import json
+          with open('outdated.json') as f:
+              pkgs = json.load(f)
+          if not pkgs:
+              print('All packages are up to date')
+          else:
+              print(f'{len(pkgs)} package(s) have updates available:')
+              for p in pkgs:
+                  print(f'  {p[\"name\"]}: {p[\"version\"]} -> {p[\"latest_version\"]}')
+          "
+
+      - name: Create issue if vulnerabilities found
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VULNS=$(python -c "
+          import json, os
+          try:
+              with open('audit-results.json') as f:
+                  data = json.load(f)
+              vulns = data.get('dependencies', [])
+              count = sum(1 for d in vulns if d.get('vulns'))
+              print(count)
+          except:
+              print(0)
+          " 2>/dev/null)
+
+          if [ "$VULNS" -gt 0 ]; then
+            gh issue create \
+              --title "Dependency vulnerability detected ($(date -u +%Y-%m-%d))" \
+              --body "pip-audit found $VULNS vulnerable package(s). Run \`pip-audit\` locally for details." \
+              --label "security" 2>/dev/null || echo "Could not create issue (label may not exist)"
+          fi

@@ -67,10 +67,12 @@ mobile/dsi/cyberworld/src/*.nds
 usb_payload/microsd/loot/
 collected/
 
-# ─── CVE Engine Cache & Monitor Data ────────────────────
-cve_cache.db
-*.sqlite
+# ─── CVE Engine Local User Cache ────────────────────────
 .fuperson/
+
+# ─── Keep auto-synced CVE reports (but ignore local cache DBs) ──
+!data/cve/
+data/cve/*.db
 
 # ─── Quantum Crypto Key Material ────────────────────────
 *.pqkey

@@ -1,0 +1,40 @@
+name: Update Integrity Checksums
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'core/**'
+      - 'payloads/**'
+      - 'usb_payload/**'
+      - 'firmware/**'
+      - 'web/**'
+      - 'scripts/**'
+
+permissions:
+  contents: write
+
+jobs:
+  update-checksums:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Regenerate checksums
+        run: python scripts/verify_integrity.py generate
+
+      - name: Commit if changed
+        run: |
+          git config user.name "PrestonFurulie"
+          git config user.email "Personfu@users.noreply.github.com"
+          git add CHECKSUMS.sha256
+          if git diff --cached --quiet; then
+            echo "Checksums unchanged"
+          else
+            git commit -m "auto: regenerate integrity checksums"
+            git push
+          fi
